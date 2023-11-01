@@ -2,6 +2,10 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.CafeApplication" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
+        <item name="backgroundColor">@color/background_grey</item>
+        <item name="colorOnBackground">@color/primaryOnBackground</item>
+        <item name="colorPrimary">@color/primaryOnBackground</item>
+        <item name="colorAccent">@color/primaryOnBackground</item>
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
