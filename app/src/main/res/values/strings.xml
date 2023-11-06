@@ -5,4 +5,5 @@
     <string name="landing_page_button_text">Get Started</string>
     <string name="landing_page_example_email_text">example@gmail.com</string>
     <string name="landing_page_hero_text">All ingredients are locally sourced</string>
+    <string name="loginTitle">Login</string>
 </resources>

@@ -6,8 +6,14 @@
         <item name="colorOnBackground">@color/primaryOnBackground</item>
         <item name="colorPrimary">@color/primaryOnBackground</item>
         <item name="colorAccent">@color/primaryOnBackground</item>
+        <item name="colorSecondary">@color/light_grey</item>
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
+
+    <style name="ToolbarColoredBackArrow" parent="Base.Theme.CafeApplication">
+        <item name="android:textColorSecondary">@color/primaryOnBackground</item>
+    </style>
+
 
     <style name="Theme.CafeApplication" parent="Base.Theme.CafeApplication" />
 </resources>
