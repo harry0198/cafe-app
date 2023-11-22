@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="?attr/backgroundColor"
     android:theme="@style/Base.Theme.CafeApplication"
-    tools:context=".LoginActivity">
+    tools:context=".controllers.LoginActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"

@@ -13,14 +13,20 @@
         android:theme="@style/Theme.CafeApplication"
         tools:targetApi="31">
         <activity
-            android:name=".BrowseMenuView"
+            android:name=".controllers.Cart"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity" />
+            android:name=".ProductListView"
+            android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".controllers.BrowseMenuView"
+            android:exported="false" />
+        <activity
+            android:name=".controllers.LoginActivity"
+            android:exported="false"
+            android:parentActivityName=".controllers.MainActivity" />
+        <activity
+            android:name=".controllers.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

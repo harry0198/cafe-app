@@ -1,9 +1,10 @@
-package me.harrydrummond.cafeapplication
+package me.harrydrummond.cafeapplication.controllers
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import me.harrydrummond.cafeapplication.R
 
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,7 +17,7 @@ class LoginActivity : AppCompatActivity() {
         supportActionBar?.setHomeAsUpIndicator(R.drawable.toolbar_back_arrow)
 
 
-        var button = findViewById<Button>(R.id.btnAuthenticate)
+        val button = findViewById<Button>(R.id.btnAuthenticate)
         button.setOnClickListener {
             val intent = Intent(this, BrowseMenuView::class.java).apply {
 
