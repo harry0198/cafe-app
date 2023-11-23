@@ -1,4 +1,4 @@
-package me.harrydrummond.cafeapplication.database.tables
+package me.harrydrummond.cafeapplication.data.tables
 
 import android.database.sqlite.SQLiteDatabase
 

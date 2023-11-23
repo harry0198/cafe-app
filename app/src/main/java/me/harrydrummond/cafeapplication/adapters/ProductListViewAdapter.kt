@@ -1,14 +1,18 @@
 package me.harrydrummond.cafeapplication.adapters
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.Button
 import android.widget.TextView
 import me.harrydrummond.cafeapplication.R
+import me.harrydrummond.cafeapplication.view.ProductViewActivity
+import me.harrydrummond.cafeapplication.model.ProductModel
 
-class ProductListViewAdapter(context: Context, private val productList: Array<String>) : BaseAdapter() {
+class ProductListViewAdapter(private val context: Context, private val productList: Array<ProductModel>) : BaseAdapter() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -16,7 +20,7 @@ class ProductListViewAdapter(context: Context, private val productList: Array<St
         return productList.size
     }
 
-    override fun getItem(p0: Int): String {
+    override fun getItem(p0: Int): ProductModel {
         return productList[p0]
     }
 
@@ -29,9 +33,26 @@ class ProductListViewAdapter(context: Context, private val productList: Array<St
 
         if (myView == null) {
             myView = inflater.inflate(R.layout.activity_product_list_view, parent, false)
-            val productName = myView.findViewById<TextView>(R.id.txtProductName)
 
-            productName.text = getItem(position)
+            val product = getItem(position)
+
+
+            val productName = myView.findViewById<TextView>(R.id.productName)
+            val productPrice = myView.findViewById<TextView>(R.id.productPrice)
+            val productViewButton = myView.findViewById<Button>(R.id.nextButton)
+
+            val price = "£ ${product.productPrice}"
+
+            productName.text = product.productName
+            productPrice.text = price
+
+            productViewButton.setOnClickListener {
+                val intent = Intent(context, ProductViewActivity::class.java).apply {
+                    putExtra("PRODUCT", product)
+                }
+
+                context.startActivity(intent)
+            }
         }
 
         return myView

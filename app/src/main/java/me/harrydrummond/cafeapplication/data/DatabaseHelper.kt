@@ -1,16 +1,19 @@
-package me.harrydrummond.cafeapplication.database
+package me.harrydrummond.cafeapplication.data
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import me.harrydrummond.cafeapplication.database.tables.AdministratorTable
-import me.harrydrummond.cafeapplication.database.tables.CustomerTable
-import me.harrydrummond.cafeapplication.database.tables.OrderDetailsTable
-import me.harrydrummond.cafeapplication.database.tables.OrderStatusTable
-import me.harrydrummond.cafeapplication.database.tables.OrderTable
-import me.harrydrummond.cafeapplication.database.tables.PaymentTable
-import me.harrydrummond.cafeapplication.database.tables.ProductTable
-import me.harrydrummond.cafeapplication.database.tables.ReviewTable
+import me.harrydrummond.cafeapplication.data.tables.AdministratorTable
+import me.harrydrummond.cafeapplication.data.tables.CustomerTable
+import me.harrydrummond.cafeapplication.data.tables.OrderDetailsTable
+import me.harrydrummond.cafeapplication.data.tables.OrderStatusTable
+import me.harrydrummond.cafeapplication.data.tables.OrderTable
+import me.harrydrummond.cafeapplication.data.tables.PaymentTable
+import me.harrydrummond.cafeapplication.data.tables.ProductTable
+import me.harrydrummond.cafeapplication.data.tables.ReviewTable
+import me.harrydrummond.cafeapplication.model.CustomerModel
+import java.sql.PreparedStatement
 
 class DatabaseHelper(ctx: Context) : SQLiteOpenHelper(ctx, "Cafe.db", null, 1) {
 
@@ -35,6 +38,9 @@ class DatabaseHelper(ctx: Context) : SQLiteOpenHelper(ctx, "Cafe.db", null, 1) {
 
     override fun onUpgrade(p0: SQLiteDatabase?, p1: Int, p2: Int) {
         TODO("Not yet implemented")
+    }
+
+    fun getUser(email: String, password: String): CustomerModel {
     }
 
     private fun addForeignKey(sql: SQLiteDatabase, table1: String, table2: String, field1: String, field2: String) {

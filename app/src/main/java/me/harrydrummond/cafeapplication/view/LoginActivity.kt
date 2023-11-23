@@ -1,4 +1,4 @@
-package me.harrydrummond.cafeapplication.controllers
+package me.harrydrummond.cafeapplication.view
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -14,7 +14,7 @@ class LoginActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.toolbar_back_arrow)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.toolbar_arrow_back)
 
 
         val button = findViewById<Button>(R.id.btnAuthenticate)

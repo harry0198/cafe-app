@@ -4,5 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="background_grey">#F1F1F1</color>
     <color name="primaryOnBackground">#705337</color>
-    <color name="light_grey">#A9A9A9</color>
+    <color name="light_grey">#4E4A4A</color>
+    <color name="very_light_grey">#E4E4E4</color>
+    <color name="pastel_green">#ECFAF2</color>
 </resources>

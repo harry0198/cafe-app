@@ -1,4 +1,4 @@
-package me.harrydrummond.cafeapplication.controllers
+package me.harrydrummond.cafeapplication.view
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -11,7 +11,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var button = findViewById<Button>(R.id.button)
+        var button = findViewById<Button>(R.id.btnLogIn)
         button.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java).apply {
 

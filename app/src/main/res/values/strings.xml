@@ -6,4 +6,6 @@
     <string name="landing_page_example_email_text">example@gmail.com</string>
     <string name="landing_page_hero_text">All ingredients are locally sourced</string>
     <string name="loginTitle">Login</string>
+    <string name="nav_open">Open</string>
+    <string name="nav_close">Close</string>
 </resources>

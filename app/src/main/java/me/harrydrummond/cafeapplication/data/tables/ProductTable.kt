@@ -1,4 +1,4 @@
-package me.harrydrummond.cafeapplication.database.tables
+package me.harrydrummond.cafeapplication.data.tables
 
 import android.database.sqlite.SQLiteDatabase
 
@@ -10,6 +10,7 @@ class ProductTable : Table {
         const val PRODUCT_NAME = "product_name"
         const val PRODUCT_PRICE = "product_price"
         const val PRODUCT_IMAGE = "product_image"
+        const val PRODUCT_DESCRIPTION = "product_description"
         const val PRODUCT_AVAILABLE = "product_available"
     }
 
@@ -18,6 +19,7 @@ class ProductTable : Table {
                 "($PRODUCT_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "$PRODUCT_NAME TEXT, " +
                 "$PRODUCT_PRICE NUMERIC, " +
+                "$PRODUCT_DESCRIPTION TEXT, " +
                 "$PRODUCT_IMAGE TEXT, " +
                 "$PRODUCT_AVAILABLE BOOLEAN)"
 
