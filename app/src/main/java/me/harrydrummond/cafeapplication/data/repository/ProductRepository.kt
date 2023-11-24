@@ -128,6 +128,10 @@ class ProductRepository(context: Context) : Repository {
         return updateRecord(id, PRODUCT_PRICE, price.toString())
     }
 
+    fun updateProductAvailability(id: Long, availability: Boolean): Boolean {
+        return updateRecord(id, PRODUCT_AVAILABLE, if (availability) "1" else "0")
+    }
+
     private fun updateRecord(id: Long, column: String, data: String): Boolean {
         val db = dbHelper.writableDatabase
         val contentValues = ContentValues()

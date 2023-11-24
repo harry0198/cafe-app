@@ -48,7 +48,6 @@ class RegisterActivity : AppCompatActivity() {
                 RegisterAction.EMAIL_IN_USE -> {
                     binding.registerEmail.error = "This email already has an account"
                 }
-                RegisterAction.PROGRESS -> null
                 RegisterAction.FAILURE -> Toast.makeText(this, "An unknown error occurred", Toast.LENGTH_SHORT).show()
                 else -> null
             }

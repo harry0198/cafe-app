@@ -12,6 +12,7 @@ class ProductViewModel(application: Application): AndroidViewModel(application) 
     val productName: MutableLiveData<String> = MutableLiveData()
     val productDesc: MutableLiveData<String> = MutableLiveData()
     val productPrice: MutableLiveData<Double> = MutableLiveData()
+    val productAvailability: MutableLiveData<Boolean> = MutableLiveData()
 
 
     fun initialize(productId: Long) {
@@ -20,6 +21,7 @@ class ProductViewModel(application: Application): AndroidViewModel(application) 
         this.productName.value = product?.productName
         this.productDesc.value = product?.productDescription
         this.productPrice.value = product?.productPrice
+        this.productAvailability.value = product?.productAvailable
     }
 
     fun saveProductName(name: String) {
@@ -32,7 +34,13 @@ class ProductViewModel(application: Application): AndroidViewModel(application) 
         productRepository.updateProductDescription(productId!!, desc)
     }
 
+    fun saveProductAvailability(availability: Boolean) {
+        productAvailability.value = availability
+        productRepository.updateProductAvailability(productId!!, availability)
+    }
+
     fun saveProductPrice(price: Double) {
         productPrice.value = price
+        productRepository.updateProductPrice(productId!!, price)
     }
 }

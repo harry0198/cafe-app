@@ -3,6 +3,7 @@ package me.harrydrummond.cafeapplication.view
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -41,24 +42,26 @@ class ProductViewActivity : AbstractAuthenticatedActivity() {
     }
 
     fun onEditPriceButtonClicked(view: View) {
-
+        popupEditDecimal("Edit product description", productViewModel.productPrice.value ?: 0.0) { price ->
+            // Our view will handle cases that are not a number. No need for it here.
+            productViewModel.saveProductPrice(price.toDouble())
+        }
     }
 
     fun onAvailabilityToggle(view: View) {
-
+        productViewModel.saveProductAvailability(binding.availabilityToggle.isChecked)
     }
 
-    private fun popupEditText(title: String, initialValue: String, onPositiveButtonClick: (String) -> Unit) {
+    private fun popupEditDecimal(title: String, initialValue: Double, onPositiveButtonClick: (String) -> Unit) {
         val builder = AlertDialog.Builder(this)
-        val dialogLayout = layoutInflater.inflate(R.layout.edit_text_layout, null)
-        val editText = dialogLayout.findViewById<EditText>(R.id.etLayout)
+        val dialogLayout = layoutInflater.inflate(R.layout.edit_number_layout, null)
+        val editNumber = dialogLayout.findViewById<EditText>(R.id.enEditNumber)
 
-        editText.setText(initialValue)
-
+        editNumber.setText(initialValue.toString())
         with(builder) {
             setTitle(title)
             setPositiveButton("Save") { _, _ ->
-                onPositiveButtonClick(editText.text.toString())
+                onPositiveButtonClick(editNumber.text.toString())
             }
             setNegativeButton("Cancel") { dialog, which ->
                 // do nothing
@@ -67,6 +70,29 @@ class ProductViewActivity : AbstractAuthenticatedActivity() {
             show()
         }
     }
+
+    private fun popupEditText(title: String, initialValue: String, onPositiveButtonClick: (String) -> Unit) {
+        val builder = AlertDialog.Builder(this)
+        val dialogLayout = layoutInflater.inflate(R.layout.edit_text_layout, null)
+        val editText = dialogLayout.findViewById<EditText>(R.id.etLayout)
+
+        val toast = Toast.makeText(this, "Field Updated", Toast.LENGTH_SHORT)
+        editText.setText(initialValue)
+
+        with(builder) {
+            setTitle(title)
+            setPositiveButton("Save") { _, _ ->
+                    onPositiveButtonClick(editText.text.toString())
+                    toast.show()
+            }
+            setNegativeButton("Cancel") { dialog, which ->
+                // do nothing
+            }
+            setView(dialogLayout)
+            show()
+        }
+    }
+
 
 
     private fun visibility() {
@@ -89,6 +115,9 @@ class ProductViewActivity : AbstractAuthenticatedActivity() {
         }
         productViewModel.productDesc.observe(this) { desc ->
             binding.lblProductDescription.text = desc
+        }
+        productViewModel.productAvailability.observe(this) { toggle ->
+            binding.availabilityToggle.isChecked = toggle
         }
     }
 }
