@@ -18,7 +18,7 @@ import me.harrydrummond.cafeapplication.viewmodel.ButtonUIState
 
 class BrowseMenuView : AbstractAuthenticatedActivity() {
 
-    private lateinit var adapter: BaseAdapter
+    private lateinit var adapter: ProductListViewAdapter
     private lateinit var binding: ActivityBrowseMenuViewBinding
     private lateinit var browseMenuViewModel: BrowseMenuViewModel
     private lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
@@ -49,6 +49,13 @@ class BrowseMenuView : AbstractAuthenticatedActivity() {
                 else -> binding.btnAddMenuItem.isVisible = false
             }
         }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        browseMenuViewModel.refreshProducts()
+        adapter.notifyDataSetChanged()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -12,7 +12,7 @@ import me.harrydrummond.cafeapplication.model.ProductModel
 class BrowseMenuViewModel(application: Application): AndroidViewModel(application) {
 
     private val productRepository: ProductRepository = ProductRepository(application)
-    val productList: LiveData<MutableList<ProductModel>> = MutableLiveData(productRepository.getProducts())
+    val productList: MutableLiveData<MutableList<ProductModel>> = MutableLiveData(productRepository.getProducts())
 
     val uiButtonState: LiveData<ButtonUIState> = MutableLiveData(
         if (AuthenticatedUser.getInstance().isCustomer())
@@ -20,6 +20,11 @@ class BrowseMenuViewModel(application: Application): AndroidViewModel(applicatio
         else
             ButtonUIState.VISIBLE
     )
+
+    fun refreshProducts() {
+        productList.value?.clear()
+        productList.value?.addAll(productRepository.getProducts())
+    }
 
     fun addProduct(): Long {
         val dummyName = "New Product"

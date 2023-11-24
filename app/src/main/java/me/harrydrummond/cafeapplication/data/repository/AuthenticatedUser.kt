@@ -2,9 +2,13 @@ package me.harrydrummond.cafeapplication.data.repository
 
 import me.harrydrummond.cafeapplication.model.Role
 import me.harrydrummond.cafeapplication.model.UserModel
+import java.util.concurrent.locks.ReentrantLock
 
 class AuthenticatedUser private constructor() {
 
+    private val lock = ReentrantLock()
+
+    @Volatile
     var user: UserModel? = null
 
     // Standard singleton generation
@@ -17,6 +21,16 @@ class AuthenticatedUser private constructor() {
             instance ?: synchronized(this) {
                 instance ?: AuthenticatedUser().also { instance = it }
             }
+    }
+
+    // Use this function to temporarily block updates to the user property
+    fun lockUserUpdate(block: () -> Unit) {
+        lock.lock()
+        try {
+            block()
+        } finally {
+            lock.unlock()
+        }
     }
 
     /**

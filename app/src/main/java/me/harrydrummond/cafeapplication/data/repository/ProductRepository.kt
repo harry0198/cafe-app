@@ -116,6 +116,36 @@ class ProductRepository(context: Context) : Repository {
             return null
     }
 
+    fun updateProductName(id: Long, name: String): Boolean {
+        return updateRecord(id, PRODUCT_NAME, name)
+    }
+
+    fun updateProductDescription(id: Long, desc: String): Boolean {
+        return updateRecord(id, PRODUCT_DESCRIPTION, desc)
+    }
+
+    fun updateProductPrice(id: Long, price: Double): Boolean {
+        return updateRecord(id, PRODUCT_PRICE, price.toString())
+    }
+
+    private fun updateRecord(id: Long, column: String, data: String): Boolean {
+        val db = dbHelper.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put(column, data)
+
+        try {
+            val affectedRows = db.update(
+                TABLE_NAME,
+                contentValues,
+                "$PRODUCT_ID = ?",
+                arrayOf(id.toString())
+            )
+            return affectedRows > 0
+        } finally {
+            db.close()
+        }
+    }
+
     @SuppressLint("Range")
     private fun getProductModelFromCursor(cursor: Cursor): ProductModel {
         return ProductModel(

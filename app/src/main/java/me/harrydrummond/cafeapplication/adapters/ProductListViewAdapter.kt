@@ -9,10 +9,11 @@ import android.widget.BaseAdapter
 import android.widget.Button
 import android.widget.TextView
 import me.harrydrummond.cafeapplication.R
+import me.harrydrummond.cafeapplication.databinding.ActivityProductListViewBinding
 import me.harrydrummond.cafeapplication.view.ProductViewActivity
 import me.harrydrummond.cafeapplication.model.ProductModel
 
-class ProductListViewAdapter(private val context: Context, private val productList: MutableList<ProductModel>) : BaseAdapter() {
+class ProductListViewAdapter(private val context: Context, var productList: MutableList<ProductModel>) : BaseAdapter() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -31,28 +32,26 @@ class ProductListViewAdapter(private val context: Context, private val productLi
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
         var myView: View? = convertView
 
+        // Set up binding, store it as a tag.
+        val binding: ActivityProductListViewBinding
         if (myView == null) {
-            myView = inflater.inflate(R.layout.activity_product_list_view, parent, false)
+            binding = ActivityProductListViewBinding.inflate(inflater, parent, false)
+            myView = binding.root
+            myView.setTag(binding)
+        } else {
+            binding = myView.tag as ActivityProductListViewBinding
+        }
 
-            val product = getItem(position)
+        val product = getItem(position)
 
-
-            val productName = myView.findViewById<TextView>(R.id.productName)
-            val productPrice = myView.findViewById<TextView>(R.id.productPrice)
-            val productViewButton = myView.findViewById<Button>(R.id.nextButton)
-
-            val price = "£ ${product.productPrice}"
-
-            productName.text = product.productName
-            productPrice.text = price
-
-            productViewButton.setOnClickListener {
-                val intent = Intent(context, ProductViewActivity::class.java).apply {
-                    putExtra("PRODUCT", product)
-                }
-
-                context.startActivity(intent)
+        binding.productName.text = product.productName
+        binding.productPrice.text = "£ ${product.productPrice}"
+        binding.nextButton.setOnClickListener {
+            val intent = Intent(context, ProductViewActivity::class.java).apply {
+                putExtra("PRODUCT", product.productId)
             }
+
+            context.startActivity(intent)
         }
 
         return myView

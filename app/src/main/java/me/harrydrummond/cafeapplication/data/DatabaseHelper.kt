@@ -24,7 +24,7 @@ class DatabaseHelper(val context: Context) : SQLiteOpenHelper(context, "Cafe.db"
     }
 
     override fun onUpgrade(p0: SQLiteDatabase?, p1: Int, p2: Int) {
-        TODO("Not yet implemented")
+        // nothing to do here
     }
 
     private fun addForeignKey(sql: SQLiteDatabase, table1: String, table2: String, field1: String, field2: String) {
