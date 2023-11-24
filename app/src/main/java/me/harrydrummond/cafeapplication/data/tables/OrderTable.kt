@@ -11,7 +11,7 @@ class OrderTable : Table {
         const val ORDER_STATUS_ID = "order_status_id"
     }
 
-    override fun onCreate(sql: SQLiteDatabase) {
+    override fun create(sql: SQLiteDatabase) {
         val createTableStatement = "CREATE TABLE $TABLE_NAME " +
                 "($ORDER_ID PRIMARY KEY AUTOINCREMENT, " +
                 "$USER_ID INTEGER, " +
@@ -21,7 +21,7 @@ class OrderTable : Table {
         sql.execSQL(createTableStatement)
     }
 
-    override fun onUpgrade(sql: SQLiteDatabase, oldVer: Int) {
+    override fun upgrade(sql: SQLiteDatabase, oldVer: Int) {
         TODO("Not yet implemented")
     }
 

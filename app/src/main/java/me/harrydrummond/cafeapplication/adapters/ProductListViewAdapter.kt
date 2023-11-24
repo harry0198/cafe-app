@@ -12,7 +12,7 @@ import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.view.ProductViewActivity
 import me.harrydrummond.cafeapplication.model.ProductModel
 
-class ProductListViewAdapter(private val context: Context, private val productList: Array<ProductModel>) : BaseAdapter() {
+class ProductListViewAdapter(private val context: Context, private val productList: MutableList<ProductModel>) : BaseAdapter() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 

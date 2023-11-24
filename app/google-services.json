@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "921035441126",
+    "project_id": "universitycafeorder",
+    "storage_bucket": "universitycafeorder.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:921035441126:android:b4aafdeed13efcce934c27",
+        "android_client_info": {
+          "package_name": "me.harrydrummond.cafeapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWV-hHGAKcA-9Qlg6G30v5Bp6WHvD0Fg0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

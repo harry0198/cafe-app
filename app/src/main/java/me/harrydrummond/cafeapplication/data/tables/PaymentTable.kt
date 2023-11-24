@@ -12,7 +12,7 @@ class PaymentTable : Table {
         const val AMOUNT = "amount"
         const val PAYMENT_DATE = "payment_date"
     }
-    override fun onCreate(sql: SQLiteDatabase) {
+    override fun create(sql: SQLiteDatabase) {
         val createTableStatement = "CREATE TABLE $TABLE_NAME " +
                 "($PAYMENT_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "$ORDER_ID INTEGER, " +
@@ -23,7 +23,7 @@ class PaymentTable : Table {
         sql.execSQL(createTableStatement)
     }
 
-    override fun onUpgrade(sql: SQLiteDatabase, oldVer: Int) {
+    override fun upgrade(sql: SQLiteDatabase, oldVer: Int) {
         TODO("Not yet implemented")
     }
 }

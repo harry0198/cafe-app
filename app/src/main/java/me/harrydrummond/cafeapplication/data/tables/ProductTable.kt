@@ -14,7 +14,7 @@ class ProductTable : Table {
         const val PRODUCT_AVAILABLE = "product_available"
     }
 
-    override fun onCreate(sql: SQLiteDatabase) {
+    override fun create(sql: SQLiteDatabase) {
         val createTableStatement = "CREATE TABLE $TABLE_NAME " +
                 "($PRODUCT_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "$PRODUCT_NAME TEXT, " +
@@ -26,7 +26,7 @@ class ProductTable : Table {
         sql.execSQL(createTableStatement)
     }
 
-    override fun onUpgrade(sql: SQLiteDatabase, oldVer: Int) {
+    override fun upgrade(sql: SQLiteDatabase, oldVer: Int) {
         TODO("Not yet implemented")
     }
 }

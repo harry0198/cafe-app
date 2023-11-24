@@ -9,7 +9,7 @@ class OrderDetailsTable : Table {
         const val ORDER_ID = "order_id"
         const val PRODUCT_ID = "product_id"
     }
-    override fun onCreate(sql: SQLiteDatabase) {
+    override fun create(sql: SQLiteDatabase) {
         val createTableStatement = "CREATE TABLE $TABLE_NAME " +
                 "($ORDER_DETAILS_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "$ORDER_ID INTEGER, " +
@@ -18,7 +18,7 @@ class OrderDetailsTable : Table {
         sql.execSQL(createTableStatement)
     }
 
-    override fun onUpgrade(sql: SQLiteDatabase, oldVer: Int) {
+    override fun upgrade(sql: SQLiteDatabase, oldVer: Int) {
         TODO("Not yet implemented")
     }
 }

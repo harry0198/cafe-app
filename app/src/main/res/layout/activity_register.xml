@@ -4,12 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/backgroundColor"
-    android:theme="@style/Base.Theme.CafeApplication"
-    tools:context=".view.LoginActivity">
+    tools:context=".view.RegisterActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/toolbar3"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
         android:minHeight="?attr/actionBarSize"
@@ -18,7 +16,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:titleTextColor="?attr/colorPrimary"/>
+        app:titleTextColor="?attr/colorPrimary" />
 
     <LinearLayout
         android:id="@+id/lytAuth"
@@ -29,13 +27,13 @@
         android:padding="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+        app:layout_constraintTop_toBottomOf="@+id/toolbar3">
 
         <TextView
             android:id="@+id/lblWelcomeAuth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Login"
+            android:text="Register"
             android:textColor="?attr/colorPrimary"
             android:textSize="28sp"
             android:textStyle="bold" />
@@ -79,14 +77,13 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/btnAuthenticate"
+        android:id="@+id/btnAuthenticate2"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="50dp"
-        android:onClick="onLoginClick"
         android:text="Continue"
+        android:onClick="onRegisterClick"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
