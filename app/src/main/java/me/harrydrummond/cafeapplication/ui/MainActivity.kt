@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import me.harrydrummond.cafeapplication.databinding.ActivityMainBinding
+import me.harrydrummond.cafeapplication.ui.login.LoginActivity
 import me.harrydrummond.cafeapplication.ui.register.RegisterActivity
 
 class MainActivity : AppCompatActivity() {
@@ -17,11 +18,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onLoginButtonClicked(view: View) {
-//        val intent = Intent(this, LoginActivity::class.java)
-//        intent.putExtra("IS_EMPLOYEE", binding.employeeSwitch.isChecked)
-//        startActivity(intent)
-        val intent = Intent(this, AppActivity::class.java)
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.putExtra("IS_EMPLOYEE", binding.employeeSwitch.isChecked)
         startActivity(intent)
+//        val intent = Intent(this, AppActivity::class.java)
+//        startActivity(intent)
     }
 
     fun onRegisterButtonClicked(view: View) {

@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.databinding.ActivityProductListViewBinding
-import me.harrydrummond.cafeapplication.model.ProductModel
+import me.harrydrummond.cafeapplication.data.model.ProductModel
+import me.harrydrummond.cafeapplication.data.model.UserModel
 
-class ProductListViewAdapter(private val context: Context, var productList: MutableList<ProductModel>) : BaseAdapter() {
+class ProductListViewAdapter(private val context: Context, var productList: List<ProductModel>, val userModel: UserModel) : BaseAdapter() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -44,7 +46,8 @@ class ProductListViewAdapter(private val context: Context, var productList: Muta
         binding.productPrice.text = "£ ${product.productPrice}"
         binding.nextButton.setOnClickListener {
             val intent = Intent(context, ProductViewActivity::class.java).apply {
-                putExtra("PRODUCT", product.productId)
+                putExtra(IntentExtra.PRODUCT, product)
+                putExtra(IntentExtra.USER_MODEL, userModel)
             }
 
             context.startActivity(intent)

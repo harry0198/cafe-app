@@ -5,11 +5,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.Validators
 import me.harrydrummond.cafeapplication.databinding.ActivityRegisterBinding
-import me.harrydrummond.cafeapplication.model.Role
+import me.harrydrummond.cafeapplication.data.model.Role
 import me.harrydrummond.cafeapplication.ui.AppActivity
 
 class RegisterActivity : AppCompatActivity() {
@@ -22,8 +23,6 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
         registerViewModel = ViewModelProvider(this).get(RegisterViewModel::class.java)
-        val isEmployee = intent.getBooleanExtra("IS_EMPLOYEE", false)
-        registerViewModel.setUserLoginType(if (isEmployee) Role.EMPLOYEE else Role.CUSTOMER)
 
         setSupportActionBar(binding.toolbar3)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -33,20 +32,32 @@ class RegisterActivity : AppCompatActivity() {
         registerViewModel.progress.observe(this) { progress ->
             when (progress) {
                 RegisterAction.REGISTER_SUCCESS -> {
-                    Toast.makeText(this, "Account created", Toast.LENGTH_SHORT).show()
 
-                    startActivity(
-                        Intent(
-                            this,
-                            AppActivity::class.java
-                        )
-                    )
+                    registerViewModel.getUser().addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(this, "Account created", Toast.LENGTH_SHORT).show()
+                            val intent = Intent(this, AppActivity::class.java)
+                            intent.putExtra("USER_MODEL", task.result)
+                            startActivity(intent)
+                            finish()
+                        } else {
+                            Toast.makeText(this, "Account heeree", Toast.LENGTH_SHORT).show()
+
+                        }
+
+                    }
                 }
-                RegisterAction.EMAIL_IN_USE -> {
-                    binding.registerEmail.error = "This email already has an account"
+                RegisterAction.PROGRESS -> {
+                    binding.progressBar.isVisible = true
                 }
-                RegisterAction.FAILURE -> Toast.makeText(this, "An unknown error occurred", Toast.LENGTH_SHORT).show()
-                else -> null
+                RegisterAction.FAILURE -> {
+                    Toast.makeText(this, "An unknown error occurred", Toast.LENGTH_SHORT).show()
+                    binding.progressBar.isVisible = false
+                }
+
+                else -> {
+                    binding.progressBar.isVisible = false
+                }
             }
         }
     }
@@ -63,7 +74,7 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         if (binding.registerEmail.error == null && binding.registerPassword.error == null) {
-            registerViewModel.register(email.text.toString(), pass.text.toString(), "", 4)
+            registerViewModel.register(email.text.toString(), pass.text.toString())
         }
     }
 }

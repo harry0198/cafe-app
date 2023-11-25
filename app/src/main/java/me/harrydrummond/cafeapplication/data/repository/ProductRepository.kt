@@ -1,177 +1,59 @@
 package me.harrydrummond.cafeapplication.data.repository
 
-import android.annotation.SuppressLint
-import android.content.ContentValues
-import android.content.Context
-import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
-import me.harrydrummond.cafeapplication.data.DatabaseHelper
-import me.harrydrummond.cafeapplication.model.ProductModel
-import me.harrydrummond.cafeapplication.model.UserModel
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import me.harrydrummond.cafeapplication.data.model.ProductModel
+import me.harrydrummond.cafeapplication.data.model.UserModel
 
-class ProductRepository(context: Context) : Repository {
+class ProductRepository {
 
-    private val dbHelper = DatabaseHelper(context)
     companion object {
-        const val TABLE_NAME = "product"
-        const val PRODUCT_ID = "product_id"
-        const val PRODUCT_NAME = "product_name"
-        const val PRODUCT_PRICE = "product_price"
-        const val PRODUCT_IMAGE = "product_image"
-        const val PRODUCT_DESCRIPTION = "product_description"
-        const val PRODUCT_AVAILABLE = "product_available"
+        const val DOCUMENT_NAME = "products"
     }
 
-    override fun create(sql: SQLiteDatabase) {
-        val createTableStatement = "CREATE TABLE $TABLE_NAME " +
-                "($PRODUCT_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "$PRODUCT_NAME TEXT, " +
-                "$PRODUCT_PRICE NUMERIC, " +
-                "$PRODUCT_DESCRIPTION TEXT, " +
-                "$PRODUCT_IMAGE TEXT, " +
-                "$PRODUCT_AVAILABLE BOOLEAN)"
+    private val db = Firebase.firestore
 
-        sql.execSQL(createTableStatement)
-    }
-
-    override fun update(sql: SQLiteDatabase) {
-        // nothing
-    }
-
-    fun deleteProduct(id: Long): Boolean {
-        val db = dbHelper.writableDatabase
-
-        try {
-            val rowsAffected = db.delete(TABLE_NAME, "$PRODUCT_ID = ?", arrayOf(id.toString()))
-
-            return rowsAffected > 0
-        } finally {
-            db.close()
+    fun saveProduct(product: ProductModel): Task<Void> {
+        val document = if (product.productId == null || product.productId.isEmpty()) {
+            db.collection(DOCUMENT_NAME).document()
+        } else {
+            db.collection(DOCUMENT_NAME).document(product.productId)
         }
+        product.productId = document.id
+        return document.set(product)
     }
 
-    fun addProduct(product: ProductModel): Long {
-
-        val db = dbHelper.writableDatabase
-
-        val values = ContentValues().apply {
-            put(PRODUCT_NAME, product.productName)
-            put(PRODUCT_DESCRIPTION, product.productDescription)
-            put(PRODUCT_PRICE, product.productPrice)
-            put(PRODUCT_IMAGE, product.productImage)
-            put(PRODUCT_AVAILABLE, product.productAvailable)
-        }
-
-        try {
-            return db.insert(TABLE_NAME, null, values)
-        } finally {
-            db.close()
-        }
+    fun deleteProduct(product: ProductModel): Task<Void> {
+        return db.collection(DOCUMENT_NAME).document(product.productId).delete()
     }
 
-    fun getProducts(): MutableList<ProductModel> {
-
-        val productList: MutableList<ProductModel> = ArrayList()
-        val db = dbHelper.writableDatabase
-
-        val cursor = db.query(
-            TABLE_NAME,  // Table name
-            arrayOf("*"),  // Columns to retrieve
-            null,  // WHERE clause
-            null,  // Arguments for WHERE clause
-            null,  // GROUP BY (if any)
-            null,  // HAVING (if any)
-            null // ORDER BY (if any)
-        )
-
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                // Assuming Product is a class with appropriate constructor
-                val product = getProductModelFromCursor(cursor)
-                productList.add(product)
-            } while (cursor.moveToNext())
-            cursor.close()
-        }
-
-        db.close()
-        return productList
-    }
-
-    fun getProductById(id: Long): ProductModel? {
-            val db = dbHelper.readableDatabase
-            val selection = "$PRODUCT_ID = ?"
-            val selectionArgs = arrayOf(id.toString())
-            var cursor: Cursor? = null
-
-            try {
-                cursor = db.query(
-                    TABLE_NAME,  // Table name
-                    arrayOf("*"),  // Columns to retrieve
-                    selection,  // WHERE clause
-                    selectionArgs,  // Arguments for WHERE clause
-                    null,  // GROUP BY
-                    null,  // HAVING
-                    null // ORDER BY
-                )
-
-                val product: ProductModel?
-
-                if (cursor != null && cursor.moveToFirst()) {
-                    product = getProductModelFromCursor(cursor)
-                    return product
-                }
-            } finally {
-                cursor?.close()
-                db.close()
+    fun getAllProducts(): Task<List<ProductModel>> {
+        return db.collection(DOCUMENT_NAME).get().continueWith { result ->
+            val products = mutableListOf<ProductModel>()
+            for (document in result.result) {
+                val product = document.toObject(ProductModel::class.java)
+                product.productId = document.id
+                products.add(product)
             }
 
-            return null
-    }
-
-    fun updateProductName(id: Long, name: String): Boolean {
-        return updateRecord(id, PRODUCT_NAME, name)
-    }
-
-    fun updateProductDescription(id: Long, desc: String): Boolean {
-        return updateRecord(id, PRODUCT_DESCRIPTION, desc)
-    }
-
-    fun updateProductPrice(id: Long, price: Double): Boolean {
-        return updateRecord(id, PRODUCT_PRICE, price.toString())
-    }
-
-    fun updateProductAvailability(id: Long, availability: Boolean): Boolean {
-        return updateRecord(id, PRODUCT_AVAILABLE, if (availability) "1" else "0")
-    }
-
-    private fun updateRecord(id: Long, column: String, data: String): Boolean {
-        val db = dbHelper.writableDatabase
-        val contentValues = ContentValues()
-        contentValues.put(column, data)
-
-        try {
-            val affectedRows = db.update(
-                TABLE_NAME,
-                contentValues,
-                "$PRODUCT_ID = ?",
-                arrayOf(id.toString())
-            )
-            return affectedRows > 0
-        } finally {
-            db.close()
+            products
         }
     }
 
-    @SuppressLint("Range")
-    private fun getProductModelFromCursor(cursor: Cursor): ProductModel {
-        return ProductModel(
-            cursor.getLong(cursor.getColumnIndex(PRODUCT_ID)),
-            cursor.getString(cursor.getColumnIndex(PRODUCT_NAME)),
-            cursor.getDouble(cursor.getColumnIndex(PRODUCT_PRICE)),
-            cursor.getString(cursor.getColumnIndex(PRODUCT_IMAGE)),
-            cursor.getString(cursor.getColumnIndex(PRODUCT_DESCRIPTION)),
-            cursor.getInt(cursor.getColumnIndex(PRODUCT_AVAILABLE)) == 1
-        )
+    fun getProductById(id: String): Task<ProductModel> {
+        val document = db.collection(DOCUMENT_NAME).document(id)
+        return document.get().continueWith { task: Task<DocumentSnapshot> ->
+            if (task.isSuccessful) {
+                val documentSnapshot = task.result
+                val product = documentSnapshot?.toObject(ProductModel::class.java)
+                product?.productId = document.id
+                product
+            } else {
+                null
+            }
+        }
     }
 
 }

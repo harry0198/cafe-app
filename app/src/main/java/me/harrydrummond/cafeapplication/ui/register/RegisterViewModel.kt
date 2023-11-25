@@ -1,63 +1,40 @@
 package me.harrydrummond.cafeapplication.ui.register
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import me.harrydrummond.cafeapplication.data.repository.AuthenticatedUser
-import me.harrydrummond.cafeapplication.data.repository.CustomerRepository
-import me.harrydrummond.cafeapplication.data.repository.EmployeeRepository
+import androidx.lifecycle.ViewModel
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.auth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import me.harrydrummond.cafeapplication.data.repository.UserRepository
-import me.harrydrummond.cafeapplication.model.Role
-import me.harrydrummond.cafeapplication.model.UserModel
+import me.harrydrummond.cafeapplication.data.model.UserModel
 
-class RegisterViewModel(private val application: Application): AndroidViewModel(application) {
+class RegisterViewModel: ViewModel() {
 
-    private lateinit var userRepository: UserRepository
+    private val userRepository: UserRepository = UserRepository()
     val progress: MutableLiveData<RegisterAction> = MutableLiveData<RegisterAction>(RegisterAction.NONE)
 
-    fun setUserLoginType(role: Role) {
-        userRepository = when (role) {
-            Role.CUSTOMER -> CustomerRepository(application)
-            Role.EMPLOYEE -> EmployeeRepository(application)
-        }
-    }
-
-    fun register(email: String, password: String, fullname: String, phoneNumber: Int) {
+    fun register(email: String, password: String) {
         progress.value = RegisterAction.PROGRESS
 
-        val customerModel = UserModel(-1, email, phoneNumber, fullname, password, true)
-
-        if (emailExists(email)) {
-            progress.value = RegisterAction.EMAIL_IN_USE
-            return
+        userRepository.registerAndSaveUser(email, password, UserModel(333,"Harry", true)).addOnCompleteListener {task ->
+            if (task.isSuccessful) {
+                progress.value = RegisterAction.REGISTER_SUCCESS
+            } else {
+                progress.value = RegisterAction.FAILURE
+            }
         }
-        val result = userRepository.registerUser(customerModel)
-
-        if (result == -1L) {
-            progress.value = RegisterAction.FAILURE
-            return
-        }
-
-        val user = userRepository.getUserById(result)
-
-        if (user == null) {
-            progress.value = RegisterAction.FAILURE
-            return
-        }
-
-        AuthenticatedUser.getInstance().user = user
-        progress.value = RegisterAction.REGISTER_SUCCESS
     }
 
-    private fun emailExists(email: String): Boolean {
-        return userRepository.userExists(email)
+    fun getUser(): Task<UserModel?> {
+        return userRepository.getUser(Firebase.auth.uid!!)
     }
 }
 
 enum class RegisterAction {
     REGISTER_SUCCESS,
     PROGRESS,
-    EMAIL_IN_USE,
     FAILURE,
     NONE
 }

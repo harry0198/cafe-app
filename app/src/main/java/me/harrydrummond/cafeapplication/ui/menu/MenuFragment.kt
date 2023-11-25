@@ -9,7 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
+import me.harrydrummond.cafeapplication.data.model.Role
+import me.harrydrummond.cafeapplication.data.model.UserModel
 import me.harrydrummond.cafeapplication.databinding.FragmentMenuBinding
+import me.harrydrummond.cafeapplication.ui.AppActivity
 import me.harrydrummond.cafeapplication.ui.menu.product.ProductListViewAdapter
 
 class MenuFragment : Fragment() {
@@ -17,6 +20,7 @@ class MenuFragment : Fragment() {
     private lateinit var adapter: ProductListViewAdapter
     private lateinit var viewModel: MenuViewModel
     private lateinit var binding: FragmentMenuBinding
+    private var userModel: UserModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,18 +37,21 @@ class MenuFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.btnAddMenuItem.isVisible = true
 
-        adapter =  ProductListViewAdapter(this.requireContext(), viewModel.productList.value!!)
+        userModel = (activity as AppActivity).userModel
+        adapter =  ProductListViewAdapter(this.requireContext(), viewModel.productList.value!!, userModel!!)
         binding.listProducts.adapter = adapter
 
-        viewModel.uiButtonState.observe(this.viewLifecycleOwner) { state ->
-            when (state) {
-                ButtonUIState.VISIBLE -> binding.btnAddMenuItem.isVisible = true
-                else -> binding.btnAddMenuItem.isVisible = false
-            }
+
+        when (userModel?.role) {
+            Role.EMPLOYEE -> binding.btnAddProduct.isVisible = true
+            else -> binding.btnAddProduct.isVisible = false
         }
 
+        viewModel.productList.observe(this.viewLifecycleOwner) {items ->
+            adapter.productList = items
+            adapter.notifyDataSetChanged()
+        }
         onAddMenuItemButtonListener()
     }
 
@@ -55,16 +62,8 @@ class MenuFragment : Fragment() {
     }
 
     private fun onAddMenuItemButtonListener(){
-        binding.btnAddMenuItem.setOnClickListener {
-            val productId = viewModel.addProduct()
-
-            if (productId == -1L) {
-                // Error
-                return@setOnClickListener
-            }
-
-            adapter.notifyDataSetChanged()
-            Toast.makeText(this.context, "New menu item added", Toast.LENGTH_SHORT).show()
+        binding.btnAddProduct.setOnClickListener {
+            viewModel.addProduct()
         }
     }
 }

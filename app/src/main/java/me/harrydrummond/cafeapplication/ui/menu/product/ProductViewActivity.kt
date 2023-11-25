@@ -1,30 +1,37 @@
 package me.harrydrummond.cafeapplication.ui.menu.product
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.R
+import me.harrydrummond.cafeapplication.data.model.ProductModel
 import me.harrydrummond.cafeapplication.databinding.ActivityProductViewBinding
-import me.harrydrummond.cafeapplication.model.Role
-import me.harrydrummond.cafeapplication.ui.AbstractAuthenticatedActivity
+import me.harrydrummond.cafeapplication.data.model.Role
+import me.harrydrummond.cafeapplication.data.model.UserModel
 
-class ProductViewActivity : AbstractAuthenticatedActivity() {
+class ProductViewActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityProductViewBinding
     private lateinit var productViewModel: ProductViewModel
+    private var userModel: UserModel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProductViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
         productViewModel = ViewModelProvider(this).get(ProductViewModel::class.java)
 
-        val productId: Long = intent.getLongExtra("PRODUCT", -1L)
-        productViewModel.initialize(productId)
+        // This is asserted because if no product was passed, we can't display anything anyway.
+        // It is not this class' responsibility to resolve.
+        val product = intent.getParcelableExtra(IntentExtra.PRODUCT, ProductModel::class.java)!!
+        productViewModel.initialize(product)
+        userModel = intent.getParcelableExtra(IntentExtra.USER_MODEL, UserModel::class.java)
 
         bindings()
         visibility()
@@ -33,16 +40,7 @@ class ProductViewActivity : AbstractAuthenticatedActivity() {
     fun onDeleteButtonClicked(view: View) {
         val builder = AlertDialog.Builder(this)
         builder.setMessage("Are you sure you want to delete this?").setPositiveButton("Delete") { _, _ ->
-            val deleted = productViewModel.deleteProduct()
-            if (deleted) {
-                val toast = Toast.makeText(this, "Product Deleted", Toast.LENGTH_SHORT)
-                toast.show()
-                finish()
-            } else {
-                val toast = Toast.makeText(this, "An unknown error occured", Toast.LENGTH_SHORT)
-                toast.show()
-
-            }
+            productViewModel.deleteProduct()
         }.setNegativeButton("Cancel") { _, _ ->
                 // Nothing
         }
@@ -119,7 +117,7 @@ class ProductViewActivity : AbstractAuthenticatedActivity() {
 
 
     private fun visibility() {
-        val isEmployee = role == Role.EMPLOYEE
+        val isEmployee = userModel?.role == Role.EMPLOYEE
         binding.btnEditDescription.isVisible = isEmployee
         binding.availabilityToggle.isVisible = isEmployee
         binding.btnEditPrice.isVisible = isEmployee
@@ -142,6 +140,18 @@ class ProductViewActivity : AbstractAuthenticatedActivity() {
         }
         productViewModel.productAvailability.observe(this) { toggle ->
             binding.availabilityToggle.isChecked = toggle
+        }
+        productViewModel.deleteProductComplete.observe(this) { completed ->
+            if (completed) {
+                Toast.makeText(this, "Product Deleted", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        }
+        productViewModel.savedProductState.observe(this) { saved ->
+            if (saved) {
+                Toast.makeText(this, "Field Saved", Toast.LENGTH_SHORT).show()
+                productViewModel.savedProductState.value = false
+            }
         }
     }
 }

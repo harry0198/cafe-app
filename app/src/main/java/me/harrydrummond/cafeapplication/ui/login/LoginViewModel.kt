@@ -3,45 +3,34 @@ package me.harrydrummond.cafeapplication.ui.login
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
-import me.harrydrummond.cafeapplication.data.repository.AuthenticatedUser
-import me.harrydrummond.cafeapplication.data.repository.CustomerRepository
-import me.harrydrummond.cafeapplication.data.repository.EmployeeRepository
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import me.harrydrummond.cafeapplication.data.repository.UserRepository
-import me.harrydrummond.cafeapplication.model.Role
+import me.harrydrummond.cafeapplication.data.model.Role
+import me.harrydrummond.cafeapplication.data.model.UserModel
 
 class LoginViewModel(private val application: Application): AndroidViewModel(application) {
 
-    private lateinit var userRepository: UserRepository
+    private val userRepository: UserRepository = UserRepository()
     val loginState: MutableLiveData<LoginAction> = MutableLiveData<LoginAction>(LoginAction.NONE)
 
-    fun setUserLoginType(role: Role) {
-        userRepository = when (role) {
-            Role.CUSTOMER -> CustomerRepository(application)
-            Role.EMPLOYEE -> EmployeeRepository(application)
-        }
-    }
 
     fun login(email: String, password: String) {
         loginState.value = LoginAction.PROGRESS
+        val result = userRepository.loginUser(email, password)
 
-        viewModelScope.launch {
-            val result = userRepository.loginUser(email, password)
-            if (result == -1L) {
-                loginState.value = LoginAction.EMAIL_OR_PASS_INVALID
-                return@launch
-            }
-            val user = userRepository.getUserById(result)
-
-            if (user == null) {
+        result.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                loginState.value = LoginAction.LOGIN_SUCCESS
+            } else {
                 loginState.value = LoginAction.ERROR
-                return@launch
             }
-
-            AuthenticatedUser.getInstance().user = user
-            loginState.value = LoginAction.LOGIN_SUCCESS
         }
+    }
+
+    fun getUser(): Task<UserModel?> {
+        return userRepository.getUser(Firebase.auth.uid!!)
     }
 }
 
