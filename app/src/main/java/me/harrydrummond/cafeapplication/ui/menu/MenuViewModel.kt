@@ -1,4 +1,4 @@
-package me.harrydrummond.cafeapplication.viewmodel
+package me.harrydrummond.cafeapplication.ui.menu
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -8,9 +8,7 @@ import me.harrydrummond.cafeapplication.data.repository.AuthenticatedUser
 import me.harrydrummond.cafeapplication.data.repository.ProductRepository
 import me.harrydrummond.cafeapplication.model.ProductModel
 
-
-class BrowseMenuViewModel(application: Application): AndroidViewModel(application) {
-
+class MenuViewModel(application: Application) : AndroidViewModel(application) {
     private val productRepository: ProductRepository = ProductRepository(application)
     val productList: MutableLiveData<MutableList<ProductModel>> = MutableLiveData(productRepository.getProducts())
 

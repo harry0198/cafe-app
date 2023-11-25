@@ -16,7 +16,10 @@
         android:theme="@style/Theme.CafeApplication"
         tools:targetApi="31">
         <activity
-            android:name=".view.NewProductActivity"
+            android:name=".ui.AppActivity"
+            android:exported="false" />
+        <activity
+            android:name=".NavLayout"
             android:exported="false" />
         <activity
             android:name=".MenuActivity"
@@ -24,26 +27,29 @@
             android:label="@string/title_activity_menu"
             android:theme="@style/Theme.CafeApplication" />
         <activity
-            android:name=".view.RegisterActivity"
+            android:name=".view.NewProductActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ProductViewActivity"
+            android:name=".ui.register.RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.menu.product.ProductViewActivity"
             android:exported="false" />
         <activity
             android:name=".view.Cart"
             android:exported="false" />
         <activity
-            android:name=".view.ProductListView"
+            android:name=".ui.menu.product.ProductListView"
             android:exported="false" />
         <activity
-            android:name=".view.BrowseMenuView"
+            android:name=".ui.menu.BrowseMenuView"
             android:exported="false" />
         <activity
-            android:name=".view.LoginActivity"
+            android:name=".ui.login.LoginActivity"
             android:exported="false"
-            android:parentActivityName=".view.MainActivity" />
+            android:parentActivityName=".ui.MainActivity" />
         <activity
-            android:name=".view.MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

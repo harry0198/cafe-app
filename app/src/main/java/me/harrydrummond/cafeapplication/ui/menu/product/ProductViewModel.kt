@@ -1,4 +1,4 @@
-package me.harrydrummond.cafeapplication.viewmodel
+package me.harrydrummond.cafeapplication.ui.menu.product
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -22,6 +22,10 @@ class ProductViewModel(application: Application): AndroidViewModel(application) 
         this.productDesc.value = product?.productDescription
         this.productPrice.value = product?.productPrice
         this.productAvailability.value = product?.productAvailable
+    }
+
+    fun deleteProduct(): Boolean {
+        return productRepository.deleteProduct(productId!!)
     }
 
     fun saveProductName(name: String) {

@@ -1,12 +1,12 @@
-package me.harrydrummond.cafeapplication.view
+package me.harrydrummond.cafeapplication.ui.menu.product
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import me.harrydrummond.cafeapplication.R
 
-class Cart : AppCompatActivity() {
+class ProductListView : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_cart)
+        setContentView(R.layout.activity_product_list_view)
     }
 }

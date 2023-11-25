@@ -1,4 +1,4 @@
-package me.harrydrummond.cafeapplication.adapters
+package me.harrydrummond.cafeapplication.ui.menu.product
 
 import android.content.Context
 import android.content.Intent
@@ -6,11 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.Button
-import android.widget.TextView
-import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.databinding.ActivityProductListViewBinding
-import me.harrydrummond.cafeapplication.view.ProductViewActivity
 import me.harrydrummond.cafeapplication.model.ProductModel
 
 class ProductListViewAdapter(private val context: Context, var productList: MutableList<ProductModel>) : BaseAdapter() {

@@ -1,4 +1,4 @@
-package me.harrydrummond.cafeapplication.view
+package me.harrydrummond.cafeapplication.ui.register
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -8,12 +8,9 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.Validators
-import me.harrydrummond.cafeapplication.databinding.ActivityLoginBinding
 import me.harrydrummond.cafeapplication.databinding.ActivityRegisterBinding
 import me.harrydrummond.cafeapplication.model.Role
-import me.harrydrummond.cafeapplication.viewmodel.LoginViewModel
-import me.harrydrummond.cafeapplication.viewmodel.RegisterAction
-import me.harrydrummond.cafeapplication.viewmodel.RegisterViewModel
+import me.harrydrummond.cafeapplication.ui.AppActivity
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -41,7 +38,7 @@ class RegisterActivity : AppCompatActivity() {
                     startActivity(
                         Intent(
                             this,
-                            BrowseMenuView::class.java
+                            AppActivity::class.java
                         )
                     )
                 }

@@ -1,14 +1,11 @@
-package me.harrydrummond.cafeapplication.view
+package me.harrydrummond.cafeapplication.ui
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import me.harrydrummond.cafeapplication.R
-import me.harrydrummond.cafeapplication.databinding.ActivityLoginBinding
 import me.harrydrummond.cafeapplication.databinding.ActivityMainBinding
-import me.harrydrummond.cafeapplication.viewmodel.LoginViewModel
+import me.harrydrummond.cafeapplication.ui.register.RegisterActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,8 +17,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onLoginButtonClicked(view: View) {
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.putExtra("IS_EMPLOYEE", binding.employeeSwitch.isChecked)
+//        val intent = Intent(this, LoginActivity::class.java)
+//        intent.putExtra("IS_EMPLOYEE", binding.employeeSwitch.isChecked)
+//        startActivity(intent)
+        val intent = Intent(this, AppActivity::class.java)
         startActivity(intent)
     }
 

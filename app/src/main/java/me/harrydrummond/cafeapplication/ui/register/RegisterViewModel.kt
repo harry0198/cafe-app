@@ -1,4 +1,4 @@
-package me.harrydrummond.cafeapplication.viewmodel
+package me.harrydrummond.cafeapplication.ui.register
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

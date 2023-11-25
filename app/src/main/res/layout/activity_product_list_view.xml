@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/product_list_view_background"
-    tools:context=".view.ProductListView">
+    tools:context=".ui.menu.product.ProductListView">
 
 
     <ImageView

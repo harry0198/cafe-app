@@ -1,4 +1,4 @@
-package me.harrydrummond.cafeapplication.view
+package me.harrydrummond.cafeapplication.ui
 
 import android.content.Intent
 import android.os.Bundle

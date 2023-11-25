@@ -1,4 +1,4 @@
-package me.harrydrummond.cafeapplication.view
+package me.harrydrummond.cafeapplication.ui.login
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,8 +10,7 @@ import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.Validators
 import me.harrydrummond.cafeapplication.databinding.ActivityLoginBinding
 import me.harrydrummond.cafeapplication.model.Role
-import me.harrydrummond.cafeapplication.viewmodel.LoginAction
-import me.harrydrummond.cafeapplication.viewmodel.LoginViewModel
+import me.harrydrummond.cafeapplication.ui.AppActivity
 
 
 class LoginActivity : AppCompatActivity() {
@@ -37,7 +36,7 @@ class LoginActivity : AppCompatActivity() {
             when (progress) {
                 LoginAction.LOGIN_SUCCESS -> {
                     Toast.makeText(this, "Successfully Logged-in", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, BrowseMenuView::class.java))
+                    startActivity(Intent(this, AppActivity::class.java))
                 }
                 LoginAction.EMAIL_OR_PASS_INVALID -> {
                     binding.btnAuthenticate.isEnabled = true

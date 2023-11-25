@@ -38,6 +38,18 @@ class ProductRepository(context: Context) : Repository {
         // nothing
     }
 
+    fun deleteProduct(id: Long): Boolean {
+        val db = dbHelper.writableDatabase
+
+        try {
+            val rowsAffected = db.delete(TABLE_NAME, "$PRODUCT_ID = ?", arrayOf(id.toString()))
+
+            return rowsAffected > 0
+        } finally {
+            db.close()
+        }
+    }
+
     fun addProduct(product: ProductModel): Long {
 
         val db = dbHelper.writableDatabase
