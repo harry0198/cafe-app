@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="?attr/backgroundColor"
     android:theme="@style/Base.Theme.CafeApplication"
-    tools:context=".ui.login.LoginActivity">
+    tools:context=".ui.common.login.LoginActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Enter your password"
-            android:inputType="textEmailAddress" />
+            android:inputType="textPassword" />
 
     </LinearLayout>
 

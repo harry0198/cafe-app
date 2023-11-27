@@ -4,21 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.menu.product.ProductViewActivity">
+    tools:context=".ui.customer.menu.product.ProductViewActivity">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnDeleteProduct"
-        android:layout_width="wrap_content"
+    <ProgressBar
+        android:id="@+id/pv_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:indeterminate="true"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:clickable="true"
-        android:onClick="onDeleteButtonClicked"
-        android:src="@drawable/delete_outline_icon"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
+        android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -32,7 +31,7 @@
             android:orientation="vertical">
 
             <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar2"
+                android:id="@+id/prod_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/pastel_green"
@@ -92,7 +91,7 @@
                     android:id="@+id/counter"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:background="@drawable/counter_background"
+                    android:background="@drawable/outline_background"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:paddingLeft="10dp"
@@ -105,9 +104,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@null"
                         android:minWidth="48dp"
                         android:minHeight="48dp"
-                        android:background="@null"
                         android:src="@drawable/minus" />
 
                     <TextView
@@ -126,10 +125,10 @@
                         android:id="@+id/imageButton2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:minWidth="48dp"
-                        android:minHeight="48dp"
                         android:layout_weight="1"
                         android:background="@null"
+                        android:minWidth="48dp"
+                        android:minHeight="48dp"
                         android:src="@drawable/add" />
 
                 </LinearLayout>
@@ -147,54 +146,11 @@
                     android:id="@+id/btnAddToCart"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:onClick="onAddToCartButtonClicked"
                     android:text="Add to Cart"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/lblTANDC"
                     app:layout_constraintTop_toBottomOf="@+id/lblTANDC" />
-
-                <ImageButton
-                    android:id="@+id/btnEditPrice"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/edit_icon"
-                    android:background="@null"
-                    android:onClick="onEditPriceButtonClicked"
-                    app:layout_constraintBottom_toBottomOf="@+id/lblProductPrice"
-                    app:layout_constraintStart_toEndOf="@+id/lblProductPrice"
-                    app:layout_constraintTop_toTopOf="@+id/lblProductPrice" />
-
-                <ImageButton
-                    android:id="@+id/btnEditTitle"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@null"
-                    android:onClick="onEditTitleButtonClicked"
-                    android:src="@drawable/edit_icon"
-                    app:layout_constraintBottom_toBottomOf="@+id/lblProductName"
-                    app:layout_constraintStart_toEndOf="@+id/lblProductName"
-                    app:layout_constraintTop_toTopOf="@+id/lblProductName" />
-
-                <ImageButton
-                    android:id="@+id/btnEditDescription"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:onClick="onEditDescriptionButtonClicked"
-                    android:background="@null"
-                    android:src="@drawable/edit_icon"
-                    app:layout_constraintEnd_toEndOf="@+id/lblProductDescription"
-                    app:layout_constraintTop_toBottomOf="@+id/lblProductDescription" />
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/availabilityToggle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:minWidth="48dp"
-                    android:minHeight="48dp"
-                    android:onClick="onAvailabilityToggle"
-                    android:text="Available"
-                    app:layout_constraintEnd_toEndOf="@+id/counter"
-                    app:layout_constraintTop_toBottomOf="@+id/btnEditDescription" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

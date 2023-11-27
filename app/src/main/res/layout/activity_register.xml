@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.register.RegisterActivity">
+    tools:context=".ui.common.register.RegisterActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar3"
@@ -44,7 +44,7 @@
             android:id="@+id/lblWelcomeAuth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Register"
+            android:text="Create Account 🧙"
             android:textColor="?attr/colorPrimary"
             android:textSize="28sp"
             android:textStyle="bold" />
@@ -83,7 +83,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Enter your password"
-            android:inputType="textEmailAddress" />
+            android:inputType="textPassword" />
 
     </LinearLayout>
 
@@ -93,6 +93,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="50dp"
         android:text="Continue"
+        android:theme="@style/ButtonGreen"
         android:onClick="onRegisterClick"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

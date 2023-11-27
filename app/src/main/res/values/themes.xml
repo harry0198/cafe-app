@@ -5,7 +5,7 @@
         <item name="backgroundColor">@color/white</item>
         <item name="colorOnBackground">@color/black</item>
         <item name="colorPrimary">@color/black</item>
-        <item name="colorAccent">@color/primaryOnBackground</item>
+        <item name="colorAccent">@color/green</item>
         <item name="colorSecondary">@color/light_grey</item>
         <item name="colorSecondaryContainer">@color/white</item>
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
@@ -23,5 +23,13 @@
         <!-- This code is for changing the color of the bar. -->
         <!-- Type your colour code which you want to set in colorPrimary item -->
         <item name="colorPrimary">@color/white</item>
+    </style>
+
+    <style name="ButtonGreen" parent="Theme.CafeApplication">
+        <item name="colorPrimary">@color/green</item>
+    </style>
+
+    <style name="ButtonNoBackground" parent="Theme.CafeApplication">
+        <item name="colorPrimary">@color/transparent</item>
     </style>
 </resources>

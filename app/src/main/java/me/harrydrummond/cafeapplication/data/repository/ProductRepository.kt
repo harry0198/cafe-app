@@ -1,10 +1,12 @@
 package me.harrydrummond.cafeapplication.data.repository
 
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import me.harrydrummond.cafeapplication.data.model.ProductModel
+import me.harrydrummond.cafeapplication.data.model.ProductQuantity
 import me.harrydrummond.cafeapplication.data.model.UserModel
 
 class ProductRepository {
@@ -29,6 +31,47 @@ class ProductRepository {
         return db.collection(DOCUMENT_NAME).document(product.productId).delete()
     }
 
+    fun getAllAvailableProducts(): Task<List<ProductModel>> {
+        return getAllProducts().continueWith { result ->
+            if (result.isSuccessful) {
+                val filteredProducts = result.result.filter {
+                    it.productAvailable
+                }
+
+                filteredProducts
+            } else {
+                result.result
+            }
+        }
+    }
+
+    fun getProductsByQuantity(prodQuantities: List<ProductQuantity>, callback: (List<Pair<Int, ProductModel>>) -> Unit) {
+        Tasks.whenAllSuccess<ProductModel>(
+            prodQuantities.mapNotNull { prodQuantity ->
+                getProductById(prodQuantity.productId)
+            }
+        ).addOnCompleteListener { getModelTask ->
+            val productModels = getModelTask.result ?: emptyList()
+            val resultPairs = prodQuantities.zip(productModels) { cartProduct, productModel ->
+                Pair(cartProduct.quantity, productModel)
+            }
+            callback(resultPairs)
+        }
+    }
+
+    fun getProductById(productId: String): Task<ProductModel?> {
+        return Firebase.firestore.collection(DOCUMENT_NAME)
+            .document(productId)
+            .get()
+            .continueWith { task ->
+                if (task.isSuccessful) {
+                    task.result.toProductModel()
+                } else {
+                    null
+                }
+            }
+    }
+
     fun getAllProducts(): Task<List<ProductModel>> {
         return db.collection(DOCUMENT_NAME).get().continueWith { result ->
             val products = mutableListOf<ProductModel>()
@@ -41,19 +84,4 @@ class ProductRepository {
             products
         }
     }
-
-    fun getProductById(id: String): Task<ProductModel> {
-        val document = db.collection(DOCUMENT_NAME).document(id)
-        return document.get().continueWith { task: Task<DocumentSnapshot> ->
-            if (task.isSuccessful) {
-                val documentSnapshot = task.result
-                val product = documentSnapshot?.toObject(ProductModel::class.java)
-                product?.productId = document.id
-                product
-            } else {
-                null
-            }
-        }
-    }
-
 }
