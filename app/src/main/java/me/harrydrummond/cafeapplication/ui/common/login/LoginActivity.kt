@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
-import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.Validators
 import me.harrydrummond.cafeapplication.data.model.Role
@@ -15,55 +14,39 @@ import me.harrydrummond.cafeapplication.databinding.ActivityLoginBinding
 import me.harrydrummond.cafeapplication.ui.AdminAppActivity
 import me.harrydrummond.cafeapplication.ui.AppActivity
 
-
+/**
+ * LoginActivity class.
+ * This is the View for the MVVM pattern. Sends events to the LoginViewModel.
+ * Contains functions to update the UI based on the ViewModel bindings and button event handlers.
+ *
+ * @see LoginViewModel
+ * @see ActivityLoginBinding
+ * @author Harry Drummond
+ */
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var loginViewModel: LoginViewModel
+    private lateinit var viewModel: LoginViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.toolbar_arrow_back)
 
-        loginViewModel.loginState.observe(this) { progress ->
-            when (progress) {
-                LoginAction.LOGIN_SUCCESS -> {
-                    loginViewModel.getUser().addOnCompleteListener { task ->
-                        binding.progressBar2.isVisible = false
-                        if (task.isSuccessful) {
-                            val userModel = task.result
-                            val intent: Intent = if (userModel?.role == Role.EMPLOYEE) {
-                                Intent(this, AdminAppActivity::class.java)
-                            } else {
-                                Intent(this, AppActivity::class.java)
-                            }
-
-                            Toast.makeText(this, "Successfully Logged-in", Toast.LENGTH_SHORT).show()
-                            startActivity(intent)
-                            finishAffinity()
-                        }
-                    }
-                }
-                LoginAction.EMAIL_OR_PASS_INVALID -> {
-                    Toast.makeText(this, "Invalid email and password combination.", Toast.LENGTH_SHORT).show()
-                    binding.progressBar2.isVisible = false
-                }
-                LoginAction.PROGRESS -> {
-                    binding.progressBar2.isVisible = true
-                }
-                else -> {
-                    binding.progressBar2.isVisible = false
-                }
-            }
-        }
+        handleUIState()
     }
 
+    /**
+     * Event handler for when the login button is clicked.
+     * This is defined as the event handler in the xml view.
+     *
+     * @param view View of button clicked.
+     */
     fun onLoginClick(view: View) {
 
         val email = binding.registerEmail
@@ -77,10 +60,33 @@ class LoginActivity : AppCompatActivity() {
         }
 
         if (binding.registerEmail.error == null && binding.registerPassword.error == null) {
-            loginViewModel.login(email.text.toString(), pass.text.toString())
+            viewModel.login(email.text.toString(), pass.text.toString())
         }
     }
-    override fun onStart() {
-        super.onStart()
+
+    private fun handleUIState() {
+        // Observe the ViewModel UIState data
+        viewModel.uiState.observe(this) { uiState ->
+            // Make progress bar visible
+            binding.progressBar.isVisible = uiState.loading
+
+            // If error messages exist, put them in a toast.
+            if (uiState.errorMessage != null) {
+                Toast.makeText(this, uiState.errorMessage, Toast.LENGTH_SHORT).show()
+                viewModel.errorMessageShown()
+            }
+
+            // React to events.
+            if (uiState.event != null) {
+                val nextActivity = when (uiState.event) {
+                    Event.GoToAdminApp -> Intent(this, AdminAppActivity::class.java)
+                    else -> Intent(this, AppActivity::class.java)
+                }
+
+                Toast.makeText(this, "Successfully Logged-in", Toast.LENGTH_SHORT).show()
+                startActivity(nextActivity)
+                finishAffinity()
+            }
+        }
     }
 }

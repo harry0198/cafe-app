@@ -8,6 +8,7 @@ import me.harrydrummond.cafeapplication.data.model.UserModel
 import me.harrydrummond.cafeapplication.databinding.ActivityAdminAppBinding
 import me.harrydrummond.cafeapplication.databinding.ActivityAppBinding
 import me.harrydrummond.cafeapplication.ui.admin.editmenu.EditMenuFragment
+import me.harrydrummond.cafeapplication.ui.admin.orders.AdminOrdersFragment
 import me.harrydrummond.cafeapplication.ui.customer.cart.CartFragment
 import me.harrydrummond.cafeapplication.ui.customer.menu.MenuFragment
 import me.harrydrummond.cafeapplication.ui.customer.orders.OrdersFragment
@@ -24,7 +25,7 @@ class AdminAppActivity : AppCompatActivity() {
 
             when(it.itemId) {
                 R.id.a_menu -> replaceFragment(EditMenuFragment())
-                R.id.a_orders -> replaceFragment(CartFragment())
+                R.id.a_orders -> replaceFragment(AdminOrdersFragment())
                 else -> {}
             }
             true

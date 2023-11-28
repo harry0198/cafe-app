@@ -1,4 +1,4 @@
-package me.harrydrummond.cafeapplication.ui.common.order
+package me.harrydrummond.cafeapplication.ui.customer.orders
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

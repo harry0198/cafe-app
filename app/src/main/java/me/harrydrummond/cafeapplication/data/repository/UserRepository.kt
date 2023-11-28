@@ -29,8 +29,7 @@ class UserRepository {
         return document.set(userModel)
     }
 
-    fun registerUser(email: String, password: String, userModel: UserModel): Task<AuthResult> {
-        //TODO
+    fun registerUser(email: String, password: String): Task<AuthResult> {
         return registerUserAuth(email, password)
     }
 

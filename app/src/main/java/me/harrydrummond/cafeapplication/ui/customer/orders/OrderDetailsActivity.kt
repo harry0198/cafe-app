@@ -1,13 +1,11 @@
-package me.harrydrummond.cafeapplication.ui.common.order
+package me.harrydrummond.cafeapplication.ui.customer.orders
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import me.harrydrummond.cafeapplication.IntentExtra
-import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.databinding.ActivityOrderDetailsBinding
-import me.harrydrummond.cafeapplication.databinding.ActivityProductViewBinding
-import me.harrydrummond.cafeapplication.ui.customer.menu.product.ProductViewModel
+import me.harrydrummond.cafeapplication.ui.common.order.CartItemListViewAdapter
 
 class OrderDetailsActivity : AppCompatActivity() {
 

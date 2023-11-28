@@ -1,46 +1,69 @@
 package me.harrydrummond.cafeapplication.ui.common.register
 
-import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.auth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import me.harrydrummond.cafeapplication.data.repository.UserRepository
 import me.harrydrummond.cafeapplication.data.model.UserModel
 
+
+/**
+ * RegisterViewModel class which provides the business logic to the view class
+ * using the MVVM pattern. Contains functions to register a new user.
+ *
+ * @see RegisterActivity
+ * @author Harry Drummond
+ */
 class RegisterViewModel: ViewModel() {
 
     private val userRepository: UserRepository = UserRepository()
-    val progress: MutableLiveData<RegisterAction> = MutableLiveData<RegisterAction>(RegisterAction.NONE)
+    private val _uiState: MutableLiveData<RegisterUIState> = MutableLiveData(RegisterUIState())
+    val uiState: LiveData<RegisterUIState> get() = _uiState
 
+    /**
+     * Registers the user using a email and password authentication method.
+     * If any errors occur, an appropriate error message is posted to the UiState.
+     *
+     * @see RegisterUIState
+     */
     fun register(email: String, password: String) {
-        progress.value = RegisterAction.PROGRESS
+        _uiState.value = _uiState.value?.copy(loading = true)
 
-        userRepository.registerUser(email, password, UserModel("","Harry")).addOnCompleteListener {task ->
-            if (task.isSuccessful) {
-                val model = UserModel("null", "")
-                userRepository.saveUser(Firebase.auth.currentUser!!, model).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        progress.value = RegisterAction.REGISTER_SUCCESS
-                    } else {
-                        progress.value = RegisterAction.FAILURE
-                    }
-                }
-
-            } else {
-                progress.value = RegisterAction.FAILURE
+        userRepository.registerUser(email, password).addOnSuccessListener { task ->
+            userRepository.saveUser(Firebase.auth.currentUser!!, UserModel()).addOnSuccessListener {
+                _uiState.value = _uiState.value?.copy(loading = false, event = Event.UserWasRegistered)
+            }.addOnFailureListener { _ ->
+                _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Fatal Error: Please contact an administrator.")
             }
+        }.addOnFailureListener { task ->
+            val error = when (task) {
+                is FirebaseAuthUserCollisionException -> "A user with this email already exists"
+                is FirebaseAuthWeakPasswordException -> "Your password is too weak"
+                else -> "An unknown error occurred"
+            }
+
+            _uiState.value = _uiState.value?.copy(errorMessage = error, loading = false)
         }
+    }
 
-
+    /**
+     * Marks that an error message has been shown in the ui and can now be removed from the UIState.
+     */
+    fun errorMessageShown() {
+        _uiState.value = _uiState.value?.copy(errorMessage = null)
     }
 }
 
-enum class RegisterAction {
-    REGISTER_SUCCESS,
-    PROGRESS,
-    FAILURE,
-    NONE
+sealed interface Event {
+    data object UserWasRegistered: Event
 }
+
+data class RegisterUIState(
+    val loading: Boolean = false,
+    val errorMessage: String? = null,
+    val event: Event? = null
+)

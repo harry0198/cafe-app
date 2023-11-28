@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.databinding.FragmentOrdersBinding
-import me.harrydrummond.cafeapplication.ui.common.order.OrderDetailsActivity
 import me.harrydrummond.cafeapplication.ui.common.order.OrderListViewAdapter
 
 class OrdersFragment : Fragment() {

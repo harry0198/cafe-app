@@ -11,7 +11,7 @@ class AdminOrdersViewModel : ViewModel() {
     val orders = MutableLiveData<List<Order>>(listOf())
 
     fun refreshOrders() {
-        orderRepository.getOrdersByUser().continueWith { task ->
+        orderRepository.getOrders().continueWith { task ->
             if (task.isSuccessful) {
                 orders.value = task.result
             }

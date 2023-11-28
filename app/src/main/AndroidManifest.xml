@@ -19,7 +19,7 @@
             android:name=".ui.admin.orders.AdminViewOrderActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.common.order.OrderDetailsActivity"
+            android:name=".ui.customer.orders.OrderDetailsActivity"
             android:exported="false"
             android:parentActivityName=".ui.AppActivity" />
         <activity

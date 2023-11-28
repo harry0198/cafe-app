@@ -9,49 +9,46 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.Validators
+import me.harrydrummond.cafeapplication.databinding.ActivityLoginBinding
 import me.harrydrummond.cafeapplication.databinding.ActivityRegisterBinding
+import me.harrydrummond.cafeapplication.ui.common.login.LoginViewModel
 import me.harrydrummond.cafeapplication.ui.common.register.profile.CreateProfileActivity
 
+
+/**
+ * RegisterActivity class.
+ * This is the View for the MVVM pattern. Sends events to the RegisterViewModel.
+ * Contains functions to update the UI based on the ViewModel bindings and button event handlers.
+ *
+ * @see RegisterViewModel
+ * @see ActivityRegisterBinding
+ * @author Harry Drummond
+ */
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
-    private lateinit var registerViewModel: RegisterViewModel
+    private lateinit var viewModel: RegisterViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        registerViewModel = ViewModelProvider(this).get(RegisterViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(RegisterViewModel::class.java)
 
         setSupportActionBar(binding.toolbar3)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        registerViewModel.progress.observe(this) { progress ->
-            when (progress) {
-                RegisterAction.REGISTER_SUCCESS -> {
-                    Toast.makeText(this, "Account created", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this, CreateProfileActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
-                    finish()
-                }
-                RegisterAction.PROGRESS -> {
-                    binding.progressBar.isVisible = true
-                }
-                RegisterAction.FAILURE -> {
-                    Toast.makeText(this, "An unknown error occurred", Toast.LENGTH_SHORT).show()
-                    binding.progressBar.isVisible = false
-                }
-
-                else -> {
-                    binding.progressBar.isVisible = false
-                }
-            }
-        }
+        handleUIState()
     }
 
+    /**
+     * Event handler for the register button.
+     * Validates the user inputs, and marks the fields as errors if they have any.
+     *
+     * @param view Button view
+     */
     fun onRegisterClick(view: View) {
         val email = binding.registerEmail
         val pass = binding.registerPassword
@@ -64,7 +61,27 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         if (binding.registerEmail.error == null && binding.registerPassword.error == null) {
-            registerViewModel.register(email.text.toString(), pass.text.toString())
+            viewModel.register(email.text.toString(), pass.text.toString())
+        }
+    }
+
+    private fun handleUIState() {
+        viewModel.uiState.observe(this) { uiState ->
+            binding.progressBar.isVisible = uiState.loading
+            if (uiState.errorMessage != null) {
+                Toast.makeText(this, uiState.errorMessage, Toast.LENGTH_SHORT).show()
+                viewModel.errorMessageShown()
+            }
+            if (uiState.event != null) {
+                when (uiState.event) {
+                    Event.UserWasRegistered -> {
+                        val intent = Intent(this, CreateProfileActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                        finish()
+                    }
+                }
+            }
         }
     }
 }

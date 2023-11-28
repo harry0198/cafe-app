@@ -8,12 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import me.harrydrummond.cafeapplication.IntentExtra
-import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.databinding.FragmentAdminOrdersBinding
-import me.harrydrummond.cafeapplication.databinding.FragmentOrdersBinding
-import me.harrydrummond.cafeapplication.ui.common.order.OrderDetailsActivity
+import me.harrydrummond.cafeapplication.ui.customer.orders.OrderDetailsActivity
 import me.harrydrummond.cafeapplication.ui.common.order.OrderListViewAdapter
-import me.harrydrummond.cafeapplication.ui.customer.orders.OrdersViewModel
 
 class AdminOrdersFragment : Fragment() {
 
@@ -37,8 +34,8 @@ class AdminOrdersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter =  OrderListViewAdapter(this.requireContext(), viewModel.orders.value!!) { product ->
-            val intent = Intent(requireContext(), OrderDetailsActivity::class.java)
+        adapter = OrderListViewAdapter(this.requireContext(), viewModel.orders.value!!) { product ->
+            val intent = Intent(requireContext(), AdminViewOrderActivity::class.java)
             intent.putExtra(IntentExtra.ORDER_ID, product.orderId)
             startActivity(intent)
         }

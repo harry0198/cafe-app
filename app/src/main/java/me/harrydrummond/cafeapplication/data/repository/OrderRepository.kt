@@ -42,6 +42,18 @@ class OrderRepository {
         }
     }
 
+    fun getOrders(): Task<List<Order>> {
+        return db.collection(DOCUMENT_NAME).get().continueWith { result ->
+            val orders = mutableListOf<Order>()
+            for (document in result.result) {
+                val order = document.toObject(Order::class.java)
+                orders.add(order)
+            }
+
+            orders
+        }
+    }
+
     fun fullLoadOrderProducts(order: Order, callback: (List<Pair<Int, ProductModel>>) -> Unit) {
         productRepository.getProductsByQuantity(order.products) {
             callback(it)
