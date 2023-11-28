@@ -3,10 +3,12 @@ package me.harrydrummond.cafeapplication.ui.common.register.profile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import me.harrydrummond.cafeapplication.data.model.UserModel
-import me.harrydrummond.cafeapplication.data.repository.UserRepository
+import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
+import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
+import me.harrydrummond.cafeapplication.data.repository.IProductRepository
+import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 
 /**
  * CreateProfileViewModel class which provides the business logic to the view class
@@ -17,7 +19,8 @@ import me.harrydrummond.cafeapplication.data.repository.UserRepository
  */
 class CreateProfileViewModel: ViewModel() {
 
-    private val userRepository: UserRepository = UserRepository()
+    private val productRepository: IProductRepository = FirestoreProductRepository()
+    private val userRepository: IUserRepository = FirestoreUserRepository(productRepository)
     private val _uiState: MutableLiveData<CreateProfileUiState> = MutableLiveData(
         CreateProfileUiState()
     )
@@ -35,19 +38,28 @@ class CreateProfileViewModel: ViewModel() {
         _uiState.value = _uiState.value?.copy(loading = true)
 
         val model = UserModel(phoneNumber, "$firstName $lastName")
-        Firebase.auth.currentUser?.let {
-            userRepository.saveUser(it, model).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    _uiState.value =
-                        _uiState.value?.copy(loading = false, event = Event.ProfileSaved)
-                } else {
-                    _uiState.value = _uiState.value?.copy(
-                        loading = false,
-                        errorMessage = "Unable to save profile"
-                    )
+        userRepository.getLoggedInUserId().let {
+            if (it != null) {
+                userRepository.saveUser(it, model).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        _uiState.value =
+                            _uiState.value?.copy(loading = false, event = Event.ProfileSaved)
+                    } else {
+                        _uiState.value = _uiState.value?.copy(
+                            loading = false,
+                            errorMessage = "Unable to save profile"
+                        )
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * Indicates that the error message has been shown and can be removed from the ui state.
+     */
+    fun errorMessageShown() {
+        _uiState.value = _uiState.value?.copy(errorMessage = null)
     }
 }
 

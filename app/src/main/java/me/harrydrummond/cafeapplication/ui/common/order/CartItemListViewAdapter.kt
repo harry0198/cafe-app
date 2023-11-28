@@ -10,7 +10,17 @@ import me.harrydrummond.cafeapplication.data.model.ProductModel
 import me.harrydrummond.cafeapplication.databinding.OrderDetailsListViewBinding
 import java.util.Dictionary
 
-class CartItemListViewAdapter (context: Context, var cartItems: List<Pair<Int, ProductModel>>, val onEditClick: ((ProductModel) -> Unit)?, val onDeleteClick: ((ProductModel) -> Unit)?) : BaseAdapter() {
+/**
+ * List view adapter for viewing a fully loaded cart.
+ *
+ * @param context Context object
+ * @param cartItems Items to display in list view
+ * @param onEditClick Callback for when the edit button is clicked. Null removes the display of edit btn.
+ * @param onDeleteClick Callback for when the delete button i clicked. Null removed the display of delete btn.
+ *
+ * @see CartItemListView
+ */
+class CartItemListViewAdapter (context: Context, var cartItems: List<Pair<Int, ProductModel>>, private val onEditClick: ((ProductModel) -> Unit)?, private val onDeleteClick: ((ProductModel) -> Unit)?) : BaseAdapter() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -39,6 +49,7 @@ class CartItemListViewAdapter (context: Context, var cartItems: List<Pair<Int, P
             binding = myView.tag as OrderDetailsListViewBinding
         }
 
+        // Setup view values.
         val prodPair = getItem(position)
         val quantity = prodPair.first
         val product = prodPair.second
@@ -49,6 +60,7 @@ class CartItemListViewAdapter (context: Context, var cartItems: List<Pair<Int, P
         binding.lblSubTotal.text = "£$totalPrice"
         binding.lblDesc.text = product.productDescription
 
+        // If edit btn callback is null, don't display the edit btn
         if (onEditClick != null) {
             binding.btnEditCartItem.setOnClickListener {
                 onEditClick.invoke(product)
@@ -57,6 +69,7 @@ class CartItemListViewAdapter (context: Context, var cartItems: List<Pair<Int, P
             binding.btnEditCartItem.isVisible = false
         }
 
+        // If the delete btn callback is null, don't display the delete btn.
         if (onDeleteClick != null) {
             binding.btnDeleteFromCart.setOnClickListener {
                 onDeleteClick.invoke(product)

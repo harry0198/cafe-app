@@ -3,20 +3,25 @@ package me.harrydrummond.cafeapplication.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.auth.User
-import com.google.firebase.ktx.Firebase
-import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.R
-import me.harrydrummond.cafeapplication.data.model.Order
-import me.harrydrummond.cafeapplication.data.model.Role
-import me.harrydrummond.cafeapplication.data.model.UserModel
-import me.harrydrummond.cafeapplication.data.repository.UserRepository
 import me.harrydrummond.cafeapplication.databinding.ActivityAppBinding
+import me.harrydrummond.cafeapplication.databinding.ActivityOrderDetailsBinding
+import me.harrydrummond.cafeapplication.ui.common.order.CartItemListViewAdapter
 import me.harrydrummond.cafeapplication.ui.customer.cart.CartFragment
 import me.harrydrummond.cafeapplication.ui.customer.menu.MenuFragment
+import me.harrydrummond.cafeapplication.ui.customer.orders.OrderDetailsViewModel
 import me.harrydrummond.cafeapplication.ui.customer.orders.OrdersFragment
 
+/**
+ * AppActivity class.
+ * This is the Customer App Page that functions using a bottom navigation and swaps out the
+ * view fragments based on what was clicked.
+ *
+ * @see MenuFragment
+ * @see CartFragment
+ * @see OrdersFragment
+ * @author Harry Drummond
+ */
 class AppActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAppBinding
@@ -26,6 +31,7 @@ class AppActivity : AppCompatActivity() {
         setContentView(binding.root)
         replaceFragment(MenuFragment())
 
+        // When a new item is selected, switch out the fragment
         binding.bottomNavigationView.setOnItemSelectedListener {
 
             when(it.itemId) {
@@ -38,19 +44,29 @@ class AppActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Changes fragment viewing to menu
+     */
     fun navigateToMenu() {
         replaceFragment(MenuFragment())
     }
 
+    /**
+     * Changes fragment viewing to cart
+     */
     fun navigateToCart() {
         replaceFragment(CartFragment())
     }
 
+    /**
+     * Changes fragment viewing to orders
+     */
     fun navigateToOrders() {
         replaceFragment(OrdersFragment())
     }
 
     private fun replaceFragment(fragment: Fragment) {
+        // Replaces fragment in view
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frameLayout, fragment)

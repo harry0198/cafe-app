@@ -1,24 +1,46 @@
 package me.harrydrummond.cafeapplication.ui.admin.editmenu
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import me.harrydrummond.cafeapplication.data.model.ProductModel
-import me.harrydrummond.cafeapplication.data.repository.ProductRepository
-import me.harrydrummond.cafeapplication.ui.State
+import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
+import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 
+/**
+ * EditProductViewModel class which provides the business logic to the view class
+ * using the MVVM pattern. Contains functions to refresh orders and handle the ui state.
+ *
+ * @see EditProductActivity
+ * @author Harry Drummond
+ */
 class EditProductViewModel: ViewModel() {
 
-    private val repository: ProductRepository = ProductRepository()
-    lateinit var productModel: ProductModel
-    var uiProcessingState: MutableLiveData<State> = MutableLiveData(State.NONE)
-    var productDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
+    private val repository: IProductRepository = FirestoreProductRepository()
+    private lateinit var productModel: ProductModel
+    private val _uiState: MutableLiveData<EditProductUIState> = MutableLiveData(EditProductUIState())
+    val uiState: LiveData<EditProductUIState> get() = _uiState
 
+    /**
+     * This class requires a productmodel.
+     * This should be called first.
+     *
+     * @see ProductModel
+     */
     fun init(productModel: ProductModel) {
         this.productModel = productModel
     }
 
+    /**
+     * Function to save product to database
+     *
+     * @param productName Name of product
+     * @param productDesc Description of product
+     * @param productPrice Price of product
+     * @param productAvailable Is the product available to customers?
+     */
     fun saveProduct(productName: String, productDesc: String, productPrice: Double, productAvailable: Boolean) {
-        uiProcessingState.value = State.PROCESSING
+        _uiState.value = _uiState.value?.copy(loading = true)
 
         productModel.productName = productName
         productModel.productDescription = productDesc
@@ -27,23 +49,59 @@ class EditProductViewModel: ViewModel() {
 
         repository.saveProduct(productModel).addOnCompleteListener {
             if (it.isSuccessful) {
-                uiProcessingState.value = State.SUCCESS
+                _uiState.value = _uiState.value?.copy(loading = false, event = Event.ProductSaved)
             } else {
-                uiProcessingState.value = State.FAILURE
+                _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Unable to save product")
             }
         }
     }
 
+    /**
+     * Deletes this product from the database
+     *
+     * @see ProductModel
+     */
     fun deleteProduct() {
-        uiProcessingState.value = State.PROCESSING
+        _uiState.value = _uiState.value?.copy(loading = true)
 
         repository.deleteProduct(productModel).addOnCompleteListener {
             if (it.isSuccessful) {
-                uiProcessingState.value = State.SUCCESS
-                productDeleted.value = true
+                _uiState.value = _uiState.value?.copy(loading = false, event = Event.ProductDeleted)
             } else {
-                uiProcessingState.value = State.FAILURE
+                _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Unable to delete product")
             }
         }
     }
+
+    /**
+     * Indictaes that an event has been handled.
+     */
+    fun eventHandled() {
+        _uiState.value = _uiState.value?.copy(event = null)
+    }
+
+    /**
+     * Indicates that the view has shown the error message.
+     */
+    fun errorMessageShown() {
+        _uiState.value = _uiState.value?.copy(errorMessage = null)
+    }
+
+    /**
+     * Data class for showing the EditProduct UIState.
+     */
+    data class EditProductUIState(
+        val loading: Boolean = false,
+        val errorMessage: String? = null,
+        val event: Event? = null,
+    )
+
+    /**
+     * Event interface for declaring events to the UI.
+     */
+    sealed interface Event {
+        data object ProductSaved: Event
+        data object ProductDeleted: Event
+    }
 }
+

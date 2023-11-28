@@ -2,23 +2,33 @@ package me.harrydrummond.cafeapplication.data.repository
 
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import me.harrydrummond.cafeapplication.data.model.ProductModel
 import me.harrydrummond.cafeapplication.data.model.ProductQuantity
-import me.harrydrummond.cafeapplication.data.model.UserModel
 
-class ProductRepository {
+/**
+ * Implementation of the product repository using a firestore database.
+ *
+ * @see Firebase.firestore
+ * @see IProductRepository
+ */
+class FirestoreProductRepository: IProductRepository{
 
     companion object {
+        /**
+         * Name of the document in firestore.
+         */
         const val DOCUMENT_NAME = "products"
     }
 
     private val db = Firebase.firestore
 
-    fun saveProduct(product: ProductModel): Task<Void> {
-        val document = if (product.productId == null || product.productId.isEmpty()) {
+    /**
+     * @inheritDoc
+     */
+    override fun saveProduct(product: ProductModel): Task<Void> {
+        val document = if (product.productId.isEmpty()) {
             db.collection(DOCUMENT_NAME).document()
         } else {
             db.collection(DOCUMENT_NAME).document(product.productId)
@@ -27,11 +37,17 @@ class ProductRepository {
         return document.set(product)
     }
 
-    fun deleteProduct(product: ProductModel): Task<Void> {
+    /**
+     * @inheritDoc
+     */
+    override fun deleteProduct(product: ProductModel): Task<Void> {
         return db.collection(DOCUMENT_NAME).document(product.productId).delete()
     }
 
-    fun getAllAvailableProducts(): Task<List<ProductModel>> {
+    /**
+     * @inheritDoc
+     */
+    override fun getAllAvailableProducts(): Task<List<ProductModel>> {
         return getAllProducts().continueWith { result ->
             if (result.isSuccessful) {
                 val filteredProducts = result.result.filter {
@@ -45,21 +61,31 @@ class ProductRepository {
         }
     }
 
-    fun getProductsByQuantity(prodQuantities: List<ProductQuantity>, callback: (List<Pair<Int, ProductModel>>) -> Unit) {
-        Tasks.whenAllSuccess<ProductModel>(
+    /**
+     * @inheritDoc
+     */
+    override fun getProductsByQuantity(prodQuantities: List<ProductQuantity>): Task<List<Pair<Int, ProductModel>>?> {
+        return Tasks.whenAllSuccess<ProductModel>(
             prodQuantities.mapNotNull { prodQuantity ->
                 getProductById(prodQuantity.productId)
             }
-        ).addOnCompleteListener { getModelTask ->
-            val productModels = getModelTask.result ?: emptyList()
-            val resultPairs = prodQuantities.zip(productModels) { cartProduct, productModel ->
-                Pair(cartProduct.quantity, productModel)
+        ).continueWith { getModelTask ->
+            if (getModelTask.isSuccessful) {
+                val productModels = getModelTask.result ?: emptyList()
+                val resultPairs = prodQuantities.zip(productModels) { cartProduct, productModel ->
+                    Pair(cartProduct.quantity, productModel)
+                }
+                resultPairs
+            } else {
+                null
             }
-            callback(resultPairs)
         }
     }
 
-    fun getProductById(productId: String): Task<ProductModel?> {
+    /**
+     * @inheritDoc
+     */
+    override fun getProductById(productId: String): Task<ProductModel?> {
         return Firebase.firestore.collection(DOCUMENT_NAME)
             .document(productId)
             .get()
@@ -72,7 +98,10 @@ class ProductRepository {
             }
     }
 
-    fun getAllProducts(): Task<List<ProductModel>> {
+    /**
+     * @inheritDoc
+     */
+    override fun getAllProducts(): Task<List<ProductModel>> {
         return db.collection(DOCUMENT_NAME).get().continueWith { result ->
             val products = mutableListOf<ProductModel>()
             for (document in result.result) {

@@ -13,6 +13,15 @@ import me.harrydrummond.cafeapplication.ui.customer.cart.CartFragment
 import me.harrydrummond.cafeapplication.ui.customer.menu.MenuFragment
 import me.harrydrummond.cafeapplication.ui.customer.orders.OrdersFragment
 
+/**
+ * AdminAppActivity class.
+ * This is the Customer App Page that functions using a bottom navigation and swaps out the
+ * view fragments based on what was clicked.
+ *
+ * @see EditMenuFragment
+ * @see AdminOrdersFragment
+ * @author Harry Drummond
+ */
 class AdminAppActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAdminAppBinding
     override fun onCreate(savedInstanceState: Bundle?) {

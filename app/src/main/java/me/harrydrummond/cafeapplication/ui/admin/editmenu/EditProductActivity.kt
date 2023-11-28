@@ -7,14 +7,18 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import me.harrydrummond.cafeapplication.IntentExtra
-import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.data.model.ProductModel
-import me.harrydrummond.cafeapplication.data.repository.UserRepository
 import me.harrydrummond.cafeapplication.databinding.ActivityEditProductBinding
-import me.harrydrummond.cafeapplication.databinding.FragmentEditMenuBinding
-import me.harrydrummond.cafeapplication.ui.State
-import me.harrydrummond.cafeapplication.ui.common.register.profile.CreateProfileViewModel
 
+/**
+ * EditProductActivity class.
+ * This is the View for the MVVM pattern. Sends events to the EditProductViewModel.
+ * Contains functions to update the UI based on the ViewModel bindings and button event handlers.
+ *
+ * @see EditProductViewModel
+ * @see ActivityEditProductBinding
+ * @author Harry Drummond
+ */
 class EditProductActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityEditProductBinding
@@ -30,8 +34,6 @@ class EditProductActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        bindings()
-
         val product = intent.getParcelableExtra(IntentExtra.PRODUCT, ProductModel::class.java)
         if (product == null) {
             Toast.makeText(this, "A Fatal Error Occurred", Toast.LENGTH_SHORT).show()
@@ -44,8 +46,13 @@ class EditProductActivity : AppCompatActivity() {
         binding.editProductDesc.setText(product.productDescription)
         binding.editProductPrice.setText(product.productPrice.toString())
         binding.editProductAvailability.isChecked = product.productAvailable
+
+        handleUIState()
     }
 
+    /**
+     * Event handler for the save button. Updates the view fields and saves.
+     */
     fun onSaveBtnClicked(view: View) {
         // Validation
         val name = binding.editProductTitle.text.toString()
@@ -58,39 +65,35 @@ class EditProductActivity : AppCompatActivity() {
         viewModel.saveProduct(name, desc, priceSanitized, availability)
     }
 
+    /**
+     * Event handler for the delete button.
+     */
     fun onDeleteBtnClicked(view: View) {
         viewModel.deleteProduct()
     }
 
-    private fun performingTask(performing: Boolean) {
-        binding.epProgress.isVisible = performing
-        binding.btnDeleteProduct.isEnabled = !performing
-        binding.btnSaveProduct.isEnabled = !performing
-    }
+    private fun handleUIState() {
+        viewModel.uiState.observe(this) { uiState ->
+            binding.epProgress.isVisible = uiState.loading
 
-    private fun bindings() {
-        viewModel.uiProcessingState.observe(this) {
-            when (it) {
-                State.SUCCESS -> {
-                    performingTask(false)
-                    Toast.makeText(this, "Product Updated", Toast.LENGTH_SHORT).show()
-                }
-                State.FAILURE -> {
-                    performingTask(false)
-                    Toast.makeText(this, "Unable to Update Product", Toast.LENGTH_SHORT).show()
-                }
-                State.PROCESSING -> {
-                    performingTask(true)
-                }
-                else -> {
-                    performingTask(false)
-                }
+            if (uiState.errorMessage != null) {
+                Toast.makeText(this, uiState.errorMessage, Toast.LENGTH_SHORT).show()
+                viewModel.errorMessageShown()
+                return@observe
             }
-        }
 
-        viewModel.productDeleted.observe(this) {
-            if (it) {
-                onBackPressed()
+            if (uiState.event != null) {
+                when (uiState.event) {
+                    EditProductViewModel.Event.ProductDeleted -> {
+                        Toast.makeText(this, "Product Deleted", Toast.LENGTH_SHORT).show()
+                        viewModel.eventHandled()
+                    }
+                    EditProductViewModel.Event.ProductSaved -> {
+                        Toast.makeText(this, "Product Saved", Toast.LENGTH_SHORT).show()
+                        onBackPressed()
+                        viewModel.eventHandled()
+                    }
+                }
             }
         }
     }

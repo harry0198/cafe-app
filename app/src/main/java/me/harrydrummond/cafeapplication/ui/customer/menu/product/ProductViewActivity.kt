@@ -2,22 +2,23 @@ package me.harrydrummond.cafeapplication.ui.customer.menu.product
 
 import android.os.Bundle
 import android.view.View
-import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import me.harrydrummond.cafeapplication.IntentExtra
-import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.data.model.ProductModel
 import me.harrydrummond.cafeapplication.databinding.ActivityProductViewBinding
-import me.harrydrummond.cafeapplication.data.model.Role
-import me.harrydrummond.cafeapplication.data.model.UserModel
-import me.harrydrummond.cafeapplication.data.repository.UserRepository
-import me.harrydrummond.cafeapplication.ui.State
 
+/**
+ * ProductViewActivity class.
+ * This is the View for the MVVM pattern. Sends events to the OrdersViewModel.
+ * Contains functions to update the UI based on the ViewModel bindings and button event handlers.
+ *
+ * @see ProductViewModel
+ * @see ActivityProductViewBinding
+ * @author Harry Drummond
+ */
 class ProductViewActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityProductViewBinding
@@ -33,32 +34,53 @@ class ProductViewActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         // This is asserted because if no product was passed, we can't display anything anyway.
-        // It is not this class' responsibility to resolve.
+        // It is not this class' responsibility to resolve the issue.
         val product = intent.getParcelableExtra(IntentExtra.PRODUCT, ProductModel::class.java)!!
         viewModel.initialize(product)
 
-        bindings()
+        handleUIState()
     }
 
+    /**
+     * Event handler for the increment button.
+     */
+    fun onIncrementBtnClicked(view: View) {
+        viewModel.incrementQuantity()
+    }
+
+    /**
+     * Event handler for the decrement button.
+     */
+    fun onDecrementBtnClicked(view: View) {
+        viewModel.decrementQuantity()
+    }
+
+    /**
+     * Event handler for the add to cart button.
+     * Adds the current product to the user's cart.
+     */
     fun onAddToCartButtonClicked(view: View) {
         viewModel.addToCart()
     }
 
-    private fun bindings() {
-        viewModel.saveState.observe(this) {
-            when (it) {
-                State.SUCCESS -> {
-                    binding.pvProgress.isVisible = false
-                    Toast.makeText(this, "Cart item added", Toast.LENGTH_SHORT).show()
+    private fun handleUIState() {
+        viewModel.uiState.observe(this) { uiState ->
+            binding.pvProgress.isVisible = uiState.loading
+            binding.lblQuantity.text = uiState.quantity.toString()
+
+            if (uiState.event != null) {
+                when (uiState.event) {
+                    Event.ItemAddedToCart -> {
+                        Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show()
+                        viewModel.eventExecuted()
+                        return@observe
+                    }
                 }
-                State.FAILURE -> {
-                    binding.pvProgress.isVisible = false
-                    Toast.makeText(this, "An error occurred", Toast.LENGTH_SHORT).show()
-                }
-                State.PROCESSING -> {
-                    binding.pvProgress.isVisible = true
-                }
-                else -> binding.pvProgress.isVisible = true
+            }
+
+            if (uiState.errorMessage != null) {
+                Toast.makeText(this, uiState.errorMessage, Toast.LENGTH_SHORT).show()
+                viewModel.errorMessageShown()
             }
         }
     }

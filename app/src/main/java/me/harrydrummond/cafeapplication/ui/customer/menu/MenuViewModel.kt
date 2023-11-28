@@ -1,23 +1,56 @@
 package me.harrydrummond.cafeapplication.ui.customer.menu
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.tasks.Task
-import me.harrydrummond.cafeapplication.data.repository.ProductRepository
+import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
 import me.harrydrummond.cafeapplication.data.model.ProductModel
-import me.harrydrummond.cafeapplication.data.model.Role
+import me.harrydrummond.cafeapplication.data.repository.IProductRepository
+import me.harrydrummond.cafeapplication.ui.common.register.profile.CreateProfileActivity
 
+/**
+ * MenuViewModel class which provides the business logic to the view class
+ * using the MVVM pattern. Contains functions to refresh the currently shown products.
+ *
+ * @see MenuFragment
+ * @author Harry Drummond
+ */
 class MenuViewModel : ViewModel() {
-    private val productRepository: ProductRepository = ProductRepository()
-    private var mProductList = listOf<ProductModel>()
-    val productList: MutableLiveData<List<ProductModel>> = MutableLiveData(mProductList)
 
+    private val productRepository: IProductRepository = FirestoreProductRepository()
+    private val _uiState: MutableLiveData<MenuUiState> = MutableLiveData(MenuUiState())
+    val uiState: LiveData<MenuUiState> get() = _uiState
+
+
+    /**
+     * Refreshes the products and updates the UI State. Containers handlers for errors.
+     */
     fun refreshProducts(){
-        productRepository.getAllAvailableProducts().continueWith { task ->
+        _uiState.value = _uiState.value?.copy(loading = true)
+
+        productRepository.getAllAvailableProducts().addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                mProductList = task.result
-                productList.value = mProductList
+                _uiState.value = _uiState.value?.copy(loading = false, products = task.result)
+            } else {
+                _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Unable to refresh products")
             }
         }
     }
+
+    /**
+     * Indicates that an error message has been shown in the UI and can be removed from UIState.
+     */
+    fun errorMessageShown() {
+        _uiState.value = _uiState.value?.copy(errorMessage = null)
+    }
 }
+
+/**
+ * Data class for the CreateProfile UI State.
+ * Includes fields for loading, errors and events.
+ */
+data class MenuUiState(
+    val loading: Boolean = false,
+    val errorMessage: String? = null,
+    val products: List<ProductModel> = emptyList()
+)

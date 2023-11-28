@@ -8,6 +8,15 @@ import android.widget.BaseAdapter
 import me.harrydrummond.cafeapplication.data.model.Order
 import me.harrydrummond.cafeapplication.databinding.ActivityOrderListViewBinding
 
+/**
+ * List view adapter for viewing orders.
+ *
+ * @param context Context object
+ * @param orderItems List of orders to display in list
+ * @param onNextClick Callback for when the next button is clicked
+ *
+ * @see OrderListView
+ */
 class OrderListViewAdapter (context: Context, var orderItems: List<Order>, val onNextClick: (Order) -> Unit) : BaseAdapter() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -38,6 +47,7 @@ class OrderListViewAdapter (context: Context, var orderItems: List<Order>, val o
             binding = myView.tag as ActivityOrderListViewBinding
         }
 
+        // Update the view
         val order = getItem(position)
         val total = order.products.sumOf { it.quantity }
 

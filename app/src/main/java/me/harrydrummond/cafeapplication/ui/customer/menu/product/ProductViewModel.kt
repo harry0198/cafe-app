@@ -1,35 +1,101 @@
 package me.harrydrummond.cafeapplication.ui.customer.menu.product
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import me.harrydrummond.cafeapplication.data.model.ProductModel
-import me.harrydrummond.cafeapplication.data.repository.UserRepository
-import me.harrydrummond.cafeapplication.ui.State
+import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
+import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
+import me.harrydrummond.cafeapplication.data.repository.IProductRepository
+import me.harrydrummond.cafeapplication.data.repository.IUserRepository
+import me.harrydrummond.cafeapplication.logic.Counter
 
 class ProductViewModel: ViewModel() {
 
     private lateinit var product: ProductModel
-    private val userRepository = UserRepository()
-    private val quantity: MutableLiveData<Int> = MutableLiveData(1)
-    val saveState = MutableLiveData(State.NONE)
+    private val counter = Counter(1, 1, 15)
+    private val productRepository: IProductRepository = FirestoreProductRepository()
+    private val userRepository: IUserRepository = FirestoreUserRepository(productRepository)
+    private val _uiState: MutableLiveData<ProductViewUIState> = MutableLiveData(ProductViewUIState())
+    val uiState: LiveData<ProductViewUIState> get() = _uiState
 
+    /**
+     * This view requires a productmodel to display correctly.
+     * This should be called first by the view(s)
+     */
     fun initialize(productModel: ProductModel) {
         this.product = productModel
     }
 
+    /**
+     * Adds the current item to the cart by the quantity selected.
+     */
     fun addToCart() {
-        userRepository.partialLoadUserCart { cart ->
-            saveState.value = State.SUCCESS
-            if (cart != null) {
-                cart.addToCart(product.productId, quantity.value?: 0)
-                userRepository.saveUserCart(cart).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        saveState.value = State.SUCCESS
-                    } else {
-                        saveState.value = State.FAILURE
+        _uiState.value = _uiState.value?.copy(loading = true)
+        userRepository.partialLoadUserCart().addOnCompleteListener { cartTask ->
+            val cart = cartTask.result
+            if (cartTask.isSuccessful && cart != null) {
+                    cart.addToCart(product.productId, counter.getValue())
+                    userRepository.saveUserCart(cart).addOnCompleteListener { saveTask ->
+                        if (saveTask.isSuccessful) {
+                            _uiState.value = _uiState.value?.copy(loading = false, event = Event.ItemAddedToCart)
+                        } else {
+                            _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Could not save to cart")
+                        }
                     }
-                }
+
+            } else {
+                _uiState.value =
+                    _uiState.value?.copy(loading = false, errorMessage = "Could not fetch cart")
             }
         }
     }
+
+    /**
+     * Increments the number of products to add to the cart.
+     */
+    fun incrementQuantity() {
+        counter.increment(1)
+        _uiState.value = _uiState.value?.copy(quantity = counter.getValue())
+    }
+
+    /**
+     * Decrements the number of products to add to the cart.
+     */
+    fun decrementQuantity() {
+        counter.decrement(1)
+        _uiState.value = _uiState.value?.copy(quantity = counter.getValue())
+    }
+
+    /**
+     * Prompts that the error message has been shown and should update the uistate.
+     */
+    fun errorMessageShown() {
+        _uiState.value = _uiState.value?.copy(errorMessage = null)
+    }
+
+    /**
+     * Indicates that the event has been processed by the UI and UIState should update.
+     */
+    fun eventExecuted() {
+        _uiState.value = _uiState.value?.copy(event = null)
+    }
+}
+
+/**
+ * Data class for the ProductView UI State.
+ * Includes fields for loading, errors and events.
+ */
+data class ProductViewUIState(
+    val loading: Boolean = false,
+    val errorMessage: String? = null,
+    val event: Event? = null,
+    val quantity: Int = 1,
+)
+
+/**
+ * Event definition for the product view model.
+ */
+sealed interface Event {
+    data object ItemAddedToCart: Event
 }

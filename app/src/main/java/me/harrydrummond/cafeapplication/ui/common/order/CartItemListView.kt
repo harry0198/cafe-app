@@ -4,6 +4,11 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import me.harrydrummond.cafeapplication.R
 
+/**
+ * View class for the CartItemListViewAdapter
+ *
+ * @see CartItemListViewAdapter
+ */
 class CartItemListView : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

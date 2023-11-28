@@ -72,4 +72,7 @@
     <string name="first_name_label">First Name</string>
     <string name="create_profile_subheading">You\'re almost there!</string>
     <string name="create_profile_heading">Complete Your Profile 😎</string>
+    <string name="coffee_shop">COFFEE SHOP</string>
+    <string name="main_subheading">DISCOVER YOUR NEW FAVOURITE COFFEE SHOP WITH BLENDS FROM AROUND THE GLOBE</string>
+    <string name="sign_up_btn">Sign Up</string>
 </resources>

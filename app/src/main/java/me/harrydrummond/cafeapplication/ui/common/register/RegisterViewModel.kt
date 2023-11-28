@@ -7,8 +7,11 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import me.harrydrummond.cafeapplication.data.repository.UserRepository
+import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
 import me.harrydrummond.cafeapplication.data.model.UserModel
+import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
+import me.harrydrummond.cafeapplication.data.repository.IProductRepository
+import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 
 
 /**
@@ -20,7 +23,8 @@ import me.harrydrummond.cafeapplication.data.model.UserModel
  */
 class RegisterViewModel: ViewModel() {
 
-    private val userRepository: UserRepository = UserRepository()
+    private val productRepository: IProductRepository = FirestoreProductRepository()
+    private val userRepository: IUserRepository = FirestoreUserRepository(productRepository)
     private val _uiState: MutableLiveData<RegisterUIState> = MutableLiveData(RegisterUIState())
     val uiState: LiveData<RegisterUIState> get() = _uiState
 
@@ -34,7 +38,7 @@ class RegisterViewModel: ViewModel() {
         _uiState.value = _uiState.value?.copy(loading = true)
 
         userRepository.registerUser(email, password).addOnSuccessListener { task ->
-            userRepository.saveUser(Firebase.auth.currentUser!!, UserModel()).addOnSuccessListener {
+            userRepository.saveUser(userRepository.getLoggedInUserId()!!, UserModel()).addOnSuccessListener {
                 _uiState.value = _uiState.value?.copy(loading = false, event = Event.UserWasRegistered)
             }.addOnFailureListener { _ ->
                 _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Fatal Error: Please contact an administrator.")
@@ -58,10 +62,16 @@ class RegisterViewModel: ViewModel() {
     }
 }
 
+/**
+ * Event definition for the product view model.
+ */
 sealed interface Event {
     data object UserWasRegistered: Event
 }
 
+/**
+ * UI State data class to hold properties for the UI View
+ */
 data class RegisterUIState(
     val loading: Boolean = false,
     val errorMessage: String? = null,

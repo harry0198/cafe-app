@@ -12,7 +12,16 @@ import me.harrydrummond.cafeapplication.databinding.ActivityProductListViewBindi
 import me.harrydrummond.cafeapplication.data.model.ProductModel
 import me.harrydrummond.cafeapplication.data.model.UserModel
 
-class ProductListViewAdapter(private val context: Context, var productList: List<ProductModel>, val onItemClick: (ProductModel) -> Unit) : BaseAdapter() {
+/**
+ * List adapter for viewing ProductModels with a next button action.
+ *
+ * @param context Context object
+ * @param productList List of ProductModels to display
+ * @param onItemClick Callback for when an item in clicked
+ *
+ * @see ProductListView
+ */
+class ProductListViewAdapter(context: Context, var productList: List<ProductModel>, val onItemClick: (ProductModel) -> Unit) : BaseAdapter() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -41,6 +50,7 @@ class ProductListViewAdapter(private val context: Context, var productList: List
             binding = myView.tag as ActivityProductListViewBinding
         }
 
+        // Update fields
         val product = getItem(position)
 
         binding.productName.text = product.productName

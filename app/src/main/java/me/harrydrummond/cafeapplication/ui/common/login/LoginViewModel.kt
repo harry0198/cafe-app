@@ -8,7 +8,10 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import me.harrydrummond.cafeapplication.data.model.Role
 import me.harrydrummond.cafeapplication.data.model.UserModel
-import me.harrydrummond.cafeapplication.data.repository.UserRepository
+import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
+import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
+import me.harrydrummond.cafeapplication.data.repository.IProductRepository
+import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 
 
 /**
@@ -20,16 +23,16 @@ import me.harrydrummond.cafeapplication.data.repository.UserRepository
  */
 class LoginViewModel: ViewModel() {
 
-    private val userRepository: UserRepository = UserRepository()
+    private val productRepository: IProductRepository = FirestoreProductRepository()
+    private val userRepository: IUserRepository = FirestoreUserRepository(productRepository)
     private val _uiState: MutableLiveData<LoginUiState> = MutableLiveData(LoginUiState())
     val uiState: LiveData<LoginUiState> = _uiState
 
     fun login(email: String, password: String) {
         _uiState.value = _uiState.value?.copy(loading = true)
         val loginTask = userRepository.loginUser(email, password)
-        loginTask.addOnSuccessListener { task ->
-            task.user?.let {
-                getUser(it.uid).addOnCompleteListener { userTask ->
+        loginTask.addOnSuccessListener {
+            getUser(userRepository.getLoggedInUserId()!!).addOnCompleteListener { userTask ->
                     if (userTask.isSuccessful) {
                         val event = when (userTask.result?.role) {
                             Role.EMPLOYEE -> Event.GoToAdminApp
@@ -43,7 +46,6 @@ class LoginViewModel: ViewModel() {
                         )
                     }
                 }
-            }
         }
         loginTask.addOnFailureListener { task ->
             when (task) {

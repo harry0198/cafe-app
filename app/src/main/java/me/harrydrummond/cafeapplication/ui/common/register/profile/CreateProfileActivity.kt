@@ -78,6 +78,7 @@ class CreateProfileActivity : AppCompatActivity() {
             binding.progressBar.isVisible = uiState.loading
             if (uiState.errorMessage != null) {
                 Toast.makeText(this, uiState.errorMessage, Toast.LENGTH_SHORT).show()
+                viewModel.errorMessageShown()
             }
 
             if (uiState.event != null) {

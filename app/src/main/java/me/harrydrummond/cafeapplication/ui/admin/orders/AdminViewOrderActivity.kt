@@ -14,10 +14,21 @@ import me.harrydrummond.cafeapplication.databinding.ActivityOrderDetailsBinding
 import me.harrydrummond.cafeapplication.ui.common.order.CartItemListViewAdapter
 import me.harrydrummond.cafeapplication.ui.customer.orders.OrderDetailsViewModel
 
+/**
+ * AdminViewOrderActivity class.
+ * This is the View for the MVVM pattern. Sends events to the AdminViewOrderViewModel.
+ * Contains functions to update the UI based on the ViewModel bindings and button event handlers.
+ *
+ * @see CartItemListViewAdapter
+ * @see AdminViewOrderViewModel
+ * @see ActivityAdminViewOrderBinding
+ * @author Harry Drummond
+ */
 class AdminViewOrderActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAdminViewOrderBinding
     private lateinit var viewModel: AdminViewOrderViewModel
     private lateinit var adapter: CartItemListViewAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAdminViewOrderBinding.inflate(layoutInflater)
@@ -39,10 +50,18 @@ class AdminViewOrderActivity : AppCompatActivity() {
         handleUIState()
     }
 
+    /**
+     * Event handler for when the preparing button was clicked.
+     * Changes the order status to preparing.
+     */
     fun onPreparingBtnClicked(view: View) {
         viewModel.changeOrderStatus(Status.PREPARING)
     }
 
+    /**
+     * Event handler for when the ready button was clicked.
+     * Changes the order status to ready.
+     */
     fun onReadyBtnClicked(view: View) {
         viewModel.changeOrderStatus(Status.READY)
     }

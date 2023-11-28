@@ -2,11 +2,25 @@ package me.harrydrummond.cafeapplication.ui.customer.orders
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.databinding.ActivityOrderDetailsBinding
+import me.harrydrummond.cafeapplication.databinding.FragmentOrdersBinding
 import me.harrydrummond.cafeapplication.ui.common.order.CartItemListViewAdapter
+import me.harrydrummond.cafeapplication.ui.common.order.OrderListViewAdapter
 
+/**
+ * OrderDetailsActivity class.
+ * This is the View for the MVVM pattern. Sends events to the OrdersViewModel.
+ * Contains functions to update the UI based on the ViewModel bindings and button event handlers.
+ *
+ * @see CartItemListViewAdapter
+ * @see OrderDetailsViewModel
+ * @see ActivityOrderDetailsBinding
+ * @author Harry Drummond
+ */
 class OrderDetailsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityOrderDetailsBinding
@@ -30,12 +44,19 @@ class OrderDetailsActivity : AppCompatActivity() {
         // No product id is fatal. There's no way this view can be shown.
         viewModel.initialize(productId!!)
 
-        bindings()
+        handleUIState()
     }
 
-    private fun bindings() {
-        viewModel.products.observe(this) { items ->
-            adapter.cartItems = items
+    private fun handleUIState() {
+        viewModel.uiState.observe(this) { uiState ->
+            binding.odProgress.isVisible = uiState.loading
+
+            if (uiState.errorMessage != null) {
+                Toast.makeText(this, uiState.errorMessage, Toast.LENGTH_SHORT).show()
+                viewModel.errorMessageShown()
+            }
+
+            adapter.cartItems = uiState.productsAndQuantity
             adapter.notifyDataSetChanged()
         }
     }

@@ -12,10 +12,18 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.databinding.FragmentCartBinding
-import me.harrydrummond.cafeapplication.ui.AppActivity
-import me.harrydrummond.cafeapplication.ui.State
 import me.harrydrummond.cafeapplication.ui.common.order.CartItemListViewAdapter
 
+/**
+ * CartFragment class.
+ * This is the View for the MVVM pattern. Sends events to the OrdersViewModel.
+ * Contains functions to update the UI based on the ViewModel bindings and button event handlers.
+ *
+ * @see CartItemListViewAdapter
+ * @see CartViewModel
+ * @see FragmentCartBinding
+ * @author Harry Drummond
+ */
 class CartFragment : Fragment() {
 
     private lateinit var binding: FragmentCartBinding
@@ -35,7 +43,7 @@ class CartFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(CartViewModel::class.java)
 
         adapter =  CartItemListViewAdapter(this.requireContext(), listOf(), { product ->
-            // Edit Listener
+            // Edit Listener to update the product quantity.
             popupEditQuantity("Edit Amount", 1) { result ->
                 viewModel.updateQuantity(product.productId, result)
             }
@@ -44,39 +52,41 @@ class CartFragment : Fragment() {
         })
         binding.cartOrderList.adapter = adapter
 
-        viewModel.cartItems.observe(this.viewLifecycleOwner) {items ->
-            adapter.cartItems = items
-            adapter.notifyDataSetChanged()
-        }
-
-        viewModel.orderPlaceStatus.observe(this.viewLifecycleOwner) { status ->
-            when (status) {
-                State.SUCCESS -> {
-                    viewModel.orderPlaceStatus.value = State.NONE
-                    Toast.makeText(requireContext(), "Order Placed", Toast.LENGTH_SHORT).show()
-                    (activity as AppActivity).navigateToOrders()
-                }
-                State.PROCESSING -> {
-                    binding.progressBar.isVisible = true
-                }
-                State.FAILURE -> {
-                    binding.progressBar.isVisible = false
-                    Toast.makeText(requireContext(), "Unable to place order", Toast.LENGTH_SHORT).show()
-                }
-                else -> {
-                    binding.progressBar.isVisible = false
-                }
-            }
-        }
-
         binding.btnPlaceOrder.setOnClickListener {
             viewModel.placeOrder()
         }
 
+        handleUIState()
+
         viewModel.refreshCart()
     }
 
+    private fun handleUIState() {
+        viewModel.uiState.observe(requireActivity()) { uiState ->
+            binding.progressBar.isVisible = uiState.loading
+
+            adapter.cartItems = uiState.cartProducts
+            adapter.notifyDataSetChanged()
+
+            if (uiState.errorMessage != null) {
+                Toast.makeText(requireContext(), uiState.errorMessage, Toast.LENGTH_SHORT).show()
+                viewModel.errorMessageShown()
+                return@observe
+            }
+            if (uiState.event != null) {
+                when (uiState.event) {
+                    Event.OrderPlaced -> {
+                        Toast.makeText(requireContext(), "Order placed", Toast.LENGTH_SHORT).show()
+                        viewModel.eventHandled()
+                        return@observe
+                    }
+                }
+            }
+        }
+    }
+
     private fun popupEditQuantity(title: String, initialValue: Int, onPositiveButtonClick: (Int) -> Unit) {
+        // Create a popup
         val builder = AlertDialog.Builder(requireContext())
         val dialogLayout = layoutInflater.inflate(R.layout.edit_number_layout, null)
         val editNumber = dialogLayout.findViewById<EditText>(R.id.enEditNumber)

@@ -6,39 +6,72 @@ import androidx.lifecycle.ViewModel
 import me.harrydrummond.cafeapplication.data.model.Order
 import me.harrydrummond.cafeapplication.data.model.ProductModel
 import me.harrydrummond.cafeapplication.data.model.Status
-import me.harrydrummond.cafeapplication.data.repository.OrderRepository
+import me.harrydrummond.cafeapplication.data.repository.FirestoreOrderRepository
+import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
+import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
+import me.harrydrummond.cafeapplication.data.repository.IProductRepository
+import me.harrydrummond.cafeapplication.ui.customer.orders.OrdersFragment
 
-data class OrderUiState(
-    val isLoading: Boolean = false,
-    val errorMessage: String? = null,
-    val productData: List<Pair<Int, ProductModel>> = emptyList(),
-    val orderStatus: Status = Status.NONE
-)
-
+/**
+ * AdminViewOrderViewModel class which provides the business logic to the view class
+ * using the MVVM pattern. Contains functions to refresh orders and handle the ui state.
+ *
+ * @see AdminViewOrderActivity
+ * @author Harry Drummond
+ */
 class AdminViewOrderViewModel: ViewModel() {
 
     private var order: Order? = null
-    private val orderRepository = OrderRepository()
+    private val productRepository: IProductRepository = FirestoreProductRepository()
+    private val orderRepository: IOrderRepository = FirestoreOrderRepository(productRepository)
     private val _uiState: MutableLiveData<OrderUiState> = MutableLiveData(OrderUiState())
     val orderUiState: LiveData<OrderUiState> get() = _uiState
 
+    /**
+     * This view depends on an order id to show appropriate information.
+     * This function should be called to provide the viewmodel with an order id to set the UIState
+     * with and perform operations with.
+     *
+     * @param orderId Id in the database of the order
+     */
     fun initialize(orderId: String) {
+        _uiState.value = _uiState.value?.copy(isLoading = true)
+
         orderRepository.getOrder(orderId).continueWith {
             val order = it.result
             this.order = order
             if (it.isSuccessful && order != null) {
-                orderRepository.fullLoadOrderProducts(order) { orderProducts ->
-                    _uiState.value = _uiState.value?.copy(productData = orderProducts)
+                orderRepository.fullLoadOrderProducts(order).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        _uiState.value = _uiState.value?.copy(isLoading = false, productData = task.result ?: emptyList())
+                    } else {
+                        _uiState.value = _uiState.value?.copy(isLoading = false, errorMessage = "An error occurred")
+                    }
                 }
+            } else {
+                _uiState.value = _uiState.value?.copy(isLoading = false, errorMessage = "An error occurred")
             }
         }
     }
 
+    /**
+     * Function for notifying the viewmodel that the error message has been shown and can be
+     * removed from state.
+     */
     fun errorMessageShown() {
         _uiState.value = _uiState.value?.copy(errorMessage = null)
     }
 
+    /**
+     * Function to change the status of an order.
+     *
+     * @param status Status to change the order to.
+     *
+     * @see Status
+     */
     fun changeOrderStatus(status: Status) {
+        _uiState.value = _uiState.value?.copy(isLoading = true)
+
         order?.let {
             it.status = status
             orderRepository.saveOrder(it).addOnCompleteListener { task ->
@@ -51,3 +84,13 @@ class AdminViewOrderViewModel: ViewModel() {
         }
     }
 }
+
+/**
+ * UI State class, contains variables to update the UI.
+ */
+data class OrderUiState(
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+    val productData: List<Pair<Int, ProductModel>> = emptyList(),
+    val orderStatus: Status = Status.NONE
+)

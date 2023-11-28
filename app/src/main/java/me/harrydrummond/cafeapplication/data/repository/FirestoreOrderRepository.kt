@@ -9,18 +9,30 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import me.harrydrummond.cafeapplication.data.model.Order
 import me.harrydrummond.cafeapplication.data.model.ProductModel
-import me.harrydrummond.cafeapplication.data.model.ProductQuantity
 
-class OrderRepository {
+/**
+ * OrderRepository class, is an implementation of the OrderRepository Interface using Firestore.
+ * Contains functions to perform CRUD operations on orders.
+ *
+ * @see Firebase
+ * @see FirestoreProductRepository
+ * @see IOrderRepository
+ */
+class FirestoreOrderRepository(private val productRepository: IProductRepository) : IOrderRepository {
 
     companion object {
+        /**
+         * Name of the Document in the FireStore
+         */
         const val DOCUMENT_NAME = "orders"
     }
 
     private val db = Firebase.firestore
-    private val productRepository = ProductRepository()
 
-    fun saveOrder(order: Order): Task<Void> {
+    /**
+     * @inheritDoc
+     */
+    override fun saveOrder(order: Order): Task<Void> {
         val document: DocumentReference = if (order.orderId.isEmpty()) {
             db.collection(DOCUMENT_NAME).document()
         } else {
@@ -30,7 +42,10 @@ class OrderRepository {
         return document.set(order)
     }
 
-    fun getOrder(orderId: String): Task<Order?> {
+    /**
+     * @inheritDoc
+     */
+    override fun getOrder(orderId: String): Task<Order?> {
         val document: DocumentReference = db.collection(DOCUMENT_NAME).document(orderId)
         return document.get().continueWith { task: Task<DocumentSnapshot> ->
             if (task.isSuccessful) {
@@ -42,7 +57,10 @@ class OrderRepository {
         }
     }
 
-    fun getOrders(): Task<List<Order>> {
+    /**
+     * @inheritDoc
+     */
+    override fun getOrders(): Task<List<Order>> {
         return db.collection(DOCUMENT_NAME).get().continueWith { result ->
             val orders = mutableListOf<Order>()
             for (document in result.result) {
@@ -54,13 +72,17 @@ class OrderRepository {
         }
     }
 
-    fun fullLoadOrderProducts(order: Order, callback: (List<Pair<Int, ProductModel>>) -> Unit) {
-        productRepository.getProductsByQuantity(order.products) {
-            callback(it)
-        }
+    /**
+     * @inheritDoc
+     */
+    override fun fullLoadOrderProducts(order: Order): Task<List<Pair<Int, ProductModel>>?> {
+        return productRepository.getProductsByQuantity(order.products)
     }
 
-    fun getOrdersByUser(): Task<List<Order>> {
+    /**
+     * @inheritDoc
+     */
+    override fun getOrdersByUser(): Task<List<Order>> {
         val userId = Firebase.auth.currentUser?.uid
         if (userId != null) {
             val ordersCollection = db.collection(DOCUMENT_NAME)
@@ -75,29 +97,5 @@ class OrderRepository {
         } else {
             return Tasks.forResult(listOf())
         }
-    }
-
-    fun onOrderUpdate(
-        orderId: String,
-        onUpdate: (Map<String, Any>?) -> Unit
-    ) {
-        val db = Firebase.firestore
-        val documentRef: DocumentReference = db.collection(DOCUMENT_NAME).document(orderId)
-
-        documentRef.get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val document = task.result
-
-                    if (document != null && document.exists()) {
-                        // Document exists, trigger the callback with the updated data
-                        val data = document.data
-                        onUpdate(data)
-
-                        return@addOnCompleteListener
-                    }
-                }
-                onUpdate(null)
-            }
     }
 }
