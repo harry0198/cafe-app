@@ -42,7 +42,7 @@
             android:id="@+id/lblWelcomeAuth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Complete Your Profile 😎"
+            android:text="@string/create_profile_heading"
             android:textColor="?attr/colorPrimary"
             android:textSize="28sp"
             android:textStyle="bold" />
@@ -50,8 +50,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="You're almost there!"
-            android:fontFamily="@font/roboto"
+            android:text="@string/create_profile_subheading"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp"
             />
@@ -61,7 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="First Name"
+            android:text="@string/first_name_label"
             android:textColor="?attr/colorPrimary"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -71,15 +70,16 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:ems="10"
-            android:hint="Enter your first name"
-            android:inputType="textEmailAddress" />
+            android:autofillHints="name"
+            android:hint="@string/first_name_hint"
+            android:inputType="textPersonName" />
 
         <TextView
             android:id="@+id/lblLastName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Last Name"
+            android:text="@string/last_name_label"
             android:textColor="?attr/colorPrimary"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -88,15 +88,17 @@
             android:id="@+id/lastName"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:autofillHints="name"
+            android:inputType="textPersonName"
             android:ems="10"
-            android:hint="Enter your last name" />
+            android:hint="@string/last_name_hint" />
 
         <TextView
             android:id="@+id/lblPhoneNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Phone Number"
+            android:text="@string/phone_number_label"
             android:textColor="?attr/colorPrimary"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -105,9 +107,10 @@
             android:id="@+id/phoneNumber"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:autofillHints="phone"
             android:ems="10"
             android:inputType="phone"
-            android:hint="Enter your phone number" />
+            android:hint="@string/phone_number_hint" />
 
     </LinearLayout>
 
@@ -116,7 +119,7 @@
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="100dp"
-        android:text="Finish"
+        android:text="@string/finish_btn"
         android:onClick="onFinishBtnClicked"
         android:theme="@style/ButtonGreen"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -130,7 +133,7 @@
         android:layout_marginTop="5dp"
         android:theme="@style/ButtonNoBackground"
         android:textColor="@color/green"
-        android:text="Skip"
+        android:text="@string/skip_btn"
         android:onClick="onSkipBtnClicked"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
