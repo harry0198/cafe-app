@@ -6,7 +6,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Update value"
+        android:hint="Write here"
         android:id="@+id/etLayout"
         android:layout_marginHorizontal="16dp"/>
 

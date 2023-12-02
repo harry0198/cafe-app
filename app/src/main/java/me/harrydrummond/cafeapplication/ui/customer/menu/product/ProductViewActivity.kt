@@ -1,14 +1,21 @@
 package me.harrydrummond.cafeapplication.ui.customer.menu.product
 
+import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import me.harrydrummond.cafeapplication.IntentExtra
-import me.harrydrummond.cafeapplication.data.model.ProductModel
+import me.harrydrummond.cafeapplication.R
+import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.databinding.ActivityProductViewBinding
+import me.harrydrummond.cafeapplication.ui.common.reviews.ReviewListViewAdapter
+import me.harrydrummond.cafeapplication.ui.common.reviews.ViewReviewsActivity
+import me.harrydrummond.cafeapplication.ui.common.reviews.ViewReviewsViewModel
 
 /**
  * ProductViewActivity class.
@@ -35,8 +42,12 @@ class ProductViewActivity : AppCompatActivity() {
 
         // This is asserted because if no product was passed, we can't display anything anyway.
         // It is not this class' responsibility to resolve the issue.
-        val product = intent.getParcelableExtra(IntentExtra.PRODUCT, ProductModel::class.java)!!
+        val product = intent.getParcelableExtra(IntentExtra.PRODUCT, Product::class.java)!!
         viewModel.initialize(product)
+
+        binding.lblProductName.text = product.productName
+        binding.lblProductPrice.text = product.productPrice.toString()
+        binding.lblProductDescription.text = product.productDescription
 
         handleUIState()
     }
@@ -61,6 +72,17 @@ class ProductViewActivity : AppCompatActivity() {
      */
     fun onAddToCartButtonClicked(view: View) {
         viewModel.addToCart()
+    }
+
+    /**
+     * When the view reviews button is clicked.
+     * Starts view reviews activity
+     */
+    fun onViewReviewBtnClicked(view: View) {
+        val intent = Intent(this, ViewReviewsActivity::class.java).apply {
+            putExtra(IntentExtra.PRODUCT, viewModel.product)
+        }
+        startActivity(intent)
     }
 
     private fun handleUIState() {

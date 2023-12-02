@@ -1,14 +1,17 @@
-package me.harrydrummond.cafeapplication.ui.common.register.profile
+package me.harrydrummond.cafeapplication.ui.common.profile
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.ktx.Firebase
 import me.harrydrummond.cafeapplication.data.model.UserModel
+import me.harrydrummond.cafeapplication.data.repository.FirestoreOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
 import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
+import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
+import javax.inject.Inject
 
 /**
  * CreateProfileViewModel class which provides the business logic to the view class
@@ -19,8 +22,7 @@ import me.harrydrummond.cafeapplication.data.repository.IUserRepository
  */
 class CreateProfileViewModel: ViewModel() {
 
-    private val productRepository: IProductRepository = FirestoreProductRepository()
-    private val userRepository: IUserRepository = FirestoreUserRepository(productRepository)
+    private val userRepository: IUserRepository = FirestoreUserRepository()
     private val _uiState: MutableLiveData<CreateProfileUiState> = MutableLiveData(
         CreateProfileUiState()
     )

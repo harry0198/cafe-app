@@ -12,7 +12,7 @@ import me.harrydrummond.cafeapplication.Validators
 import me.harrydrummond.cafeapplication.databinding.ActivityLoginBinding
 import me.harrydrummond.cafeapplication.databinding.ActivityRegisterBinding
 import me.harrydrummond.cafeapplication.ui.common.login.LoginViewModel
-import me.harrydrummond.cafeapplication.ui.common.register.profile.CreateProfileActivity
+import me.harrydrummond.cafeapplication.ui.common.profile.CreateProfileActivity
 
 
 /**

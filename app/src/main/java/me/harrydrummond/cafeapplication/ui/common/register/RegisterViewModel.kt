@@ -9,9 +9,12 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
 import me.harrydrummond.cafeapplication.data.model.UserModel
+import me.harrydrummond.cafeapplication.data.repository.FirestoreOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
+import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
+import javax.inject.Inject
 
 
 /**
@@ -23,8 +26,7 @@ import me.harrydrummond.cafeapplication.data.repository.IUserRepository
  */
 class RegisterViewModel: ViewModel() {
 
-    private val productRepository: IProductRepository = FirestoreProductRepository()
-    private val userRepository: IUserRepository = FirestoreUserRepository(productRepository)
+    private val userRepository: IUserRepository = FirestoreUserRepository()
     private val _uiState: MutableLiveData<RegisterUIState> = MutableLiveData(RegisterUIState())
     val uiState: LiveData<RegisterUIState> get() = _uiState
 

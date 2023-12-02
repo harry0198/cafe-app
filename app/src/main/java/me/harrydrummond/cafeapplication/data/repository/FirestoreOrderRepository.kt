@@ -8,7 +8,8 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import me.harrydrummond.cafeapplication.data.model.Order
-import me.harrydrummond.cafeapplication.data.model.ProductModel
+import me.harrydrummond.cafeapplication.data.model.Product
+import javax.inject.Inject
 
 /**
  * OrderRepository class, is an implementation of the OrderRepository Interface using Firestore.
@@ -18,7 +19,7 @@ import me.harrydrummond.cafeapplication.data.model.ProductModel
  * @see FirestoreProductRepository
  * @see IOrderRepository
  */
-class FirestoreOrderRepository(private val productRepository: IProductRepository) : IOrderRepository {
+class FirestoreOrderRepository @Inject constructor(private val productRepository: IProductRepository) : IOrderRepository {
 
     companion object {
         /**
@@ -75,7 +76,7 @@ class FirestoreOrderRepository(private val productRepository: IProductRepository
     /**
      * @inheritDoc
      */
-    override fun fullLoadOrderProducts(order: Order): Task<List<Pair<Int, ProductModel>>?> {
+    override fun fullLoadOrderProducts(order: Order): Task<List<Pair<Int, Product>>?> {
         return productRepository.getProductsByQuantity(order.products)
     }
 
@@ -98,4 +99,6 @@ class FirestoreOrderRepository(private val productRepository: IProductRepository
             return Tasks.forResult(listOf())
         }
     }
+
+
 }

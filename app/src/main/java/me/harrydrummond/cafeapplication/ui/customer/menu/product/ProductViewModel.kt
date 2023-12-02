@@ -3,27 +3,31 @@ package me.harrydrummond.cafeapplication.ui.customer.menu.product
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import me.harrydrummond.cafeapplication.data.model.ProductModel
+import me.harrydrummond.cafeapplication.data.model.Product
+import me.harrydrummond.cafeapplication.data.model.Review
+import me.harrydrummond.cafeapplication.data.model.UserReview
+import me.harrydrummond.cafeapplication.data.repository.FirestoreOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
 import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
+import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 import me.harrydrummond.cafeapplication.logic.Counter
+import javax.inject.Inject
 
 class ProductViewModel: ViewModel() {
 
-    private lateinit var product: ProductModel
     private val counter = Counter(1, 1, 15)
-    private val productRepository: IProductRepository = FirestoreProductRepository()
-    private val userRepository: IUserRepository = FirestoreUserRepository(productRepository)
+    private val userRepository: IUserRepository = FirestoreUserRepository()
     private val _uiState: MutableLiveData<ProductViewUIState> = MutableLiveData(ProductViewUIState())
     val uiState: LiveData<ProductViewUIState> get() = _uiState
+    lateinit var product: Product
 
     /**
      * This view requires a productmodel to display correctly.
      * This should be called first by the view(s)
      */
-    fun initialize(productModel: ProductModel) {
+    fun initialize(productModel: Product) {
         this.product = productModel
     }
 

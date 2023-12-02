@@ -2,7 +2,7 @@ package me.harrydrummond.cafeapplication.data.repository
 
 import com.google.android.gms.tasks.Task
 import me.harrydrummond.cafeapplication.data.model.Order
-import me.harrydrummond.cafeapplication.data.model.ProductModel
+import me.harrydrummond.cafeapplication.data.model.Product
 
 /**
  * Interface defining signatures to perform CRUD operations on an order repository.
@@ -53,9 +53,9 @@ interface IOrderRepository {
      * @see Order
      * @see Task
      * @see Pair
-     * @see ProductModel
+     * @see Product
      */
-    fun fullLoadOrderProducts(order: Order): Task<List<Pair<Int, ProductModel>>?>
+    fun fullLoadOrderProducts(order: Order): Task<List<Pair<Int, Product>>?>
 
     /**
      * Fetches all the orders from the currently logged-in user.

@@ -2,7 +2,7 @@ package me.harrydrummond.cafeapplication.data.repository
 
 import com.google.android.gms.tasks.Task
 import me.harrydrummond.cafeapplication.data.model.Cart
-import me.harrydrummond.cafeapplication.data.model.ProductModel
+import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.model.UserModel
 
 /**
@@ -49,6 +49,11 @@ interface IUserRepository {
     fun getLoggedInUserId(): String?
 
     /**
+     * Logs out the current user
+     */
+    fun logoutUser()
+
+    /**
      * Fetches the user from the user repository.
      *
      * @param uid User ID of the user to fetch.
@@ -67,17 +72,6 @@ interface IUserRepository {
      */
     fun saveUserCart(cart: Cart): Task<Boolean>
 
-    /**
-     * Fully loads the ProductModels of the user's cart with their product quantities.
-     *
-     * @param cart Cart object to fully load.
-     * @return Task containing a List of the <Quantity and ProductModel>
-     *
-     * @see Pair
-     * @see ProductModel
-     * @see Cart
-     */
-    fun fullLoadUserCart(cart: Cart): Task<List<Pair<Int, ProductModel>>?>
 
     /**
      * Partially loads the user's cart, retrieving the cart object.

@@ -7,7 +7,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import me.harrydrummond.cafeapplication.data.model.Cart
 import me.harrydrummond.cafeapplication.data.model.Order
-import me.harrydrummond.cafeapplication.data.model.ProductModel
+import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.model.ProductQuantity
 import me.harrydrummond.cafeapplication.data.model.Status
 import me.harrydrummond.cafeapplication.data.repository.FirestoreOrderRepository
@@ -16,6 +16,7 @@ import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
 import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
+import javax.inject.Inject
 
 /**
  * CartViewModel class which provides the business logic to the view class
@@ -26,9 +27,9 @@ import me.harrydrummond.cafeapplication.data.repository.IUserRepository
  */
 class CartViewModel : ViewModel() {
 
-    private val productRepository: IProductRepository = FirestoreProductRepository()
+    private val userRepository: IUserRepository = FirestoreUserRepository()
+    private val productRepository: IProductRepository = FirestoreProductRepository(userRepository)
     private val orderRepository: IOrderRepository = FirestoreOrderRepository(productRepository)
-    private val userRepository: IUserRepository = FirestoreUserRepository(productRepository)
     private val _uiState: MutableLiveData<CartFragmentUIState> = MutableLiveData(CartFragmentUIState())
     val uiState: LiveData<CartFragmentUIState> get() = _uiState
 
@@ -44,7 +45,7 @@ class CartViewModel : ViewModel() {
         userRepository.partialLoadUserCart().addOnCompleteListener { cartTask ->
             val cart = cartTask.result
             if (cartTask.isSuccessful && cart != null) {
-                    userRepository.fullLoadUserCart(cart).addOnCompleteListener { listTask ->
+                productRepository.fullLoadUserCart(cart).addOnCompleteListener { listTask ->
                         if (listTask.isSuccessful) {
                             _uiState.value = _uiState.value?.copy(loading = false, cartProducts = listTask.result ?: emptyList())
                         } else {
@@ -134,7 +135,7 @@ class CartViewModel : ViewModel() {
 data class CartFragmentUIState(
     val loading: Boolean = false,
     val errorMessage: String? = null,
-    val cartProducts: List<Pair<Int, ProductModel>> = emptyList(),
+    val cartProducts: List<Pair<Int, Product>> = emptyList(),
     val event: Event? = null
 )
 

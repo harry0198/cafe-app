@@ -13,4 +13,8 @@
         android:id="@+id/c_orders"
         android:icon="@drawable/order_icon"
         android:title="Orders" />
+    <item
+        android:id="@+id/c_account"
+        android:icon="@drawable/account_icon"
+        android:title="Account" />
 </menu>

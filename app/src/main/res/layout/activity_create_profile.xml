@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.common.register.profile.CreateProfileActivity">
+    tools:context=".ui.common.profile.CreateProfileActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/cp_toolbar"
@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:theme="@style/ActionBarWhite"
+        android:theme="@style/ActionBarNoBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -36,13 +36,13 @@
         android:padding="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cp_toolbar">
+        app:layout_constraintTop_toBottomOf="@+id/progressBar">
 
         <TextView
-            android:id="@+id/lblWelcomeAuth"
+            android:id="@+id/lblEditProduct"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/create_profile_heading"
+            android:text="@string/create_your_profile"
             android:textColor="?attr/colorPrimary"
             android:textSize="28sp"
             android:textStyle="bold" />
@@ -50,92 +50,32 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/create_profile_subheading"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp"
-            />
-
-        <TextView
-            android:id="@+id/lblFirstName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/first_name_label"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/firstName"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:ems="10"
-            android:autofillHints="name"
-            android:hint="@string/first_name_hint"
-            android:inputType="textPersonName" />
-
-        <TextView
-            android:id="@+id/lblLastName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/last_name_label"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/lastName"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:autofillHints="name"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:hint="@string/last_name_hint" />
-
-        <TextView
-            android:id="@+id/lblPhoneNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/phone_number_label"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/phoneNumber"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:autofillHints="phone"
-            android:ems="10"
-            android:inputType="phone"
-            android:hint="@string/phone_number_hint" />
-
+            android:fontFamily="@font/roboto"
+            android:text="@string/you_re_almost_there" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btnCreateProfile"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="100dp"
-        android:text="@string/finish_btn"
-        android:onClick="onFinishBtnClicked"
-        android:theme="@style/ButtonGreen"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/complete_profile_view"
+        android:name="me.harrydrummond.cafeapplication.ui.common.profile.CompleteProfileFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnSkip"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lytAuth" />
 
     <Button
         android:id="@+id/btnSkip"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:theme="@style/ButtonNoBackground"
-        android:textColor="@color/green"
-        android:text="@string/skip_btn"
+        android:layout_marginBottom="10dp"
         android:onClick="onSkipBtnClicked"
+        android:text="@string/skip_btn"
+        android:textColor="@color/green"
+        android:theme="@style/ButtonNoBackground"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnCreateProfile" />
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

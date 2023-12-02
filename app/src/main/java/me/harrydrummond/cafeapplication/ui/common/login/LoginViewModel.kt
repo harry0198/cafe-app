@@ -8,10 +8,13 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import me.harrydrummond.cafeapplication.data.model.Role
 import me.harrydrummond.cafeapplication.data.model.UserModel
+import me.harrydrummond.cafeapplication.data.repository.FirestoreOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
 import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
+import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
+import javax.inject.Inject
 
 
 /**
@@ -23,8 +26,7 @@ import me.harrydrummond.cafeapplication.data.repository.IUserRepository
  */
 class LoginViewModel: ViewModel() {
 
-    private val productRepository: IProductRepository = FirestoreProductRepository()
-    private val userRepository: IUserRepository = FirestoreUserRepository(productRepository)
+    private val userRepository: IUserRepository = FirestoreUserRepository()
     private val _uiState: MutableLiveData<LoginUiState> = MutableLiveData(LoginUiState())
     val uiState: LiveData<LoginUiState> = _uiState
 

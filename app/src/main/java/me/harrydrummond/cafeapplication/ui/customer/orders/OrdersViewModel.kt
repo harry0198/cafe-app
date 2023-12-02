@@ -6,8 +6,11 @@ import androidx.lifecycle.ViewModel
 import me.harrydrummond.cafeapplication.data.model.Order
 import me.harrydrummond.cafeapplication.data.repository.FirestoreOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
+import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
 import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
+import me.harrydrummond.cafeapplication.data.repository.IUserRepository
+import javax.inject.Inject
 
 /**
  * OrdersViewModel class which provides the business logic to the view class
@@ -18,7 +21,8 @@ import me.harrydrummond.cafeapplication.data.repository.IProductRepository
  */
 class OrdersViewModel : ViewModel() {
 
-    private val productRepository: IProductRepository = FirestoreProductRepository()
+    private val userRepository: IUserRepository = FirestoreUserRepository()
+    private val productRepository: IProductRepository = FirestoreProductRepository(userRepository)
     private val orderRepository: IOrderRepository = FirestoreOrderRepository(productRepository)
     private val _uiState: MutableLiveData<OrdersUIState> = MutableLiveData(OrdersUIState())
     val uiState: LiveData<OrdersUIState> get() = _uiState

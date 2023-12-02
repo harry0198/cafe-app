@@ -2,16 +2,14 @@ package me.harrydrummond.cafeapplication.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import me.harrydrummond.cafeapplication.R
-import me.harrydrummond.cafeapplication.data.model.UserModel
 import me.harrydrummond.cafeapplication.databinding.ActivityAdminAppBinding
-import me.harrydrummond.cafeapplication.databinding.ActivityAppBinding
+import me.harrydrummond.cafeapplication.ui.admin.accounts.AdminAccountsFragment
 import me.harrydrummond.cafeapplication.ui.admin.editmenu.EditMenuFragment
 import me.harrydrummond.cafeapplication.ui.admin.orders.AdminOrdersFragment
-import me.harrydrummond.cafeapplication.ui.customer.cart.CartFragment
-import me.harrydrummond.cafeapplication.ui.customer.menu.MenuFragment
-import me.harrydrummond.cafeapplication.ui.customer.orders.OrdersFragment
+import me.harrydrummond.cafeapplication.ui.common.profile.CompleteProfileViewModel
 
 /**
  * AdminAppActivity class.
@@ -22,7 +20,7 @@ import me.harrydrummond.cafeapplication.ui.customer.orders.OrdersFragment
  * @see AdminOrdersFragment
  * @author Harry Drummond
  */
-class AdminAppActivity : AppCompatActivity() {
+class AdminAppActivity : AppCompatActivity(), CompleteProfileViewModel.ValidationListener {
     private lateinit var binding: ActivityAdminAppBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +33,7 @@ class AdminAppActivity : AppCompatActivity() {
             when(it.itemId) {
                 R.id.a_menu -> replaceFragment(EditMenuFragment())
                 R.id.a_orders -> replaceFragment(AdminOrdersFragment())
+                R.id.a_user -> replaceFragment(AdminAccountsFragment())
                 else -> {}
             }
             true
@@ -46,5 +45,13 @@ class AdminAppActivity : AppCompatActivity() {
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frameLayout, fragment)
         fragmentTransaction.commit()
+    }
+
+    /**
+     * When the create profile fragment returns a success this is executed.
+     */
+    override fun onValidationSuccess() {
+        val toast = Toast.makeText(this, "Profile Information Saved", Toast.LENGTH_SHORT)
+        toast.show()
     }
 }

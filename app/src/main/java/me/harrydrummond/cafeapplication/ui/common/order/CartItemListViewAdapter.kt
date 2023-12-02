@@ -6,9 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import androidx.core.view.isVisible
-import me.harrydrummond.cafeapplication.data.model.ProductModel
+import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.databinding.OrderDetailsListViewBinding
-import java.util.Dictionary
 
 /**
  * List view adapter for viewing a fully loaded cart.
@@ -20,7 +19,7 @@ import java.util.Dictionary
  *
  * @see CartItemListView
  */
-class CartItemListViewAdapter (context: Context, var cartItems: List<Pair<Int, ProductModel>>, private val onEditClick: ((ProductModel) -> Unit)?, private val onDeleteClick: ((ProductModel) -> Unit)?) : BaseAdapter() {
+class CartItemListViewAdapter (context: Context, var cartItems: List<Pair<Int, Product>>, private val onEditClick: ((Product) -> Unit)?, private val onDeleteClick: ((Product) -> Unit)?) : BaseAdapter() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -28,7 +27,7 @@ class CartItemListViewAdapter (context: Context, var cartItems: List<Pair<Int, P
         return cartItems.size
     }
 
-    override fun getItem(p0: Int): Pair<Int, ProductModel> {
+    override fun getItem(p0: Int): Pair<Int, Product> {
         return cartItems[p0]
     }
 

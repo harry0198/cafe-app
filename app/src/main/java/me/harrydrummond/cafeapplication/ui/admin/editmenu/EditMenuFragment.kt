@@ -10,17 +10,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import me.harrydrummond.cafeapplication.IntentExtra
-import me.harrydrummond.cafeapplication.R
-import me.harrydrummond.cafeapplication.data.model.ProductModel
-import me.harrydrummond.cafeapplication.data.model.Role
-import me.harrydrummond.cafeapplication.databinding.FragmentAdminOrdersBinding
 import me.harrydrummond.cafeapplication.databinding.FragmentEditMenuBinding
-import me.harrydrummond.cafeapplication.databinding.FragmentMenuBinding
-import me.harrydrummond.cafeapplication.ui.AppActivity
-import me.harrydrummond.cafeapplication.ui.admin.orders.AdminOrdersViewModel
-import me.harrydrummond.cafeapplication.ui.common.order.OrderListViewAdapter
 import me.harrydrummond.cafeapplication.ui.common.productview.ProductListViewAdapter
-import me.harrydrummond.cafeapplication.ui.customer.menu.product.ProductViewActivity
 
 /**
  * EditMenuFragment class.

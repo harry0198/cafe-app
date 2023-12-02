@@ -10,8 +10,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import me.harrydrummond.cafeapplication.data.model.Cart
-import me.harrydrummond.cafeapplication.data.model.ProductModel
+import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.model.UserModel
+import javax.inject.Inject
 
 /**
  * OrderRepository class, is an implementation of the OrderRepository Interface using Firestore.
@@ -20,7 +21,7 @@ import me.harrydrummond.cafeapplication.data.model.UserModel
  * @see Firebase
  * @see IProductRepository
  */
-class FirestoreUserRepository(private val productRepository: IProductRepository): IUserRepository {
+class FirestoreUserRepository(): IUserRepository {
     companion object {
         /**
          * Name of this repository document
@@ -40,6 +41,10 @@ class FirestoreUserRepository(private val productRepository: IProductRepository)
      */
     override fun getLoggedInUserId(): String? {
         return Firebase.auth.currentUser?.uid
+    }
+
+    override fun logoutUser() {
+        Firebase.auth.signOut()
     }
 
     /**
@@ -88,14 +93,6 @@ class FirestoreUserRepository(private val productRepository: IProductRepository)
             val db = Firebase.firestore
             val cartRef = db.collection("users").document(userId).collection("cart")
 
-            // Convert Cart object to a list of maps for Firestore
-            val cartProductsMap = cart.cartProducts.map {
-                mapOf(
-                    "productId" to it.productId,
-                    "quantity" to it.quantity
-                )
-            }
-
             // Clear existing cart and add new cart items
             return cartRef.get().continueWith { task ->
                 if (task.isSuccessful) {
@@ -103,7 +100,7 @@ class FirestoreUserRepository(private val productRepository: IProductRepository)
                     for (document in documents) {
                         document.reference.delete()
                     }
-                    for (cartProductMap in cartProductsMap) {
+                    for (cartProductMap in cart.cartProducts) {
                         cartRef.add(cartProductMap)
                     }
                     true
@@ -114,13 +111,6 @@ class FirestoreUserRepository(private val productRepository: IProductRepository)
         }
 
         return Tasks.forResult(false)
-    }
-
-    /**
-     * @inheritDoc
-     */
-    override fun fullLoadUserCart(cart: Cart): Task<List<Pair<Int, ProductModel>>?> {
-        return productRepository.getProductsByQuantity(cart.cartProducts)
     }
 
     /**

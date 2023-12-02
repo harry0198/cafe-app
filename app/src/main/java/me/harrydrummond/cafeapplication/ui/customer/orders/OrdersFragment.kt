@@ -13,7 +13,7 @@ import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.databinding.ActivityCreateProfileBinding
 import me.harrydrummond.cafeapplication.databinding.FragmentOrdersBinding
 import me.harrydrummond.cafeapplication.ui.common.order.OrderListViewAdapter
-import me.harrydrummond.cafeapplication.ui.common.register.profile.CreateProfileViewModel
+import me.harrydrummond.cafeapplication.ui.common.profile.CreateProfileViewModel
 
 /**
  * OrdersFragment class.

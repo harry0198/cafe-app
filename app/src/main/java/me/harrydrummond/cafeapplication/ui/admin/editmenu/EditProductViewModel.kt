@@ -3,9 +3,12 @@ package me.harrydrummond.cafeapplication.ui.admin.editmenu
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import me.harrydrummond.cafeapplication.data.model.ProductModel
+import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
+import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
+import me.harrydrummond.cafeapplication.data.repository.IUserRepository
+import javax.inject.Inject
 
 /**
  * EditProductViewModel class which provides the business logic to the view class
@@ -16,8 +19,9 @@ import me.harrydrummond.cafeapplication.data.repository.IProductRepository
  */
 class EditProductViewModel: ViewModel() {
 
-    private val repository: IProductRepository = FirestoreProductRepository()
-    private lateinit var productModel: ProductModel
+    private val userRepository: IUserRepository = FirestoreUserRepository()
+    private val productRepository: IProductRepository = FirestoreProductRepository(userRepository)
+    private lateinit var productModel: Product
     private val _uiState: MutableLiveData<EditProductUIState> = MutableLiveData(EditProductUIState())
     val uiState: LiveData<EditProductUIState> get() = _uiState
 
@@ -25,9 +29,9 @@ class EditProductViewModel: ViewModel() {
      * This class requires a productmodel.
      * This should be called first.
      *
-     * @see ProductModel
+     * @see Product
      */
-    fun init(productModel: ProductModel) {
+    fun init(productModel: Product) {
         this.productModel = productModel
     }
 
@@ -47,7 +51,7 @@ class EditProductViewModel: ViewModel() {
         productModel.productPrice = productPrice
         productModel.productAvailable = productAvailable
 
-        repository.saveProduct(productModel).addOnCompleteListener {
+        productRepository.saveProduct(productModel).addOnCompleteListener {
             if (it.isSuccessful) {
                 _uiState.value = _uiState.value?.copy(loading = false, event = Event.ProductSaved)
             } else {
@@ -59,12 +63,12 @@ class EditProductViewModel: ViewModel() {
     /**
      * Deletes this product from the database
      *
-     * @see ProductModel
+     * @see Product
      */
     fun deleteProduct() {
         _uiState.value = _uiState.value?.copy(loading = true)
 
-        repository.deleteProduct(productModel).addOnCompleteListener {
+        productRepository.deleteProduct(productModel).addOnCompleteListener {
             if (it.isSuccessful) {
                 _uiState.value = _uiState.value?.copy(loading = false, event = Event.ProductDeleted)
             } else {

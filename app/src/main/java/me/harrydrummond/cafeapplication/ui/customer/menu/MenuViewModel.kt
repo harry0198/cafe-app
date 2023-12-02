@@ -4,9 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
-import me.harrydrummond.cafeapplication.data.model.ProductModel
+import me.harrydrummond.cafeapplication.data.model.Product
+import me.harrydrummond.cafeapplication.data.repository.FirestoreOrderRepository
+import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
+import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
-import me.harrydrummond.cafeapplication.ui.common.register.profile.CreateProfileActivity
+import me.harrydrummond.cafeapplication.data.repository.IUserRepository
+import javax.inject.Inject
 
 /**
  * MenuViewModel class which provides the business logic to the view class
@@ -17,7 +21,8 @@ import me.harrydrummond.cafeapplication.ui.common.register.profile.CreateProfile
  */
 class MenuViewModel : ViewModel() {
 
-    private val productRepository: IProductRepository = FirestoreProductRepository()
+    private val userRepository: IUserRepository = FirestoreUserRepository()
+    private val productRepository: IProductRepository = FirestoreProductRepository(userRepository)
     private val _uiState: MutableLiveData<MenuUiState> = MutableLiveData(MenuUiState())
     val uiState: LiveData<MenuUiState> get() = _uiState
 
@@ -52,5 +57,5 @@ class MenuViewModel : ViewModel() {
 data class MenuUiState(
     val loading: Boolean = false,
     val errorMessage: String? = null,
-    val products: List<ProductModel> = emptyList()
+    val products: List<Product> = emptyList()
 )

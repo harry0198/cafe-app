@@ -9,4 +9,8 @@
         android:id="@+id/a_orders"
         android:icon="@drawable/order_icon"
         android:title="Orders" />
+    <item
+        android:id="@+id/a_user"
+        android:icon="@drawable/account_icon"
+        android:title="Accounts" />
 </menu>

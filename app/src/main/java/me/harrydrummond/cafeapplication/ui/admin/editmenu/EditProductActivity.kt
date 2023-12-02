@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import me.harrydrummond.cafeapplication.IntentExtra
-import me.harrydrummond.cafeapplication.data.model.ProductModel
+import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.databinding.ActivityEditProductBinding
 
 /**
@@ -34,7 +34,7 @@ class EditProductActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        val product = intent.getParcelableExtra(IntentExtra.PRODUCT, ProductModel::class.java)
+        val product = intent.getParcelableExtra(IntentExtra.PRODUCT, Product::class.java)
         if (product == null) {
             Toast.makeText(this, "A Fatal Error Occurred", Toast.LENGTH_SHORT).show()
             finish()
@@ -86,11 +86,11 @@ class EditProductActivity : AppCompatActivity() {
                 when (uiState.event) {
                     EditProductViewModel.Event.ProductDeleted -> {
                         Toast.makeText(this, "Product Deleted", Toast.LENGTH_SHORT).show()
+                        onBackPressed()
                         viewModel.eventHandled()
                     }
                     EditProductViewModel.Event.ProductSaved -> {
                         Toast.makeText(this, "Product Saved", Toast.LENGTH_SHORT).show()
-                        onBackPressed()
                         viewModel.eventHandled()
                     }
                 }

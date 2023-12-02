@@ -3,9 +3,12 @@ package me.harrydrummond.cafeapplication.ui.admin.editmenu
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import me.harrydrummond.cafeapplication.data.model.ProductModel
+import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
-import me.harrydrummond.cafeapplication.ui.admin.orders.AdminViewOrderActivity
+import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
+import me.harrydrummond.cafeapplication.data.repository.IProductRepository
+import me.harrydrummond.cafeapplication.data.repository.IUserRepository
+import javax.inject.Inject
 
 /**
  * EditMenuViewModel class which provides the business logic to the view class
@@ -16,7 +19,9 @@ import me.harrydrummond.cafeapplication.ui.admin.orders.AdminViewOrderActivity
  */
 class EditMenuViewModel : ViewModel() {
 
-    private val productRepository: FirestoreProductRepository = FirestoreProductRepository()
+    private val userRepository: IUserRepository = FirestoreUserRepository()
+    private val productRepository: IProductRepository = FirestoreProductRepository(userRepository)
+
     private val _uiState: MutableLiveData<EditMenuUIState> = MutableLiveData(EditMenuUIState())
     val uiState: LiveData<EditMenuUIState> get() = _uiState
 
@@ -44,7 +49,7 @@ class EditMenuViewModel : ViewModel() {
         val dummyImage = ""
         val dummyAvailability = false
 
-        val dummyProduct = ProductModel("",
+        val dummyProduct = Product("",
             dummyName,
             dummyPrice,
             dummyImage,
@@ -83,7 +88,7 @@ class EditMenuViewModel : ViewModel() {
     data class EditMenuUIState(
         val loading: Boolean = false,
         val errorMessage: String? = null,
-        val products: List<ProductModel> = emptyList(),
+        val products: List<Product> = emptyList(),
         val event: Event? = null,
     )
 

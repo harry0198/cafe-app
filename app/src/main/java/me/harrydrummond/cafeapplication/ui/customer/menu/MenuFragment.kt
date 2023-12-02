@@ -1,5 +1,6 @@
 package me.harrydrummond.cafeapplication.ui.customer.menu
 
+import android.app.AlertDialog
 import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -7,9 +8,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
 import androidx.core.view.isVisible
 import me.harrydrummond.cafeapplication.IntentExtra
+import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.data.model.Role
 import me.harrydrummond.cafeapplication.data.model.UserModel
 import me.harrydrummond.cafeapplication.databinding.ActivityOrderDetailsBinding

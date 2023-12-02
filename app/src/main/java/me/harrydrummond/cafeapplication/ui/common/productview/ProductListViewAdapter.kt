@@ -1,16 +1,12 @@
 package me.harrydrummond.cafeapplication.ui.common.productview
 
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView.OnItemClickListener
 import android.widget.BaseAdapter
-import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.databinding.ActivityProductListViewBinding
-import me.harrydrummond.cafeapplication.data.model.ProductModel
-import me.harrydrummond.cafeapplication.data.model.UserModel
+import me.harrydrummond.cafeapplication.data.model.Product
 
 /**
  * List adapter for viewing ProductModels with a next button action.
@@ -21,7 +17,7 @@ import me.harrydrummond.cafeapplication.data.model.UserModel
  *
  * @see ProductListView
  */
-class ProductListViewAdapter(context: Context, var productList: List<ProductModel>, val onItemClick: (ProductModel) -> Unit) : BaseAdapter() {
+class ProductListViewAdapter(context: Context, var productList: List<Product>, val onItemClick: (Product) -> Unit) : BaseAdapter() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -29,7 +25,7 @@ class ProductListViewAdapter(context: Context, var productList: List<ProductMode
         return productList.size
     }
 
-    override fun getItem(p0: Int): ProductModel {
+    override fun getItem(p0: Int): Product {
         return productList[p0]
     }
 
