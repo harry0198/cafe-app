@@ -7,10 +7,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.Validators
+import me.harrydrummond.cafeapplication.data.model.Role
 import me.harrydrummond.cafeapplication.databinding.ActivityLoginBinding
 import me.harrydrummond.cafeapplication.databinding.ActivityRegisterBinding
+import me.harrydrummond.cafeapplication.ui.AdminAppActivity
 import me.harrydrummond.cafeapplication.ui.common.login.LoginViewModel
 import me.harrydrummond.cafeapplication.ui.common.profile.CreateProfileActivity
 
@@ -28,6 +31,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var viewModel: RegisterViewModel
+    private lateinit var accountType: Role
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +43,10 @@ class RegisterActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        // This is not this class' problem if it has not been supplied with an account type.
+        // It is mandatory
+        this.accountType = intent.getParcelableExtra(IntentExtra.ACCOUNT_TYPE, Role::class.java)!!
 
         handleUIState()
     }
@@ -53,16 +61,7 @@ class RegisterActivity : AppCompatActivity() {
         val email = binding.registerEmail
         val pass = binding.registerPassword
 
-        if (!Validators.validateEmail(email.text.toString())) {
-            email.error = "Please enter a valid email"
-        }
-        if (pass.text.toString().isBlank()) {
-            binding.registerPassword.error = "Please enter a password"
-        }
-
-        if (binding.registerEmail.error == null && binding.registerPassword.error == null) {
-            viewModel.register(email.text.toString(), pass.text.toString())
-        }
+        viewModel.register(email.text.toString(), pass.text.toString(), accountType)
     }
 
     private fun handleUIState() {
@@ -75,10 +74,20 @@ class RegisterActivity : AppCompatActivity() {
             if (uiState.event != null) {
                 when (uiState.event) {
                     Event.UserWasRegistered -> {
-                        val intent = Intent(this, CreateProfileActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                        startActivity(intent)
-                        finish()
+                        when (accountType) {
+                            Role.EMPLOYEE -> {
+                                val intent = Intent(this, AdminAppActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                startActivity(intent)
+                                finish()
+                            }
+                            else ->{
+                                val intent = Intent(this, CreateProfileActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                startActivity(intent)
+                                finish()
+                            }
+                        }
                     }
                 }
             }

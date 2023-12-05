@@ -1,6 +1,5 @@
 package me.harrydrummond.cafeapplication.ui.customer.menu
 
-import android.app.AlertDialog
 import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -8,20 +7,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.Toast
 import androidx.core.view.isVisible
 import me.harrydrummond.cafeapplication.IntentExtra
-import me.harrydrummond.cafeapplication.R
-import me.harrydrummond.cafeapplication.data.model.Role
-import me.harrydrummond.cafeapplication.data.model.UserModel
-import me.harrydrummond.cafeapplication.databinding.ActivityOrderDetailsBinding
 import me.harrydrummond.cafeapplication.databinding.FragmentMenuBinding
-import me.harrydrummond.cafeapplication.ui.AppActivity
-import me.harrydrummond.cafeapplication.ui.common.order.CartItemListViewAdapter
 import me.harrydrummond.cafeapplication.ui.common.productview.ProductListViewAdapter
 import me.harrydrummond.cafeapplication.ui.customer.menu.product.ProductViewActivity
-import me.harrydrummond.cafeapplication.ui.customer.orders.OrderDetailsViewModel
 
 /**
  * MenuFragment class.

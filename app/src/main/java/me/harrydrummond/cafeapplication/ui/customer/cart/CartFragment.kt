@@ -80,6 +80,11 @@ class CartFragment : Fragment() {
                         viewModel.eventHandled()
                         return@observe
                     }
+                    Event.CartEmpty -> {
+                        Toast.makeText(requireContext(), "Please add an item to your cart", Toast.LENGTH_SHORT).show()
+                        viewModel.eventHandled()
+                        return@observe
+                    }
                 }
             }
         }

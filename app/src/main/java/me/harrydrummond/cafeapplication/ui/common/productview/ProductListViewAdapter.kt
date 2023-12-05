@@ -50,7 +50,7 @@ class ProductListViewAdapter(context: Context, var productList: List<Product>, v
         val product = getItem(position)
 
         binding.productName.text = product.productName
-        binding.productPrice.text = "£ ${product.productPrice}"
+        binding.productPrice.text = "£ " + String.format("%.2f", product.productPrice)
         binding.nextButton.setOnClickListener {
             onItemClick(product)
         }

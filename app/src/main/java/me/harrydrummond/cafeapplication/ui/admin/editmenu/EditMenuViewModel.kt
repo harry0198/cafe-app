@@ -3,11 +3,10 @@ package me.harrydrummond.cafeapplication.ui.admin.editmenu
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import me.harrydrummond.cafeapplication.data.model.Product
-import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
-import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
-import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 import javax.inject.Inject
 
 /**
@@ -17,10 +16,7 @@ import javax.inject.Inject
  * @see EditMenuFragment
  * @author Harry Drummond
  */
-class EditMenuViewModel : ViewModel() {
-
-    private val userRepository: IUserRepository = FirestoreUserRepository()
-    private val productRepository: IProductRepository = FirestoreProductRepository(userRepository)
+class EditMenuViewModel @Inject constructor(private val productRepository: IProductRepository): ViewModel() {
 
     private val _uiState: MutableLiveData<EditMenuUIState> = MutableLiveData(EditMenuUIState())
     val uiState: LiveData<EditMenuUIState> get() = _uiState
@@ -28,13 +24,9 @@ class EditMenuViewModel : ViewModel() {
     fun refreshProducts() {
         _uiState.value = _uiState.value?.copy(loading = true)
 
-        productRepository.getAllProducts().addOnCompleteListener { task ->
-            val products = task.result
-            if (task.isSuccessful && products != null) {
-                _uiState.value = _uiState.value?.copy(loading = false, products = products)
-            } else {
-                _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Unable to refresh products")
-            }
+        viewModelScope.launch {
+            val allProducts = productRepository.getAllProducts()
+            _uiState.postValue(_uiState.value?.copy(loading = false, products = allProducts))
         }
     }
 
@@ -49,21 +41,21 @@ class EditMenuViewModel : ViewModel() {
         val dummyImage = ""
         val dummyAvailability = false
 
-        val dummyProduct = Product("",
+        val dummyProduct = Product(-1,
             dummyName,
             dummyPrice,
             dummyImage,
             dummyDescription,
             dummyAvailability
         )
-        productRepository.saveProduct(dummyProduct).addOnCompleteListener {task ->
-            if (task.isSuccessful) {
-                // Loading state is handled in this function already, to prevent flicker it is not updated
-                // again here.
-                _uiState.value = _uiState.value?.copy(event = Event.NewProductAdded)
-                refreshProducts()
+
+        // In background, add the dummy product
+        viewModelScope.launch {
+            val saved = productRepository.save(dummyProduct)
+            if (saved == -1) {
+                _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Unable to save product"))
             } else {
-                _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Unable to save product")
+                _uiState.postValue(_uiState.value?.copy(loading = false, event = Event.NewProductAdded))
             }
         }
     }

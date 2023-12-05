@@ -3,11 +3,10 @@ package me.harrydrummond.cafeapplication.ui.admin.editmenu
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import me.harrydrummond.cafeapplication.data.model.Product
-import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
-import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
-import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 import javax.inject.Inject
 
 /**
@@ -17,13 +16,11 @@ import javax.inject.Inject
  * @see EditProductActivity
  * @author Harry Drummond
  */
-class EditProductViewModel: ViewModel() {
+class EditProductViewModel @Inject constructor(private val productRepository: IProductRepository): ViewModel() {
 
-    private val userRepository: IUserRepository = FirestoreUserRepository()
-    private val productRepository: IProductRepository = FirestoreProductRepository(userRepository)
-    private lateinit var productModel: Product
     private val _uiState: MutableLiveData<EditProductUIState> = MutableLiveData(EditProductUIState())
     val uiState: LiveData<EditProductUIState> get() = _uiState
+    lateinit var productModel: Product
 
     /**
      * This class requires a productmodel.
@@ -46,16 +43,19 @@ class EditProductViewModel: ViewModel() {
     fun saveProduct(productName: String, productDesc: String, productPrice: Double, productAvailable: Boolean) {
         _uiState.value = _uiState.value?.copy(loading = true)
 
+        // Set attributes
         productModel.productName = productName
         productModel.productDescription = productDesc
         productModel.productPrice = productPrice
         productModel.productAvailable = productAvailable
 
-        productRepository.saveProduct(productModel).addOnCompleteListener {
-            if (it.isSuccessful) {
-                _uiState.value = _uiState.value?.copy(loading = false, event = Event.ProductSaved)
+        // In background update the product and notify view
+        viewModelScope.launch {
+            val updated = productRepository.update(productModel)
+            if (updated) {
+                _uiState.postValue(_uiState.value?.copy(loading = false, event = Event.ProductSaved))
             } else {
-                _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Unable to save product")
+                _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Unable to update product"))
             }
         }
     }
@@ -68,11 +68,13 @@ class EditProductViewModel: ViewModel() {
     fun deleteProduct() {
         _uiState.value = _uiState.value?.copy(loading = true)
 
-        productRepository.deleteProduct(productModel).addOnCompleteListener {
-            if (it.isSuccessful) {
-                _uiState.value = _uiState.value?.copy(loading = false, event = Event.ProductDeleted)
+        // In background, delete product and notify view.
+        viewModelScope.launch {
+            val deleted = productRepository.delete(productModel)
+            if (deleted) {
+                _uiState.postValue(_uiState.value?.copy(loading = false, event = Event.ProductDeleted))
             } else {
-                _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Unable to delete product")
+                _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Unable to delete product"))
             }
         }
     }

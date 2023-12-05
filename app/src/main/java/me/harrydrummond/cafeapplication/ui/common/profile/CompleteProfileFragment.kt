@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import me.harrydrummond.cafeapplication.Validators
 import me.harrydrummond.cafeapplication.databinding.FragmentCompleteProfileBinding
 
 
@@ -68,19 +69,6 @@ class CompleteProfileFragment : Fragment() {
         val lastName = binding.lastName.text.toString()
         val phoneNumber = binding.phoneNumber.text.toString()
 
-        if (firstName.isEmpty()) {
-            binding.firstName.error = "Please enter a name"
-        }
-        if (lastName.isEmpty()) {
-            binding.lastName.error = "Please enter a name";
-        }
-        if (phoneNumber.isEmpty()) {
-            binding.phoneNumber.error = "Please enter a phone number"
-
-        } else if (!PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)) {
-            binding.phoneNumber.error = "Please enter a valid phone number"
-        }
-
         viewModel.saveProfileInformation(firstName, lastName, phoneNumber)
     }
 
@@ -92,6 +80,11 @@ class CompleteProfileFragment : Fragment() {
             binding.lastName.setText(uiState.lastName)
             binding.phoneNumber.setText(uiState.phoneNumber)
 
+            // Apply validation results
+            Validators.apply(uiState.firstNameValidated, binding.firstName)
+            Validators.apply(uiState.lastNameValidated, binding.lastName)
+            Validators.apply(uiState.phoneNumberValidated, binding.phoneNumber)
+
             if (uiState.errorMessage != null) {
                 Toast.makeText(requireContext(), uiState.errorMessage, Toast.LENGTH_SHORT).show()
                 viewModel.errorMessageShown()
@@ -101,6 +94,7 @@ class CompleteProfileFragment : Fragment() {
                 when (uiState.event) {
                     is CompleteProfileViewModel.Event.ProfileSaved -> {
                         validationListener.onValidationSuccess()
+                        viewModel.eventHandled()
                     }
                 }
             }

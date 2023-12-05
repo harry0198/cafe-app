@@ -113,6 +113,14 @@
             android:layout_height="wrap_content"
             android:text="Product Availability" />
 
+        <Button
+            android:id="@+id/btnAdminViewReviews"
+            android:layout_width="140dp"
+            android:layout_gravity="end"
+            android:layout_height="wrap_content"
+            android:onClick="onAdminViewReviewBtnClicked"
+            android:text="View Reviews" />
+
     </LinearLayout>
 
     <Button

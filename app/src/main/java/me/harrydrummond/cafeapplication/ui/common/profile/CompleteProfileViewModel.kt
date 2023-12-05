@@ -3,19 +3,26 @@ package me.harrydrummond.cafeapplication.ui.common.profile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import me.harrydrummond.cafeapplication.data.model.UserModel
-import me.harrydrummond.cafeapplication.data.repository.FirestoreOrderRepository
-import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
-import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
-import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
-import me.harrydrummond.cafeapplication.data.repository.IProductRepository
+import androidx.lifecycle.viewModelScope
+import com.google.android.gms.tasks.Task
+import kotlinx.coroutines.launch
+import me.harrydrummond.cafeapplication.ValidatedResult
+import me.harrydrummond.cafeapplication.Validators
+import me.harrydrummond.cafeapplication.data.model.Customer
+import me.harrydrummond.cafeapplication.data.model.Role
+import me.harrydrummond.cafeapplication.data.repository.AuthenticatedUser
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 import javax.inject.Inject
 
-class CompleteProfileViewModel : ViewModel() {
-    private var userId: String? = null
-    private var userModel: UserModel? = null
-    private val userRepository: IUserRepository = FirestoreUserRepository()
+/**
+ * CompleteProfileViewModel class which provides the business logic to the view class
+ * using the MVVM pattern.
+ *
+ * @see CompleteProfileFragment
+ * @author Harry Drummond
+ */
+class CompleteProfileViewModel @Inject constructor(private val customerRepository: IUserRepository<Customer>) : ViewModel() {
+
     private val _uiState: MutableLiveData<CreateProfileUiState> = MutableLiveData(
         CreateProfileUiState()
     )
@@ -23,59 +30,79 @@ class CompleteProfileViewModel : ViewModel() {
 
     // On initialize, begin loading the user
     init {
-        userRepository.getLoggedInUserId().let {
-            _uiState.value = _uiState.value?.copy(loading = true)
-            userId = it
-            if (it != null) {
-                userRepository.getUser(it).addOnSuccessListener { user ->
-                    userModel = user
-                    val splitName = userModel?.fullName?.split(" ")
-                    val firstName = splitName?.get(0)
-                    val lastName = splitName?.get(1)
-                    val phoneNumber = userModel?.phoneNumber
-                    _uiState.value = _uiState.value?.copy(loading = false, firstName = firstName?: "", lastName = lastName?: "", phoneNumber = phoneNumber?: "")
-                }.addOnFailureListener {
-                    _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Failed to load user")
-                }
+        refreshProfile()
+    }
+
+    /**
+     * Refreshes the currently logged-in user's profile
+     * and delegates success and failure listeners
+     */
+    fun refreshProfile() {
+        // Run in background
+        viewModelScope.launch {
+
+            // Get the customer
+            val customer: Customer? =
+                customerRepository.getById(AuthenticatedUser.getInstance().getUserId())
+
+            if (customer != null) {
+                _uiState.value =
+                    _uiState.value?.copy(
+                        loading = false,
+                        fullName = customer.fullName ?: "",
+                        phoneNumber = customer.phoneNo ?: ""
+                    )
+            } else {
+                _uiState.postValue(
+                    _uiState.value?.copy(
+                        loading = false,
+                        errorMessage = "Failed to load user"
+                    )
+                )
             }
         }
     }
-
 
     /**
      * Saves the user profile information to the database. If it is unable to save, the ui State
      * is updated with the error messages.
      *
-     * @param firstName The first name of the user
-     * @param lastName The last name of the user
+     * @param fullName The full name of the user
      * @param phoneNumber The phone number of the user
      */
-    fun saveProfileInformation(firstName: String, lastName: String, phoneNumber: String) {
+    fun saveProfileInformation(fullName: String, phoneNumber: String) {
         _uiState.value = _uiState.value?.copy(loading = true)
 
-        val fullName = "$firstName $lastName"
+        viewModelScope.launch {
+            // Check validation
+            val fullNameValidated = Validators.validateNotEmpty(fullName)
+            val phoneNumberValidated = Validators.validatePhoneNumber(phoneNumber)
+            _uiState.value = _uiState.value?.copy(
+                loading = false,
+                fullNameValidated = fullNameValidated,
+                phoneNumberValidated = phoneNumberValidated
+            )
 
-        // Prevent mutable
-        val userModel = userModel
-        val userId = userId
-
-        if (userModel == null || userId == null) {
-            _uiState.value = uiState.value?.copy(loading = false, errorMessage = "Your account has not loaded yet")
-            return
-        }
-        val user = userModel.copy(phoneNumber = phoneNumber, fullName = fullName)
-
-        userRepository.saveUser(userId, user).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                _uiState.value =
-                    _uiState.value?.copy(loading = false, event = Event.ProfileSaved)
-            } else {
-                _uiState.value = _uiState.value?.copy(
-                    loading = false,
-                    errorMessage = "Unable to save profile"
-                )
+            if (!fullNameValidated.isValid || !phoneNumberValidated.isValid) {
+                return@launch
             }
 
+            // Do save
+            val customer: Customer? = customerRepository.getById(AuthenticatedUser.getInstance().getUserId())
+
+            if (customer != null) {
+                val updatedCustomer = customer.copy(fullName = fullName, phoneNo = phoneNumber)
+                val updated = customerRepository.update(updatedCustomer)
+                if (updated) {
+                    _uiState.postValue(_uiState.value?.copy(loading = false, event = Event.ProfileSaved))
+                } else {
+                    _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Could not update profile"))
+                }
+            } else {
+                _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "You are not signed in."))
+            }
+        }.invokeOnCompletion {
+            refreshProfile()
         }
     }
 
@@ -84,6 +111,13 @@ class CompleteProfileViewModel : ViewModel() {
      */
     fun errorMessageShown() {
         _uiState.value = _uiState.value?.copy(errorMessage = null)
+    }
+
+    /**
+     * Indicates that the event has been handled
+     */
+    fun eventHandled() {
+        _uiState.value = _uiState.value?.copy(event = null)
     }
 
     /**
@@ -101,9 +135,10 @@ class CompleteProfileViewModel : ViewModel() {
         val loading: Boolean = false,
         val errorMessage: String? = null,
         val event: Event? = null,
-        val firstName: String = "",
-        val lastName: String = "",
-        val phoneNumber: String = ""
+        val fullName: String = "",
+        val phoneNumber: String = "",
+        val fullNameValidated: ValidatedResult = ValidatedResult(true, null),
+        val phoneNumberValidated: ValidatedResult = ValidatedResult(true, null)
     )
 
     /**

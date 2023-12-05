@@ -4,6 +4,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import me.harrydrummond.cafeapplication.IntentExtra
+import me.harrydrummond.cafeapplication.data.model.Role
 import me.harrydrummond.cafeapplication.databinding.ActivityMainBinding
 import me.harrydrummond.cafeapplication.ui.common.login.LoginActivity
 import me.harrydrummond.cafeapplication.ui.common.register.RegisterActivity
@@ -38,7 +40,9 @@ class MainActivity : AppCompatActivity() {
      * Event handler for the register button
      */
     fun onRegisterButtonClicked(view: View) {
-        val intent = Intent(this, RegisterActivity::class.java)
+        val intent = Intent(this, RegisterActivity::class.java).apply {
+            putExtra(IntentExtra.ACCOUNT_TYPE, Role.CUSTOMER)
+        }
         startActivity(intent)
     }
 }

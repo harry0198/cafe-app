@@ -1,5 +1,6 @@
 package me.harrydrummond.cafeapplication.ui.admin.editmenu
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.databinding.ActivityEditProductBinding
+import me.harrydrummond.cafeapplication.ui.common.reviews.ViewReviewsActivity
 
 /**
  * EditProductActivity class.
@@ -67,9 +69,21 @@ class EditProductActivity : AppCompatActivity() {
 
     /**
      * Event handler for the delete button.
+     * Deletes the product.
      */
     fun onDeleteBtnClicked(view: View) {
         viewModel.deleteProduct()
+    }
+
+    /**
+     * Event handler for the view reviews button.
+     * Navigates to the view review activity
+     */
+    fun onAdminViewReviewBtnClicked(view: View) {
+        val intent = Intent(this, ViewReviewsActivity::class.java).apply {
+            putExtra(IntentExtra.PRODUCT, viewModel.productModel)
+        }
+        startActivity(intent)
     }
 
     private fun handleUIState() {

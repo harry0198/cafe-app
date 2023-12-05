@@ -4,12 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import me.harrydrummond.cafeapplication.data.model.Product
-import me.harrydrummond.cafeapplication.data.repository.FirestoreOrderRepository
-import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
-import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
 import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
-import me.harrydrummond.cafeapplication.data.repository.IProductRepository
-import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 import javax.inject.Inject
 
 /**
@@ -19,11 +14,8 @@ import javax.inject.Inject
  * @see OrderDetailsActivity
  * @author Harry Drummond
  */
-class OrderDetailsViewModel: ViewModel() {
+class OrderDetailsViewModel @Inject constructor(private val orderRepository: IOrderRepository): ViewModel() {
 
-    private val userRepository: IUserRepository = FirestoreUserRepository()
-    private val productRepository: IProductRepository = FirestoreProductRepository(userRepository)
-    private val orderRepository: IOrderRepository = FirestoreOrderRepository(productRepository)
     private val _uiState: MutableLiveData<OrderDetailsUIState> = MutableLiveData(OrderDetailsUIState())
     val uiState: LiveData<OrderDetailsUIState> get() = _uiState
 

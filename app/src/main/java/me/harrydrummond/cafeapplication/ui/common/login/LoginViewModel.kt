@@ -3,16 +3,15 @@ package me.harrydrummond.cafeapplication.ui.common.login
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import me.harrydrummond.cafeapplication.ValidatedResult
+import me.harrydrummond.cafeapplication.Validators
+import me.harrydrummond.cafeapplication.data.model.Customer
 import me.harrydrummond.cafeapplication.data.model.Role
-import me.harrydrummond.cafeapplication.data.model.UserModel
-import me.harrydrummond.cafeapplication.data.repository.FirestoreOrderRepository
-import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
-import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
-import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
-import me.harrydrummond.cafeapplication.data.repository.IProductRepository
+import me.harrydrummond.cafeapplication.data.repository.sqlite.AbstractSQLiteUserRepository
+import me.harrydrummond.cafeapplication.data.repository.AuthenticatedUser
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 import javax.inject.Inject
 
@@ -24,51 +23,40 @@ import javax.inject.Inject
  * @see LoginActivity
  * @author Harry Drummond
  */
-class LoginViewModel: ViewModel() {
 
-    private val userRepository: IUserRepository = FirestoreUserRepository()
+@HiltViewModel
+class LoginViewModel @Inject constructor(private val customerRepository: IUserRepository<Customer>): ViewModel() {
+
     private val _uiState: MutableLiveData<LoginUiState> = MutableLiveData(LoginUiState())
     val uiState: LiveData<LoginUiState> = _uiState
 
-    fun login(email: String, password: String) {
-        _uiState.value = _uiState.value?.copy(loading = true)
-        val loginTask = userRepository.loginUser(email, password)
-        loginTask.addOnSuccessListener {
-            getUser(userRepository.getLoggedInUserId()!!).addOnCompleteListener { userTask ->
-                    if (userTask.isSuccessful) {
-                        val event = when (userTask.result?.role) {
-                            Role.EMPLOYEE -> Event.GoToAdminApp
-                            else -> Event.GoToCustomerApp
-                        }
-                        _uiState.value = _uiState.value?.copy(loading = false, event = event)
-                    } else {
-                        _uiState.value = _uiState.value?.copy(
-                            loading = false,
-                            errorMessage = userTask.exception?.message
-                        )
-                    }
-                }
-        }
-        loginTask.addOnFailureListener { task ->
-            when (task) {
-                is FirebaseAuthInvalidUserException,
-                is FirebaseAuthInvalidCredentialsException -> {
-                    _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Invalid login credentials")
-                }
-                else -> {
-                    _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Unknown error occurred")
-                }
-            }
+    fun login(username: String, password: String, role: Role) {
+        _uiState.postValue(_uiState.value?.copy(loading = true))
+
+        val emailValidation = Validators.validateEmail(username)
+        val passwordValidation = Validators.validatePassword(password)
+        _uiState.postValue(_uiState.value?.copy(loading = false, emailValidation = emailValidation, passwordValidation = passwordValidation))
+
+        // Validate inputs
+        if (!emailValidation.isValid || !passwordValidation.isValid) {
+            return
         }
 
+        // Run async logging in the user
+        viewModelScope.launch {
+            val customerId = customerRepository.getEntityIdByUsernameAndPassword(username, password)
+            if (customerId == -1) {
+                _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Invalid credentials"))
+                return@launch
+            }
+
+            AuthenticatedUser.getInstance().setUserId(customerId)
+            _uiState.postValue(_uiState.value?.copy(loading = false, event = if (role == Role.EMPLOYEE) Event.GoToAdminApp else Event.GoToCustomerApp))
+        }
     }
 
     fun errorMessageShown() {
-        _uiState.value = _uiState.value?.copy(errorMessage = null)
-    }
-
-    private fun getUser(uid: String): Task<UserModel?> {
-        return userRepository.getUser(uid)
+        _uiState.postValue(_uiState.value?.copy(errorMessage = null))
     }
 }
 
@@ -78,7 +66,9 @@ class LoginViewModel: ViewModel() {
 data class LoginUiState(
     val loading: Boolean = false,
     val errorMessage: String? = null,
-    val event: Event? = null
+    val event: Event? = null,
+    val emailValidation: ValidatedResult = ValidatedResult(true, null),
+    val passwordValidation: ValidatedResult = ValidatedResult(true, null)
 )
 
 /**

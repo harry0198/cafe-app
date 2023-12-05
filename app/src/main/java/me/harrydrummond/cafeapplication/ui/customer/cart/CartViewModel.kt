@@ -5,18 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import me.harrydrummond.cafeapplication.data.model.Cart
 import me.harrydrummond.cafeapplication.data.model.Order
 import me.harrydrummond.cafeapplication.data.model.Product
-import me.harrydrummond.cafeapplication.data.model.ProductQuantity
 import me.harrydrummond.cafeapplication.data.model.Status
-import me.harrydrummond.cafeapplication.data.repository.FirestoreOrderRepository
-import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
-import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
 import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
-import javax.inject.Inject
 
 /**
  * CartViewModel class which provides the business logic to the view class
@@ -88,6 +82,7 @@ class CartViewModel : ViewModel() {
         val userId = Firebase.auth.currentUser?.uid
 
         if (mappedProductQuantity.isNullOrEmpty() || userId == null) {
+            _uiState.value = _uiState.value?.copy(loading = false, event = Event.CartEmpty)
             return
         }
 
@@ -143,5 +138,6 @@ data class CartFragmentUIState(
  * Event definition for the product view model.
  */
 sealed interface Event {
+    data object CartEmpty: Event
     data object OrderPlaced: Event
 }

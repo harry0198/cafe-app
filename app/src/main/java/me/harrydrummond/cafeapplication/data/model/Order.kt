@@ -1,3 +1,10 @@
 package me.harrydrummond.cafeapplication.data.model
 
-data class Order(var orderId: String = "", val products: List<ProductQuantity> = listOf(), var status: Status = Status.NONE, var userId: String = "")
+import java.util.Date
+
+data class Order(
+    val orderId: Int,
+    val timestamp: Date,
+    val status: Status,
+    val userId: Int
+)

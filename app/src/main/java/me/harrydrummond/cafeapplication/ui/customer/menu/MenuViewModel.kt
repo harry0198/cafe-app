@@ -3,13 +3,10 @@ package me.harrydrummond.cafeapplication.ui.customer.menu
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import me.harrydrummond.cafeapplication.data.model.Product
-import me.harrydrummond.cafeapplication.data.repository.FirestoreOrderRepository
-import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
-import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
-import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 import javax.inject.Inject
 
 /**
@@ -19,10 +16,8 @@ import javax.inject.Inject
  * @see MenuFragment
  * @author Harry Drummond
  */
-class MenuViewModel : ViewModel() {
+class MenuViewModel @Inject constructor(private val productRepository: IProductRepository) : ViewModel() {
 
-    private val userRepository: IUserRepository = FirestoreUserRepository()
-    private val productRepository: IProductRepository = FirestoreProductRepository(userRepository)
     private val _uiState: MutableLiveData<MenuUiState> = MutableLiveData(MenuUiState())
     val uiState: LiveData<MenuUiState> get() = _uiState
 
@@ -30,15 +25,13 @@ class MenuViewModel : ViewModel() {
     /**
      * Refreshes the products and updates the UI State. Containers handlers for errors.
      */
-    fun refreshProducts(){
+    fun refreshProducts() {
         _uiState.value = _uiState.value?.copy(loading = true)
 
-        productRepository.getAllAvailableProducts().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                _uiState.value = _uiState.value?.copy(loading = false, products = task.result)
-            } else {
-                _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Unable to refresh products")
-            }
+        // In background fetch available products
+        viewModelScope.launch {
+            val availableProducts = productRepository.getAllAvailableProducts()
+            _uiState.postValue(_uiState.value?.copy(loading = false, products = availableProducts))
         }
     }
 

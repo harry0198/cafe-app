@@ -3,16 +3,12 @@ package me.harrydrummond.cafeapplication.ui.common.register
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
-import me.harrydrummond.cafeapplication.data.model.UserModel
-import me.harrydrummond.cafeapplication.data.repository.FirestoreOrderRepository
-import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
-import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
-import me.harrydrummond.cafeapplication.data.repository.IProductRepository
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import me.harrydrummond.cafeapplication.ValidatedResult
+import me.harrydrummond.cafeapplication.Validators
+import me.harrydrummond.cafeapplication.data.model.Customer
+import me.harrydrummond.cafeapplication.data.model.Role
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 import javax.inject.Inject
 
@@ -24,9 +20,8 @@ import javax.inject.Inject
  * @see RegisterActivity
  * @author Harry Drummond
  */
-class RegisterViewModel: ViewModel() {
+class RegisterViewModel @Inject constructor(private val customerRepository: IUserRepository<Customer>): ViewModel() {
 
-    private val userRepository: IUserRepository = FirestoreUserRepository()
     private val _uiState: MutableLiveData<RegisterUIState> = MutableLiveData(RegisterUIState())
     val uiState: LiveData<RegisterUIState> get() = _uiState
 
@@ -34,25 +29,56 @@ class RegisterViewModel: ViewModel() {
      * Registers the user using a email and password authentication method.
      * If any errors occur, an appropriate error message is posted to the UiState.
      *
+     * @param username username to sign up with
+     * @param password Password to sign up account with
+     * @param accountType Type of account to create
      * @see RegisterUIState
      */
-    fun register(email: String, password: String) {
+    fun register(username: String, password: String, accountType: Role) {
+        // Do validations
+        val validateUsername = Validators.validateEmail(username)
+        val validatePassword = Validators.validatePassword(password)
+
+        _uiState.value = _uiState.value?.copy(
+            loading = false,
+            validatedUsername = validateUsername,
+            validatedPassword = validatePassword
+        )
+
+        if (!validateUsername.isValid || !validatePassword.isValid) {
+            return
+        }
+
         _uiState.value = _uiState.value?.copy(loading = true)
 
-        userRepository.registerUser(email, password).addOnSuccessListener { task ->
-            userRepository.saveUser(userRepository.getLoggedInUserId()!!, UserModel()).addOnSuccessListener {
-                _uiState.value = _uiState.value?.copy(loading = false, event = Event.UserWasRegistered)
-            }.addOnFailureListener { _ ->
-                _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Fatal Error: Please contact an administrator.")
+        // In background, register user.
+        viewModelScope.launch {
+            when (accountType) {
+                Role.CUSTOMER -> registerCustomer(username, password)
+                Role.EMPLOYEE -> registerEmployee(username, password)
             }
-        }.addOnFailureListener { task ->
-            val error = when (task) {
-                is FirebaseAuthUserCollisionException -> "A user with this email already exists"
-                is FirebaseAuthWeakPasswordException -> "Your password is too weak"
-                else -> "An unknown error occurred"
-            }
+        }
+    }
 
-            _uiState.value = _uiState.value?.copy(errorMessage = error, loading = false)
+    private fun registerEmployee(username: String, password: String) {
+    }
+
+    private fun registerCustomer(username: String, password: String) {
+        val customer = Customer(
+            -1,
+            null,
+            null,
+            null,
+            username,
+            password,
+            true
+        )
+        val save = customerRepository.save(customer)
+
+        when (save) {
+            -3 -> _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Username taken!"))
+            -1 -> _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Unable to register"))
+            else -> _uiState.postValue(_uiState.value?.copy(loading = false, event = Event.UserWasRegistered))
         }
     }
 
@@ -77,5 +103,7 @@ sealed interface Event {
 data class RegisterUIState(
     val loading: Boolean = false,
     val errorMessage: String? = null,
-    val event: Event? = null
+    val event: Event? = null,
+    val validatedUsername: ValidatedResult = ValidatedResult(true, null),
+    val validatedPassword: ValidatedResult = ValidatedResult(true, null)
 )

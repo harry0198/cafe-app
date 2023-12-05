@@ -6,13 +6,9 @@ import androidx.lifecycle.ViewModel
 import me.harrydrummond.cafeapplication.data.model.Order
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.model.Status
-import me.harrydrummond.cafeapplication.data.repository.FirestoreOrderRepository
-import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
-import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
 import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
-import javax.inject.Inject
 
 /**
  * AdminViewOrderViewModel class which provides the business logic to the view class

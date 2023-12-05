@@ -56,7 +56,7 @@ class CartItemListViewAdapter (context: Context, var cartItems: List<Pair<Int, P
         val totalPrice = product.productPrice * quantity
 
         binding.lblTitle.text = "x$quantity ${product.productName}"
-        binding.lblSubTotal.text = "£$totalPrice"
+        binding.lblSubTotal.text = "£" + String.format("%.2f", totalPrice)
         binding.lblDesc.text = product.productDescription
 
         // If edit btn callback is null, don't display the edit btn

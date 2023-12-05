@@ -10,10 +10,6 @@ import me.harrydrummond.cafeapplication.R
 
 class UserProfileFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = UserProfileFragment()
-    }
-
     private lateinit var viewModel: UserProfileViewModel
 
     override fun onCreateView(
@@ -26,7 +22,6 @@ class UserProfileFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(UserProfileViewModel::class.java)
-        // TODO: Use the ViewModel
     }
 
 }

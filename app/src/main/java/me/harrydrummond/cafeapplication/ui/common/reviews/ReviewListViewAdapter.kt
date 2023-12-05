@@ -5,8 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import me.harrydrummond.cafeapplication.data.model.Review
-import me.harrydrummond.cafeapplication.data.model.UserReview
 import me.harrydrummond.cafeapplication.databinding.ActivityReviewListViewBinding
 
 
@@ -50,7 +48,7 @@ class ReviewListViewAdapter(context: Context, var reviewList: List<UserReview>):
         val review = reviewList.get(position)
 
         binding.lblNumber.text = "#$position"
-        binding.lblUserName.text = review.user.fullName
+        binding.lblUserName.text = "${review.user.firstName} ${review.user.lastName}"
         binding.lblReview.text = review.review.review // Wow that's not confusing at all... (gets the user's review text)
 
         return myView

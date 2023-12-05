@@ -46,7 +46,7 @@ class ProductViewActivity : AppCompatActivity() {
         viewModel.initialize(product)
 
         binding.lblProductName.text = product.productName
-        binding.lblProductPrice.text = product.productPrice.toString()
+        binding.lblProductPrice.text = String.format("%.2f", product.productPrice)
         binding.lblProductDescription.text = product.productDescription
 
         handleUIState()

@@ -61,6 +61,7 @@
         android:name="me.harrydrummond.cafeapplication.ui.common.profile.CompleteProfileFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:padding="20dp"
         app:layout_constraintBottom_toTopOf="@+id/btnSkip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

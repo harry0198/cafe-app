@@ -1,23 +1,14 @@
 package me.harrydrummond.cafeapplication.ui
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import me.harrydrummond.cafeapplication.R
-import me.harrydrummond.cafeapplication.data.repository.FirestoreProductRepository
-import me.harrydrummond.cafeapplication.data.repository.FirestoreUserRepository
-import me.harrydrummond.cafeapplication.data.repository.IProductRepository
-import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 import me.harrydrummond.cafeapplication.databinding.ActivityAppBinding
-import me.harrydrummond.cafeapplication.databinding.ActivityOrderDetailsBinding
-import me.harrydrummond.cafeapplication.ui.common.order.CartItemListViewAdapter
 import me.harrydrummond.cafeapplication.ui.common.profile.CompleteProfileViewModel
 import me.harrydrummond.cafeapplication.ui.customer.cart.CartFragment
 import me.harrydrummond.cafeapplication.ui.customer.menu.MenuFragment
-import me.harrydrummond.cafeapplication.ui.customer.orders.OrderDetailsViewModel
 import me.harrydrummond.cafeapplication.ui.customer.orders.OrdersFragment
 import me.harrydrummond.cafeapplication.ui.customer.user.UserProfileFragment
 

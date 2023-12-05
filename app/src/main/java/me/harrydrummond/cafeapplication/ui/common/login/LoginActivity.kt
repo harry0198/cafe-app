@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.Validators
 import me.harrydrummond.cafeapplication.data.model.Role
@@ -23,6 +24,7 @@ import me.harrydrummond.cafeapplication.ui.AppActivity
  * @see ActivityLoginBinding
  * @author Harry Drummond
  */
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
@@ -52,16 +54,7 @@ class LoginActivity : AppCompatActivity() {
         val email = binding.registerEmail
         val pass = binding.registerPassword
 
-        if (!Validators.validateEmail(email.text.toString())) {
-            email.error = "Please enter a valid email"
-        }
-        if (pass.text.toString().isBlank()) {
-            binding.registerPassword.error = "Please enter a password"
-        }
-
-        if (binding.registerEmail.error == null && binding.registerPassword.error == null) {
-            viewModel.login(email.text.toString(), pass.text.toString())
-        }
+        viewModel.login(email.text.toString(), pass.text.toString(), Role.CUSTOMER)
     }
 
     private fun handleUIState() {
@@ -69,6 +62,8 @@ class LoginActivity : AppCompatActivity() {
         viewModel.uiState.observe(this) { uiState ->
             // Make progress bar visible
             binding.progressBar.isVisible = uiState.loading
+            Validators.apply(uiState.emailValidation, binding.registerEmail)
+            Validators.apply(uiState.passwordValidation, binding.registerPassword)
 
             // If error messages exist, put them in a toast.
             if (uiState.errorMessage != null) {
