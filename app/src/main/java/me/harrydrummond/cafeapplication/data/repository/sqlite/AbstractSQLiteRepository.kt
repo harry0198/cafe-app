@@ -11,13 +11,13 @@ abstract class AbstractSQLiteRepository<T>(
     private val contract: BaseContract<T>
 ) : CrudRepository<T> {
 
-    fun writeContentValues(type: T): ContentValues {
-        return contract.getEntityValues(type)
+    fun writeContentValues(type: T, withPrimaryKey: Boolean): ContentValues {
+        return contract.getEntityValues(type, withPrimaryKey)
     }
 
     override fun save(type: T): Int {
         val db = helper.writableDatabase
-        val cv = writeContentValues(type)
+        val cv = writeContentValues(type, false)
 
         val success = db.insert(contract.TABLE_NAME, null, cv)
 
@@ -27,7 +27,7 @@ abstract class AbstractSQLiteRepository<T>(
 
     override fun update(type: T): Boolean {
         val db = helper.writableDatabase
-        val cv = writeContentValues(type)
+        val cv = writeContentValues(type, true)
 
         val result = db.update(contract.TABLE_NAME, cv, "${contract.ID} = ${contract.getId(type)}", null) == 1
         db.close()
@@ -35,21 +35,9 @@ abstract class AbstractSQLiteRepository<T>(
     }
 
     override fun getById(id: Int): T? {
-        val db = helper.writableDatabase
-        val sqlStatement = "SELECT * FROM ${contract.TABLE_NAME} WHERE ${contract.ID} = $id"
+        val sqlStatement = "${contract.ID} = ?"
 
-        val cursor: Cursor = db.rawQuery(sqlStatement, null)
-        val entity = if (cursor.moveToFirst()) {
-            db.close()
-            contract.toEntity(cursor)
-        } else {
-            db.close()
-            null
-        }
-
-        cursor.close()
-        db.close()
-        return entity
+        return getAllByQuery(sqlStatement,id.toString()).firstOrNull()
     }
 
     override fun delete(type: T): Boolean {
@@ -60,11 +48,20 @@ abstract class AbstractSQLiteRepository<T>(
         return result
     }
 
-    fun getAllByQuery(query: String, contract: BaseContract<T>): List<T> {
+    fun getAllByQuery(query: String?, args: String?): List<T> {
         val db = helper.writableDatabase
         val list: MutableList<T> = mutableListOf()
 
-        val cursor: Cursor =  db.rawQuery(query,null)
+        val cursor = db.query(
+            contract.TABLE_NAME,
+            arrayOf("*"),
+            query,
+            if (args != null) arrayOf(args) else null,
+            null,
+            null,
+            null
+        )
+
         while (cursor.moveToNext()) {
             list.add(contract.toEntity(cursor))
         }

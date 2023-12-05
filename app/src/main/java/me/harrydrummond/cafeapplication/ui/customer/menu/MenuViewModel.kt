@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
@@ -16,6 +17,7 @@ import javax.inject.Inject
  * @see MenuFragment
  * @author Harry Drummond
  */
+@HiltViewModel
 class MenuViewModel @Inject constructor(private val productRepository: IProductRepository) : ViewModel() {
 
     private val _uiState: MutableLiveData<MenuUiState> = MutableLiveData(MenuUiState())

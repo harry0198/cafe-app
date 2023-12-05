@@ -55,19 +55,21 @@
                 android:id="@+id/complete_profile_view"
                 android:name="me.harrydrummond.cafeapplication.ui.common.profile.CompleteProfileFragment"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                tools:layout="@layout/fragment_complete_profile" />
 
 
         </LinearLayout>
 
-        <androidx.fragment.app.FragmentContainerView
+        <Button
             android:id="@+id/logout_button"
-            android:name="me.harrydrummond.cafeapplication.ui.common.login.LogoutBtnFragment"
             android:layout_width="150dp"
-            android:layout_height="80dp"
+            android:layout_height="45dp"
+            android:theme="@style/ActionBarCaution"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="Logout" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

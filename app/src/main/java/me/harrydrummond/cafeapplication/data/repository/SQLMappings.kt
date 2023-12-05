@@ -1,11 +1,20 @@
 package me.harrydrummond.cafeapplication.data.repository
 
+import android.annotation.SuppressLint
 import android.database.Cursor
 import me.harrydrummond.cafeapplication.data.model.Customer
 import me.harrydrummond.cafeapplication.data.model.Employee
 import me.harrydrummond.cafeapplication.data.model.Order
+import me.harrydrummond.cafeapplication.data.model.OrderDetails
 import me.harrydrummond.cafeapplication.data.model.Product
+import me.harrydrummond.cafeapplication.data.model.Review
 import me.harrydrummond.cafeapplication.data.model.Status
+import me.harrydrummond.cafeapplication.data.repository.contract.CustomerContract
+import me.harrydrummond.cafeapplication.data.repository.contract.EmployeeContract
+import me.harrydrummond.cafeapplication.data.repository.contract.OrderContract
+import me.harrydrummond.cafeapplication.data.repository.contract.OrderDetailsContract
+import me.harrydrummond.cafeapplication.data.repository.contract.ProductContract
+import me.harrydrummond.cafeapplication.data.repository.contract.ReviewContract
 import java.time.Instant
 import java.util.Date
 
@@ -15,15 +24,16 @@ import java.util.Date
  *
  * @return Customer from the cursor.
  */
+@SuppressLint("Range")
 fun Cursor.toCustomer(): Customer {
     return Customer(
-        this.getInt(0),
-        this.getString(1),
-        this.getString(2),
-        this.getString(3),
-        this.getString(4),
-        this.getString(5),
-        this.getInt(6) == 1
+        this.getInt(this.getColumnIndex(CustomerContract.ID)),
+        this.getString(this.getColumnIndex(CustomerContract.FULL_NAME)),
+        this.getString(this.getColumnIndex(CustomerContract.EMAIL)),
+        this.getString(this.getColumnIndex(CustomerContract.PHONE_NO)),
+        this.getString(this.getColumnIndex(CustomerContract.USERNAME)),
+        this.getString(this.getColumnIndex(CustomerContract.PASSWORD)),
+        this.getInt(this.getColumnIndex(CustomerContract.IS_ACTIVE)) == 1
     )
 }
 
@@ -32,15 +42,16 @@ fun Cursor.toCustomer(): Customer {
  *
  * @return Employee from the cursor.
  */
+@SuppressLint("Range")
 fun Cursor.toEmployee(): Employee {
     return Employee(
-        this.getInt(0),
-        this.getString(1),
-        this.getString(2),
-        this.getString(3),
-        this.getString(4),
-        this.getString(5),
-        this.getInt(6) == 1
+        this.getInt(this.getColumnIndex(EmployeeContract.ID)),
+        this.getString(this.getColumnIndex(EmployeeContract.FULL_NAME)),
+        this.getString(this.getColumnIndex(EmployeeContract.EMAIL)),
+        this.getString(this.getColumnIndex(EmployeeContract.PHONE_NO)),
+        this.getString(this.getColumnIndex(EmployeeContract.USERNAME)),
+        this.getString(this.getColumnIndex(EmployeeContract.PASSWORD)),
+        this.getInt(this.getColumnIndex(EmployeeContract.IS_ACTIVE)) == 1
     )
 }
 
@@ -49,23 +60,50 @@ fun Cursor.toEmployee(): Employee {
  *
  * @return Order from the cursor.
  */
+@SuppressLint("Range")
 fun Cursor.toOrder(): Order {
     return Order(
-        this.getInt(0),
-        Date.from(Instant.ofEpochSecond(this.getLong(2))),
-        Status.valueOf(this.getString(3)),
-        this.getInt(1)
+        this.getInt(this.getColumnIndex(OrderContract.ID)),
+        Date.from(Instant.ofEpochSecond(this.getLong(this.getColumnIndex(OrderContract.DATE)))),
+        Status.valueOf(this.getString(this.getColumnIndex(OrderContract.STATUS))),
+        this.getInt(this.getColumnIndex(OrderContract.CUSTOMER_ID)),
+        mutableListOf()
     )
 }
 
+/**
+ * Maps a cursor to order details
+ *
+ * @return OrderDetails from cursor
+ */
+@SuppressLint("Range")
+fun Cursor.toOrderDetails(): OrderDetails {
+    return OrderDetails(
+        this.getInt(this.getColumnIndex(OrderDetailsContract.ID)),
+        this.getInt(this.getColumnIndex(OrderDetailsContract.ORDER_ID)),
+        this.getInt(this.getColumnIndex(OrderDetailsContract.PROD_ID))
+    )
+}
+
+@SuppressLint("Range")
+fun Cursor.toReview(): Review {
+    return Review(
+        this.getInt(this.getColumnIndex(ReviewContract.ID)),
+        this.getInt(this.getColumnIndex(ReviewContract.USER_ID)),
+        this.getInt(this.getColumnIndex(ReviewContract.PRODUCT_ID)),
+        this.getString(this.getColumnIndex(ReviewContract.REVIEW))
+    )
+}
+
+@SuppressLint("Range")
 fun Cursor.toProduct(): Product {
     return Product(
-        this.getInt(0),
-        this.getString(1),
-        this.getDouble(2),
-        this.getString(3), //TODO BLOB
-        this.getString(5),
-        this.getInt(4) == 1
+        this.getInt(this.getColumnIndex(ProductContract.ID)),
+        this.getString(this.getColumnIndex(ProductContract.NAME)),
+        this.getDouble(this.getColumnIndex(ProductContract.PRICE)),
+        this.getString(this.getColumnIndex(ProductContract.IMAGE)), //TODO BLOB
+        this.getString(this.getColumnIndex(ProductContract.DESCRIPTION)),
+        this.getInt(this.getColumnIndex(ProductContract.AVAILABLE)) == 1
 
     )
 }

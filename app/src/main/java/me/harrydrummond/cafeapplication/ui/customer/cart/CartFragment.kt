@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.view.isVisible
+import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.databinding.FragmentCartBinding
 import me.harrydrummond.cafeapplication.ui.common.order.CartItemListViewAdapter
@@ -24,6 +25,7 @@ import me.harrydrummond.cafeapplication.ui.common.order.CartItemListViewAdapter
  * @see FragmentCartBinding
  * @author Harry Drummond
  */
+@AndroidEntryPoint
 class CartFragment : Fragment() {
 
     private lateinit var binding: FragmentCartBinding
@@ -45,10 +47,10 @@ class CartFragment : Fragment() {
         adapter =  CartItemListViewAdapter(this.requireContext(), listOf(), { product ->
             // Edit Listener to update the product quantity.
             popupEditQuantity("Edit Amount", 1) { result ->
-                viewModel.updateQuantity(product.productId, result)
+                viewModel.updateQuantity(product, result)
             }
         }, { product ->
-            viewModel.updateQuantity(product.productId, 0)
+            viewModel.updateQuantity(product, 0)
         })
         binding.cartOrderList.adapter = adapter
 

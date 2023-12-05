@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
 import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.databinding.ActivityAdminAppBinding
 import me.harrydrummond.cafeapplication.ui.admin.accounts.AdminAccountsFragment
@@ -20,6 +22,7 @@ import me.harrydrummond.cafeapplication.ui.common.profile.CompleteProfileViewMod
  * @see AdminOrdersFragment
  * @author Harry Drummond
  */
+@AndroidEntryPoint
 class AdminAppActivity : AppCompatActivity(), CompleteProfileViewModel.ValidationListener {
     private lateinit var binding: ActivityAdminAppBinding
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -3,12 +3,16 @@ package me.harrydrummond.cafeapplication.ui.admin.orders
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import me.harrydrummond.cafeapplication.data.model.Order
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.model.Status
 import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
+import javax.inject.Inject
 
 /**
  * AdminViewOrderViewModel class which provides the business logic to the view class
@@ -17,12 +21,10 @@ import me.harrydrummond.cafeapplication.data.repository.IUserRepository
  * @see AdminViewOrderActivity
  * @author Harry Drummond
  */
-class AdminViewOrderViewModel: ViewModel() {
+@HiltViewModel
+class AdminViewOrderViewModel @Inject constructor(private val orderRepository: IOrderRepository): ViewModel() {
 
-    private var order: Order? = null
-    private val userRepository: IUserRepository = FirestoreUserRepository()
-    private val productRepository: IProductRepository = FirestoreProductRepository(userRepository)
-    private val orderRepository: IOrderRepository = FirestoreOrderRepository(productRepository)
+    private lateinit var order: Order
     private val _uiState: MutableLiveData<OrderUiState> = MutableLiveData(OrderUiState())
     val orderUiState: LiveData<OrderUiState> get() = _uiState
 
@@ -33,24 +35,8 @@ class AdminViewOrderViewModel: ViewModel() {
      *
      * @param orderId Id in the database of the order
      */
-    fun initialize(orderId: String) {
-        _uiState.value = _uiState.value?.copy(isLoading = true)
-
-        orderRepository.getOrder(orderId).continueWith {
-            val order = it.result
-            this.order = order
-            if (it.isSuccessful && order != null) {
-                orderRepository.fullLoadOrderProducts(order).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        _uiState.value = _uiState.value?.copy(isLoading = false, productData = task.result ?: emptyList())
-                    } else {
-                        _uiState.value = _uiState.value?.copy(isLoading = false, errorMessage = "An error occurred")
-                    }
-                }
-            } else {
-                _uiState.value = _uiState.value?.copy(isLoading = false, errorMessage = "An error occurred")
-            }
-        }
+    fun initialize(order: Order) {
+        this.order = order
     }
 
     /**
@@ -71,14 +57,18 @@ class AdminViewOrderViewModel: ViewModel() {
     fun changeOrderStatus(status: Status) {
         _uiState.value = _uiState.value?.copy(isLoading = true)
 
-        order?.let {
-            it.status = status
-            orderRepository.saveOrder(it).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    _uiState.value = _uiState.value?.copy(isLoading = false, orderStatus = status)
-                } else {
-                    _uiState.value = _uiState.value?.copy(isLoading = false, errorMessage = "Failed to Update Status")
-                }
+        // Save order status in background
+        viewModelScope.launch {
+            val saved = orderRepository.save(order.copy(status = status))
+            if (saved != -1) {
+                _uiState.postValue(_uiState.value?.copy(isLoading = false, orderStatus = status))
+            } else {
+                _uiState.postValue(
+                    _uiState.value?.copy(
+                        isLoading = false,
+                        errorMessage = "Failed to Update Status"
+                    )
+                )
             }
         }
     }

@@ -49,7 +49,7 @@ class OrderListViewAdapter (context: Context, var orderItems: List<Order>, val o
 
         // Update the view
         val order = getItem(position)
-        val total = order.products.sumOf { it.quantity }
+        val total = order.products.size
 
         binding.lblTitle.text = "Order ID: ${order.orderId}"
         binding.lblItemCount.text = "x$total"

@@ -6,8 +6,10 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.R
+import me.harrydrummond.cafeapplication.data.model.Order
 import me.harrydrummond.cafeapplication.data.model.Status
 import me.harrydrummond.cafeapplication.databinding.ActivityAdminViewOrderBinding
 import me.harrydrummond.cafeapplication.databinding.ActivityOrderDetailsBinding
@@ -24,6 +26,7 @@ import me.harrydrummond.cafeapplication.ui.customer.orders.OrderDetailsViewModel
  * @see ActivityAdminViewOrderBinding
  * @author Harry Drummond
  */
+@AndroidEntryPoint
 class AdminViewOrderActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAdminViewOrderBinding
     private lateinit var viewModel: AdminViewOrderViewModel
@@ -42,10 +45,10 @@ class AdminViewOrderActivity : AppCompatActivity() {
 
         binding.detailListView.adapter = adapter
 
-        val productId = intent.getStringExtra(IntentExtra.ORDER_ID)
+        val order = intent.getParcelableExtra(IntentExtra.ORDER_OBJ, Order::class.java)
 
         // No product id is fatal. There's no way this view can be shown.
-        viewModel.initialize(productId!!)
+        viewModel.initialize(order!!)
 
         handleUIState()
     }

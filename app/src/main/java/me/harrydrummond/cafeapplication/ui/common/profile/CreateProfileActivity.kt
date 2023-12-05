@@ -9,6 +9,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.databinding.ActivityCreateProfileBinding
 import me.harrydrummond.cafeapplication.databinding.ActivityLoginBinding
@@ -26,6 +27,7 @@ import me.harrydrummond.cafeapplication.ui.common.register.RegisterViewModel
  * @see ActivityCreateProfileBinding
  * @author Harry Drummond
  */
+@AndroidEntryPoint
 class CreateProfileActivity : AppCompatActivity(), CompleteProfileViewModel.ValidationListener {
 
     private lateinit var binding: ActivityCreateProfileBinding

@@ -19,15 +19,14 @@ class SQLiteProductRepository(helper: DataBaseHelper): AbstractSQLiteRepository<
      * @inheritDoc
      */
     override fun getAllAvailableProducts(): List<Product> {
-        val query = "SELECT * FROM ${ProductContract.TABLE_NAME} WHERE ${ProductContract.AVAILABLE} = 1"
-        return getAllByQuery(query, ProductContract)
+        val query = "${ProductContract.AVAILABLE} = ?"
+        return getAllByQuery(query, "1")
     }
 
     /**
      * @inheritDoc
      */
     override fun getAllProducts(): List<Product> {
-        val query = "SELECT * FROM ${ProductContract.TABLE_NAME}"
-        return getAllByQuery(query, ProductContract)
+        return getAllByQuery(null, null)
     }
 }

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import dagger.hilt.android.AndroidEntryPoint
+import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.Validators
 import me.harrydrummond.cafeapplication.data.model.Role
@@ -29,12 +30,15 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private lateinit var viewModel: LoginViewModel
+    private lateinit var role: Role
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
+
+        role = intent.getParcelableExtra(IntentExtra.ACCOUNT_TYPE, Role::class.java)!!
 
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -51,10 +55,10 @@ class LoginActivity : AppCompatActivity() {
      */
     fun onLoginClick(view: View) {
 
-        val email = binding.registerEmail
+        val email = binding.username
         val pass = binding.registerPassword
 
-        viewModel.login(email.text.toString(), pass.text.toString(), Role.CUSTOMER)
+        viewModel.login(email.text.toString(), pass.text.toString(), role)
     }
 
     private fun handleUIState() {
@@ -62,7 +66,7 @@ class LoginActivity : AppCompatActivity() {
         viewModel.uiState.observe(this) { uiState ->
             // Make progress bar visible
             binding.progressBar.isVisible = uiState.loading
-            Validators.apply(uiState.emailValidation, binding.registerEmail)
+            Validators.apply(uiState.usernameValidation, binding.username)
             Validators.apply(uiState.passwordValidation, binding.registerPassword)
 
             // If error messages exist, put them in a toast.

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import me.harrydrummond.cafeapplication.data.model.Review
 import me.harrydrummond.cafeapplication.databinding.ActivityReviewListViewBinding
 
 
@@ -16,7 +17,7 @@ import me.harrydrummond.cafeapplication.databinding.ActivityReviewListViewBindin
  *
  * @see ReviewListView
  */
-class ReviewListViewAdapter(context: Context, var reviewList: List<UserReview>): BaseAdapter() {
+class ReviewListViewAdapter(context: Context, var reviewList: List<Review>): BaseAdapter() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -24,7 +25,7 @@ class ReviewListViewAdapter(context: Context, var reviewList: List<UserReview>):
         return reviewList.size
     }
 
-    override fun getItem(p0: Int): UserReview {
+    override fun getItem(p0: Int): Review {
         return reviewList[p0]
     }
 
@@ -48,8 +49,8 @@ class ReviewListViewAdapter(context: Context, var reviewList: List<UserReview>):
         val review = reviewList.get(position)
 
         binding.lblNumber.text = "#$position"
-        binding.lblUserName.text = "${review.user.firstName} ${review.user.lastName}"
-        binding.lblReview.text = review.review.review // Wow that's not confusing at all... (gets the user's review text)
+        binding.lblUserName.text = "TODO"
+        binding.lblReview.text = review.review
 
         return myView
     }

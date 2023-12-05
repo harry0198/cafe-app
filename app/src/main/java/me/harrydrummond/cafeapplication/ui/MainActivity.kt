@@ -32,7 +32,20 @@ class MainActivity : AppCompatActivity() {
      * Event handler for the login button
      */
     fun onLoginButtonClicked(view: View) {
-        val intent = Intent(this, LoginActivity::class.java)
+        val intent = Intent(this, LoginActivity::class.java).apply {
+            putExtra(IntentExtra.ACCOUNT_TYPE, Role.CUSTOMER)
+        }
+        startActivity(intent)
+    }
+
+    /**
+     * Event handler for employee login portal.
+     */
+    fun onEmployeeLoginClicked(view: View) {
+        val intent = Intent(this, LoginActivity::class.java).apply {
+            putExtra(IntentExtra.ACCOUNT_TYPE, Role.EMPLOYEE)
+        }
+
         startActivity(intent)
     }
 

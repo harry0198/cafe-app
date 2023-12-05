@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.Validators
@@ -27,6 +28,7 @@ import me.harrydrummond.cafeapplication.ui.common.profile.CreateProfileActivity
  * @see ActivityRegisterBinding
  * @author Harry Drummond
  */
+@AndroidEntryPoint
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
@@ -71,6 +73,8 @@ class RegisterActivity : AppCompatActivity() {
                 Toast.makeText(this, uiState.errorMessage, Toast.LENGTH_SHORT).show()
                 viewModel.errorMessageShown()
             }
+            Validators.apply(uiState.validatedUsername, binding.registerEmail)
+            Validators.apply(uiState.validatedPassword, binding.registerPassword)
             if (uiState.event != null) {
                 when (uiState.event) {
                     Event.UserWasRegistered -> {

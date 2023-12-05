@@ -3,14 +3,23 @@ package me.harrydrummond.cafeapplication.ui.customer.cart
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import me.harrydrummond.cafeapplication.data.model.Cart
 import me.harrydrummond.cafeapplication.data.model.Order
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.model.Status
+import me.harrydrummond.cafeapplication.data.repository.AuthenticatedUser
 import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
+import me.harrydrummond.cafeapplication.logic.mapDuplicatesToQuantity
+import java.time.Instant
+import java.util.Date
+import javax.inject.Inject
 
 /**
  * CartViewModel class which provides the business logic to the view class
@@ -19,11 +28,9 @@ import me.harrydrummond.cafeapplication.data.repository.IUserRepository
  * @see CartFragment
  * @author Harry Drummond
  */
-class CartViewModel : ViewModel() {
+@HiltViewModel
+class CartViewModel @Inject constructor(private val orderRepository: IOrderRepository): ViewModel() {
 
-    private val userRepository: IUserRepository = FirestoreUserRepository()
-    private val productRepository: IProductRepository = FirestoreProductRepository(userRepository)
-    private val orderRepository: IOrderRepository = FirestoreOrderRepository(productRepository)
     private val _uiState: MutableLiveData<CartFragmentUIState> = MutableLiveData(CartFragmentUIState())
     val uiState: LiveData<CartFragmentUIState> get() = _uiState
 
@@ -36,19 +43,16 @@ class CartViewModel : ViewModel() {
     fun refreshCart() {
         _uiState.value = _uiState.value?.copy(loading = true)
 
-        userRepository.partialLoadUserCart().addOnCompleteListener { cartTask ->
-            val cart = cartTask.result
-            if (cartTask.isSuccessful && cart != null) {
-                productRepository.fullLoadUserCart(cart).addOnCompleteListener { listTask ->
-                        if (listTask.isSuccessful) {
-                            _uiState.value = _uiState.value?.copy(loading = false, cartProducts = listTask.result ?: emptyList())
-                        } else {
-                            _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Failed to load cart fully")
-                        }
-                    }
-            } else {
-                _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Failed to load cart partially")
-            }
+        // Refresh in background
+        viewModelScope.launch {
+            val products = Cart.getInstance().getProducts()
+            val mappedProducts = products.mapDuplicatesToQuantity()
+            _uiState.postValue(
+                _uiState.value?.copy(
+                    loading = false,
+                    cartProducts = mappedProducts
+                )
+            )
         }
     }
 
@@ -60,14 +64,12 @@ class CartViewModel : ViewModel() {
      *
      * @see Cart
      */
-    fun updateQuantity(productId: String, quantity: Int) {
-        userRepository.partialLoadUserCart().addOnCompleteListener { cartTask ->
-            val cart = cartTask.result
-            if (cartTask.isSuccessful && cart != null) {
-                cart.updateCartItem(productId, quantity)
-                userRepository.saveUserCart(cart).addOnCompleteListener { refreshCart() }
-            }
-        }
+    fun updateQuantity(product: Product, quantity: Int) {
+
+        Cart.getInstance().clearProductsMatching(product)
+        Cart.getInstance().addProduct(product, quantity)
+
+        refreshCart()
     }
 
     /**
@@ -76,28 +78,36 @@ class CartViewModel : ViewModel() {
     fun placeOrder() {
         _uiState.value = _uiState.value?.copy(loading = true)
 
-        val mappedProductQuantity = _uiState.value?.cartProducts?.map { item ->
-            ProductQuantity(item.second.productId, item.first)
-        }
-        val userId = Firebase.auth.currentUser?.uid
+        // Place order in background
+        viewModelScope.launch {
+            val cartProducts: MutableList<Product> = mutableListOf()
+            cartProducts.addAll(Cart.getInstance().getProducts())
 
-        if (mappedProductQuantity.isNullOrEmpty() || userId == null) {
-            _uiState.value = _uiState.value?.copy(loading = false, event = Event.CartEmpty)
-            return
-        }
+            if (cartProducts.isEmpty()) {
+                _uiState.postValue(_uiState.value?.copy(loading = false, event = Event.CartEmpty))
+                return@launch
+            }
 
-        val order = Order(
-            products = mappedProductQuantity,
-            status = Status.NONE,
-            userId = userId
-        )
+            val order = Order(
+                products = cartProducts,
+                status = Status.NONE,
+                userId = AuthenticatedUser.getInstance().getUserId(),
+                orderId = -1,
+                timestamp = Date.from(Instant.now())
+            )
 
-        orderRepository.saveOrder(order).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                _uiState.value = _uiState.value?.copy(loading = false, event = Event.OrderPlaced)
+            val saved = orderRepository.save(order)
+
+            if (saved != -1) {
+                _uiState.postValue(_uiState.value?.copy(loading = false, event = Event.OrderPlaced))
                 clearCart()
             } else {
-                _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Unable to place order")
+                _uiState.postValue(
+                    _uiState.value?.copy(
+                        loading = false,
+                        errorMessage = "Unable to place order"
+                    )
+                )
             }
         }
     }
@@ -118,7 +128,9 @@ class CartViewModel : ViewModel() {
 
     private fun clearCart() {
         // Save user cart as empty and refresh
-        userRepository.saveUserCart(Cart(mutableListOf())).addOnSuccessListener {
+        viewModelScope.launch {
+            Cart.getInstance().clear()
+        }.invokeOnCompletion {
             refreshCart()
         }
     }

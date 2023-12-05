@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.tasks.Task
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import me.harrydrummond.cafeapplication.ValidatedResult
 import me.harrydrummond.cafeapplication.Validators
@@ -21,6 +22,7 @@ import javax.inject.Inject
  * @see CompleteProfileFragment
  * @author Harry Drummond
  */
+@HiltViewModel
 class CompleteProfileViewModel @Inject constructor(private val customerRepository: IUserRepository<Customer>) : ViewModel() {
 
     private val _uiState: MutableLiveData<CreateProfileUiState> = MutableLiveData(
@@ -50,7 +52,8 @@ class CompleteProfileViewModel @Inject constructor(private val customerRepositor
                     _uiState.value?.copy(
                         loading = false,
                         fullName = customer.fullName ?: "",
-                        phoneNumber = customer.phoneNo ?: ""
+                        phoneNumber = customer.phoneNo ?: "",
+                        email = customer.email ?: ""
                     )
             } else {
                 _uiState.postValue(
@@ -67,18 +70,21 @@ class CompleteProfileViewModel @Inject constructor(private val customerRepositor
      * Saves the user profile information to the database. If it is unable to save, the ui State
      * is updated with the error messages.
      *
+     * @param email Email of user
      * @param fullName The full name of the user
      * @param phoneNumber The phone number of the user
      */
-    fun saveProfileInformation(fullName: String, phoneNumber: String) {
+    fun saveProfileInformation(fullName: String, phoneNumber: String, email: String) {
         _uiState.value = _uiState.value?.copy(loading = true)
 
         viewModelScope.launch {
             // Check validation
             val fullNameValidated = Validators.validateNotEmpty(fullName)
             val phoneNumberValidated = Validators.validatePhoneNumber(phoneNumber)
+            val emailValidated = Validators.validateEmail(email)
             _uiState.value = _uiState.value?.copy(
                 loading = false,
+                emailValidated = emailValidated,
                 fullNameValidated = fullNameValidated,
                 phoneNumberValidated = phoneNumberValidated
             )
@@ -136,7 +142,9 @@ class CompleteProfileViewModel @Inject constructor(private val customerRepositor
         val errorMessage: String? = null,
         val event: Event? = null,
         val fullName: String = "",
+        val email: String = "",
         val phoneNumber: String = "",
+        var emailValidated: ValidatedResult = ValidatedResult(true,null),
         val fullNameValidated: ValidatedResult = ValidatedResult(true, null),
         val phoneNumberValidated: ValidatedResult = ValidatedResult(true, null)
     )

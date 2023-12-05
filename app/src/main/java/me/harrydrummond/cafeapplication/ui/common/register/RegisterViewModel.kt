@@ -4,11 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import me.harrydrummond.cafeapplication.ValidatedResult
 import me.harrydrummond.cafeapplication.Validators
 import me.harrydrummond.cafeapplication.data.model.Customer
+import me.harrydrummond.cafeapplication.data.model.Employee
 import me.harrydrummond.cafeapplication.data.model.Role
+import me.harrydrummond.cafeapplication.data.repository.AuthenticatedUser
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 import javax.inject.Inject
 
@@ -20,7 +23,8 @@ import javax.inject.Inject
  * @see RegisterActivity
  * @author Harry Drummond
  */
-class RegisterViewModel @Inject constructor(private val customerRepository: IUserRepository<Customer>): ViewModel() {
+@HiltViewModel
+class RegisterViewModel @Inject constructor(private val customerRepository: IUserRepository<Customer>, private val employeeRepository: IUserRepository<Employee>): ViewModel() {
 
     private val _uiState: MutableLiveData<RegisterUIState> = MutableLiveData(RegisterUIState())
     val uiState: LiveData<RegisterUIState> get() = _uiState
@@ -36,7 +40,7 @@ class RegisterViewModel @Inject constructor(private val customerRepository: IUse
      */
     fun register(username: String, password: String, accountType: Role) {
         // Do validations
-        val validateUsername = Validators.validateEmail(username)
+        val validateUsername = Validators.validateUsername(username)
         val validatePassword = Validators.validatePassword(password)
 
         _uiState.value = _uiState.value?.copy(
@@ -61,6 +65,17 @@ class RegisterViewModel @Inject constructor(private val customerRepository: IUse
     }
 
     private fun registerEmployee(username: String, password: String) {
+        val employee = Employee(
+            -1,
+            null,
+            null,
+            null,
+            username,
+            password,
+            true
+        )
+        val save = employeeRepository.save(employee)
+        saveCodeHandler(save)
     }
 
     private fun registerCustomer(username: String, password: String) {
@@ -75,6 +90,12 @@ class RegisterViewModel @Inject constructor(private val customerRepository: IUse
         )
         val save = customerRepository.save(customer)
 
+        saveCodeHandler(save)
+    }
+
+    private fun saveCodeHandler(save: Int) {
+        // Handles the codes save outputs
+        AuthenticatedUser.getInstance().setUserId(save)
         when (save) {
             -3 -> _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Username taken!"))
             -1 -> _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Unable to register"))

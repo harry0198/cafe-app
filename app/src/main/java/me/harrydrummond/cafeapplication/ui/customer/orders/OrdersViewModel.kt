@@ -3,10 +3,13 @@ package me.harrydrummond.cafeapplication.ui.customer.orders
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import me.harrydrummond.cafeapplication.data.model.Order
+import me.harrydrummond.cafeapplication.data.repository.AuthenticatedUser
 import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
+import javax.inject.Inject
 
 /**
  * OrdersViewModel class which provides the business logic to the view class
@@ -15,11 +18,9 @@ import me.harrydrummond.cafeapplication.data.repository.IUserRepository
  * @see OrdersFragment
  * @author Harry Drummond
  */
-class OrdersViewModel : ViewModel() {
+@HiltViewModel
+class OrdersViewModel @Inject constructor(private val orderRepository: IOrderRepository) : ViewModel() {
 
-    private val userRepository: IUserRepository = FirestoreUserRepository()
-    private val productRepository: IProductRepository = FirestoreProductRepository(userRepository)
-    private val orderRepository: IOrderRepository = FirestoreOrderRepository(productRepository)
     private val _uiState: MutableLiveData<OrdersUIState> = MutableLiveData(OrdersUIState())
     val uiState: LiveData<OrdersUIState> get() = _uiState
 
@@ -30,13 +31,8 @@ class OrdersViewModel : ViewModel() {
     fun refreshOrders() {
         _uiState.value = _uiState.value?.copy(loading = true)
 
-        orderRepository.getOrdersByUser().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                _uiState.value = _uiState.value?.copy(loading = false, orders = task.result)
-            } else {
-                _uiState.value = _uiState.value?.copy(loading = false, errorMessage = "Failed to update orders")
-            }
-        }
+        val orders = orderRepository.getOrdersByUserId(AuthenticatedUser.getInstance().getUserId())
+        _uiState.postValue(_uiState.value?.copy(loading = false, orders = orders))
     }
 
     /**

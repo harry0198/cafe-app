@@ -37,4 +37,8 @@ class AuthenticatedUser private constructor() {
     fun getUserRole(): Role? {
         return role
     }
+
+    fun logout() {
+        setUserId(-1)
+    }
 }

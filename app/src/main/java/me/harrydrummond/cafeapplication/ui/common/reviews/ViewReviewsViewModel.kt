@@ -3,16 +3,21 @@ package me.harrydrummond.cafeapplication.ui.common.reviews
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.model.Review
+import me.harrydrummond.cafeapplication.data.repository.AuthenticatedUser
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
+import me.harrydrummond.cafeapplication.data.repository.IReviewRepository
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
+import javax.inject.Inject
 
-class ViewReviewsViewModel: ViewModel() {
+@HiltViewModel
+class ViewReviewsViewModel @Inject constructor(private val reviewRepository: IReviewRepository): ViewModel() {
 
     private lateinit var product: Product
-    private val userRepository: IUserRepository = FirestoreUserRepository()
-    private val productRepository: IProductRepository = FirestoreProductRepository(userRepository)
     private val _uiState: MutableLiveData<ViewReviewsUIState> = MutableLiveData(ViewReviewsUIState())
     val uiState: LiveData<ViewReviewsUIState> get() = _uiState
 
@@ -28,15 +33,31 @@ class ViewReviewsViewModel: ViewModel() {
     /**
      * Saves a review to the database
      *
-     * @param review Review to save
+     * @param reviewStr Review to save
      */
-    fun saveReview(review: String) {
+    fun saveReview(reviewStr: String) {
         _uiState.value = _uiState.value?.copy(loading = true)
-        val userId = userRepository.getLoggedInUserId()
-        if (userId != null){
-            productRepository.saveReview(product.productId, Review(userId, review))
-            _uiState.value = _uiState.value?.copy(loading = false, event = Event.ReviewSaved)
-            updateReviews()
+
+        val review = Review(
+            -1,
+            AuthenticatedUser.getInstance().getUserId(),
+            product.productId,
+            reviewStr
+        )
+
+        viewModelScope.launch {
+            val saved = reviewRepository.save(review)
+            if (saved != -1) {
+                _uiState.value = _uiState.value?.copy(loading = false, event = Event.ReviewSaved)
+                updateReviews()
+            } else {
+                _uiState.postValue(
+                    _uiState.value?.copy(
+                        loading = false,
+                        errorMessage = "Failed to save review."
+                    )
+                )
+            }
         }
     }
 
@@ -46,15 +67,8 @@ class ViewReviewsViewModel: ViewModel() {
     private fun updateReviews() {
         _uiState.value = _uiState.value?.copy(loading = true)
 
-        productRepository.getUserReviewsForProduct(productId = product.productId) {
-            if (it != null) {
-                _uiState.value = _uiState.value?.copy(reviews = it, loading = false)
-            } else {
-                _uiState.value =
-                    _uiState.value?.copy(loading = false, errorMessage = "Could not update review list")
-            }
-        }
-
+        val reviews = reviewRepository.getReviewsByProductId(product.productId)
+        _uiState.postValue(_uiState.value?.copy(loading = false, reviews = reviews))
     }
 
     /**
@@ -79,7 +93,7 @@ class ViewReviewsViewModel: ViewModel() {
         val loading: Boolean = false,
         val errorMessage: String? = null,
         val event: Event? = null,
-        val reviews: List<UserReview> = emptyList()
+        val reviews: List<Review> = emptyList()
     )
 
     /**

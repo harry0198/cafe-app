@@ -14,7 +14,7 @@ interface BaseContract<T> {
     val ID: String
     val CREATE_TABLE: String
 
-    fun getEntityValues(entity: T): ContentValues
+    fun getEntityValues(entity: T, withPrimaryKey: Boolean): ContentValues
     fun getId(entity: T): Int
     fun toEntity(cursor: Cursor): T
 }

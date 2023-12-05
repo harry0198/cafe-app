@@ -15,41 +15,38 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/lblFirstName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="@string/first_name_label"
+            android:text="Email"
             android:textColor="?attr/colorPrimary"
             android:textSize="16sp"
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/firstName"
+            android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:autofillHints="name"
+            android:autofillHints="emailAddress"
             android:ems="10"
-            android:hint="@string/first_name_hint"
-            android:inputType="textPersonName" />
-
+            android:hint="Enter your email address"
+            android:inputType="textEmailAddress" />
         <TextView
-            android:id="@+id/lblLastName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="@string/last_name_label"
+            android:text="Full Name"
             android:textColor="?attr/colorPrimary"
             android:textSize="16sp"
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/lastName"
+            android:id="@+id/fullName"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:autofillHints="name"
             android:ems="10"
-            android:hint="@string/last_name_hint"
+            android:hint="Enter your full name"
             android:inputType="textPersonName" />
 
         <TextView

@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import me.harrydrummond.cafeapplication.IntentExtra
+import me.harrydrummond.cafeapplication.data.model.Order
 import me.harrydrummond.cafeapplication.databinding.ActivityOrderDetailsBinding
 import me.harrydrummond.cafeapplication.databinding.FragmentOrdersBinding
 import me.harrydrummond.cafeapplication.ui.common.order.CartItemListViewAdapter
@@ -39,7 +40,7 @@ class OrderDetailsActivity : AppCompatActivity() {
 
         binding.detailListView.adapter = adapter
 
-        val productId = intent.getStringExtra(IntentExtra.ORDER_ID)
+        val productId = intent.getParcelableExtra(IntentExtra.ORDER_OBJ, Order::class.java)
 
         // No product id is fatal. There's no way this view can be shown.
         viewModel.initialize(productId!!)

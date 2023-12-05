@@ -6,19 +6,26 @@ import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import me.harrydrummond.cafeapplication.data.model.Customer
 import me.harrydrummond.cafeapplication.data.model.Employee
+import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
+import me.harrydrummond.cafeapplication.data.repository.IReviewRepository
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 import me.harrydrummond.cafeapplication.data.repository.contract.CustomerContract
 import me.harrydrummond.cafeapplication.data.repository.contract.EmployeeContract
+import me.harrydrummond.cafeapplication.data.repository.contract.OrderContract
+import me.harrydrummond.cafeapplication.data.repository.contract.OrderDetailsContract
 import me.harrydrummond.cafeapplication.data.repository.contract.ProductContract
+import me.harrydrummond.cafeapplication.data.repository.contract.ReviewContract
 
-private const val DataBaseName = "Database.db"
+private const val DataBaseName = "Cafe.db"
 private const val ver : Int = 1
 class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null, ver) {
 
     val customerRepository: IUserRepository<Customer> = SQLiteCustomerRepository(this)
     val productRepository: IProductRepository = SQLiteProductRepository(this)
     val employeeRepository: IUserRepository<Employee> = SQLiteEmployeeRepository(this)
+    val orderRepository: IOrderRepository = SQLiteOrderRepository(this)
+    val reviewRepository: IReviewRepository = SQLiteReviewRepository(this)
 
     override fun onCreate(db: SQLiteDatabase?) {
         val database = db ?: return
@@ -28,8 +35,11 @@ class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName,
             database.execSQL(CustomerContract.CREATE_TABLE)
             database.execSQL(ProductContract.CREATE_TABLE)
             database.execSQL(EmployeeContract.CREATE_TABLE)
+            database.execSQL(OrderContract.CREATE_TABLE)
+            database.execSQL(OrderDetailsContract.CREATE_TABLE)
+            database.execSQL(ReviewContract.CREATE_TABLE)
         } catch (e: SQLiteException) {
-
+            e.printStackTrace()
         }
     }
 

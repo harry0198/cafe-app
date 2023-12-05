@@ -44,11 +44,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="@string/coffee_shop"
                 android:fontFamily="@font/roboto_medium"
+                android:text="@string/coffee_shop"
                 android:textColor="?attr/colorPrimary"
-                android:textSize="28sp"
                 android:textFontWeight="1000"
+                android:textSize="28sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -60,37 +60,52 @@
                 android:layout_marginStart="60dp"
                 android:layout_marginTop="30dp"
                 android:layout_marginEnd="60dp"
-                android:textAlignment="center"
-                android:textFontWeight="500"
-                android:textColor="?attr/colorSecondary"
                 android:fontFamily="@font/roboto_medium"
                 android:text="@string/main_subheading"
+                android:textAlignment="center"
+                android:textColor="?attr/colorSecondary"
+                android:textFontWeight="500"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
 
             <Button
                 android:id="@+id/btnLogIn"
-                android:layout_width="100dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="90dp"
-                android:layout_marginBottom="50dp"
-                android:theme="@style/ButtonGreen"
-                android:text="@string/login_btn"
+                android:layout_marginBottom="5dp"
                 android:onClick="onLoginButtonClicked"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:text="@string/login_btn"
+                android:theme="@style/ButtonGreen"
+                app:layout_constraintBottom_toTopOf="@+id/btnSignUp"
+                app:layout_constraintEnd_toEndOf="@+id/btnSignUp"
+                app:layout_constraintHorizontal_bias="0.032"
+                app:layout_constraintStart_toStartOf="@+id/btnSignUp" />
 
             <Button
                 android:id="@+id/btnSignUp"
-                android:layout_width="100dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="90dp"
-                android:theme="@style/ButtonGreen"
-                android:text="@string/sign_up_btn"
+                android:layout_marginBottom="5dp"
                 android:onClick="onRegisterButtonClicked"
-                app:layout_constraintBaseline_toBaselineOf="@+id/btnLogIn"
-                app:layout_constraintEnd_toEndOf="parent" />
+                android:text="@string/sign_up_btn"
+                android:theme="@style/ButtonGreen"
+                app:layout_constraintBottom_toTopOf="@+id/btnEmployeeLogin"
+                app:layout_constraintEnd_toEndOf="@+id/btnEmployeeLogin"
+                app:layout_constraintStart_toStartOf="@+id/btnEmployeeLogin" />
+
+            <Button
+                android:id="@+id/btnEmployeeLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:onClick="onEmployeeLoginClicked"
+                android:text="Employee Login"
+                android:textColor="@color/green"
+                android:theme="@style/ButtonNoBackground"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

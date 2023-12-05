@@ -64,12 +64,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <androidx.fragment.app.FragmentContainerView
+        <Button
             android:id="@+id/logout_button"
-            android:name="me.harrydrummond.cafeapplication.ui.common.login.LogoutBtnFragment"
-            android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:theme="@style/ActionBarCaution"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="Logout" />
 
         <Button
             android:id="@+id/btnCreateAdminAccount"

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
+import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.databinding.ActivityCreateProfileBinding
 import me.harrydrummond.cafeapplication.databinding.FragmentOrdersBinding
@@ -25,6 +26,7 @@ import me.harrydrummond.cafeapplication.ui.common.profile.CreateProfileViewModel
  * @see FragmentOrdersBinding
  * @author Harry Drummond
  */
+@AndroidEntryPoint
 class OrdersFragment : Fragment() {
 
     private lateinit var adapter: OrderListViewAdapter
@@ -48,10 +50,10 @@ class OrdersFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Set the order list view adapter to be empty
-        adapter =  OrderListViewAdapter(this.requireContext(), emptyList()) { product ->
+        adapter =  OrderListViewAdapter(this.requireContext(), emptyList()) { order ->
             // On click of an order list view, send to order details activity
             val intent = Intent(requireContext(), OrderDetailsActivity::class.java)
-            intent.putExtra(IntentExtra.ORDER_ID, product.orderId)
+            intent.putExtra(IntentExtra.ORDER_OBJ, order)
             startActivity(intent)
         }
         binding.ordersList.adapter = adapter
@@ -66,7 +68,7 @@ class OrdersFragment : Fragment() {
     }
 
     private fun handleUIState() {
-        viewModel.uiState.observe(this) { uiState ->
+        viewModel.uiState.observe(viewLifecycleOwner) { uiState ->
             binding.progressBar.isVisible = uiState.loading
             if (uiState.errorMessage != null) {
                 Toast.makeText(requireContext(), uiState.errorMessage, Toast.LENGTH_SHORT).show()

@@ -8,14 +8,14 @@ import me.harrydrummond.cafeapplication.data.repository.toOrder
 import me.harrydrummond.cafeapplication.data.repository.toProduct
 
 object OrderContract : BaseContract<Order> {
-    const val CUSTOMER_ID = "CusId"
+    const val CUSTOMER_ID = "OrderCusId"
     const val DATE = "OrderDate"
     const val STATUS = "OrderStatus"
 
-    override val TABLE_NAME = "Order"
+    override val TABLE_NAME = "CafeOrder"
     override val ID = "OrderId"
-    override val CREATE_TABLE = "CREATE TABLE $TABLE_NAME ( $ID INTEGER PRIMARY KEY AUTOINCREMENT, $CUSTOMER_ID INTEGER, " +
-            "$DATE NUMERIC, $STATUS TEXT )"
+    override val CREATE_TABLE = "CREATE TABLE $TABLE_NAME ( $ID INTEGER PRIMARY KEY AUTOINCREMENT, $CUSTOMER_ID INTEGER NOT NULL, " +
+            "$DATE NUMERIC NOT NULL, $STATUS TEXT )"
 
     /**
      * @inheritDoc
@@ -30,9 +30,11 @@ object OrderContract : BaseContract<Order> {
     /**
      * @inheritDoc
      */
-    override fun getEntityValues(entity: Order): ContentValues {
+    override fun getEntityValues(entity: Order, withPrimaryKey: Boolean): ContentValues {
         val cv = ContentValues()
 
+        if (withPrimaryKey)
+            cv.put(ID, entity.orderId)
         cv.put(CUSTOMER_ID, entity.userId)
         cv.put(DATE, entity.timestamp.toInstant().epochSecond)
         cv.put(STATUS, entity.status.toString())

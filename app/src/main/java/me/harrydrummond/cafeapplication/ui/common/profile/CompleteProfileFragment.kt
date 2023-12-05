@@ -13,10 +13,12 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.Validators
 import me.harrydrummond.cafeapplication.databinding.FragmentCompleteProfileBinding
 
 
+@AndroidEntryPoint
 class CompleteProfileFragment : Fragment() {
 
     private lateinit var viewModel: CompleteProfileViewModel
@@ -65,24 +67,24 @@ class CompleteProfileFragment : Fragment() {
      * Validates the user input is proper.
      */
     private fun onFinishBtnClicked(view: View) {
-        val firstName = binding.firstName.text.toString()
-        val lastName = binding.lastName.text.toString()
+        val fullName = binding.fullName.text.toString()
+        val email = binding.email.text.toString()
         val phoneNumber = binding.phoneNumber.text.toString()
 
-        viewModel.saveProfileInformation(firstName, lastName, phoneNumber)
+        viewModel.saveProfileInformation(fullName, phoneNumber, email)
     }
 
     private fun handleUIState() {
         viewModel.uiState.observe(requireActivity()) { uiState ->
             val progressBar = requireActivity().findViewById<View>(me.harrydrummond.cafeapplication.R.id.progressBar) as ProgressBar
             progressBar.isVisible = uiState.loading
-            binding.firstName.setText(uiState.firstName)
-            binding.lastName.setText(uiState.lastName)
+
+            binding.fullName.setText(uiState.fullName)
             binding.phoneNumber.setText(uiState.phoneNumber)
 
             // Apply validation results
-            Validators.apply(uiState.firstNameValidated, binding.firstName)
-            Validators.apply(uiState.lastNameValidated, binding.lastName)
+            Validators.apply(uiState.fullNameValidated, binding.fullName)
+            Validators.apply(uiState.emailValidated, binding.email)
             Validators.apply(uiState.phoneNumberValidated, binding.phoneNumber)
 
             if (uiState.errorMessage != null) {

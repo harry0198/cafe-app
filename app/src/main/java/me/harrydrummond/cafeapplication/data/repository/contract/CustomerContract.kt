@@ -33,8 +33,10 @@ object CustomerContract : UserContract<Customer> {
         return PASSWORD
     }
 
-    override fun getEntityValues(entity: Customer): ContentValues {
+    override fun getEntityValues(entity: Customer, withPrimaryKey: Boolean): ContentValues {
         val cv = ContentValues()
+        if (withPrimaryKey)
+            cv.put(ID, entity.id)
         cv.put(FULL_NAME, entity.fullName)
         cv.put(EMAIL, entity.email)
         cv.put(PHONE_NO, entity.phoneNo)

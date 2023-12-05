@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
 import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.databinding.ActivityAppBinding
 import me.harrydrummond.cafeapplication.ui.common.profile.CompleteProfileViewModel
@@ -22,6 +24,7 @@ import me.harrydrummond.cafeapplication.ui.customer.user.UserProfileFragment
  * @see OrdersFragment
  * @author Harry Drummond
  */
+@AndroidEntryPoint
 class AppActivity : AppCompatActivity(), CompleteProfileViewModel.ValidationListener {
 
     private lateinit var binding: ActivityAppBinding

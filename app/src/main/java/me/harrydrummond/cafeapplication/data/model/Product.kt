@@ -2,7 +2,7 @@ package me.harrydrummond.cafeapplication.data.model
 
 import java.io.Serializable
 
-data class Product @JvmOverloads constructor(
+data class Product(
     var productId: Int,
     var productName: String = "",
     var productPrice: Double = 0.0,

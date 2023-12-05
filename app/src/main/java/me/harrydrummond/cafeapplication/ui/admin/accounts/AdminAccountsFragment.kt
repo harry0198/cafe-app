@@ -7,16 +7,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.data.model.Role
+import me.harrydrummond.cafeapplication.data.repository.AuthenticatedUser
 import me.harrydrummond.cafeapplication.databinding.FragmentAdminAccountsBinding
 import me.harrydrummond.cafeapplication.databinding.FragmentCompleteProfileBinding
+import me.harrydrummond.cafeapplication.ui.MainActivity
 import me.harrydrummond.cafeapplication.ui.common.profile.CompleteProfileViewModel
 import me.harrydrummond.cafeapplication.ui.common.register.RegisterActivity
 import me.harrydrummond.cafeapplication.ui.customer.user.UserProfileFragment
 import me.harrydrummond.cafeapplication.ui.customer.user.UserProfileViewModel
 
+@AndroidEntryPoint
 class AdminAccountsFragment : Fragment() {
 
     private lateinit var viewModel: AdminAccountsViewModel
@@ -43,6 +47,13 @@ class AdminAccountsFragment : Fragment() {
                 putExtra(IntentExtra.ACCOUNT_TYPE, Role.EMPLOYEE)
             }
             startActivity(intent)
+        }
+
+        binding.logoutButton.setOnClickListener {
+            AuthenticatedUser.getInstance().logout()
+            val intent = Intent(requireContext(), MainActivity::class.java)
+            startActivity(intent)
+            requireActivity().finishAffinity()
         }
     }
 

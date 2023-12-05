@@ -9,11 +9,13 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.databinding.ActivityViewReviewsBinding
 
+@AndroidEntryPoint
 class ViewReviewsActivity : AppCompatActivity() {
 
     private lateinit var adapter: ReviewListViewAdapter

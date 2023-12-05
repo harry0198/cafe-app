@@ -50,11 +50,10 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/lblEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="@string/email_label"
+            android:text="Username"
             android:textColor="?attr/colorPrimary"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -65,12 +64,11 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:minHeight="48dp"
-            android:autofillHints="emailAddress"
-            android:hint="@string/enter_your_e_mail_address"
-            android:inputType="textEmailAddress" />
+            android:autofillHints="username"
+            android:hint="Enter your username"
+            android:inputType="text" />
 
         <TextView
-            android:id="@+id/lblEmail3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"

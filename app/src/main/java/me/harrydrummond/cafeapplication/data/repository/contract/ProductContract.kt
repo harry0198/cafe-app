@@ -34,9 +34,11 @@ object ProductContract : BaseContract<Product> {
     /**
      * @inheritDoc
      */
-    override fun getEntityValues(entity: Product): ContentValues {
+    override fun getEntityValues(entity: Product, withPrimaryKey: Boolean): ContentValues {
         val cv = ContentValues()
 
+        if (withPrimaryKey)
+            cv.put(ID, entity.productId)
         cv.put(NAME, entity.productName)
         cv.put(DESCRIPTION, entity.productDescription)
         cv.put(IMAGE, entity.productImage)

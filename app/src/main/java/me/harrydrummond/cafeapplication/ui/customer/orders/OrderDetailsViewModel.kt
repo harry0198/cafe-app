@@ -3,9 +3,9 @@ package me.harrydrummond.cafeapplication.ui.customer.orders
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import me.harrydrummond.cafeapplication.data.model.Order
 import me.harrydrummond.cafeapplication.data.model.Product
-import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
-import javax.inject.Inject
+import me.harrydrummond.cafeapplication.logic.mapDuplicatesToQuantity
 
 /**
  * OrderDetailsViewModel class which provides the business logic to the view class
@@ -14,9 +14,10 @@ import javax.inject.Inject
  * @see OrderDetailsActivity
  * @author Harry Drummond
  */
-class OrderDetailsViewModel @Inject constructor(private val orderRepository: IOrderRepository): ViewModel() {
+class OrderDetailsViewModel: ViewModel() {
 
     private val _uiState: MutableLiveData<OrderDetailsUIState> = MutableLiveData(OrderDetailsUIState())
+    private lateinit var order: Order
     val uiState: LiveData<OrderDetailsUIState> get() = _uiState
 
     /**
@@ -26,28 +27,9 @@ class OrderDetailsViewModel @Inject constructor(private val orderRepository: IOr
      *
      * @param orderId Id in the database of the order
      */
-    fun initialize(orderId: String) {
-        _uiState.value = _uiState.value?.copy(loading = true, orderId = orderId)
-
-        // Update the orders in the ui state
-        orderRepository.getOrder(orderId).continueWith {
-            val order = it.result
-            if (it.isSuccessful && order != null) {
-                orderRepository.fullLoadOrderProducts(order).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        _uiState.value = _uiState.value?.copy(
-                            loading = false,
-                            productsAndQuantity = task.result ?: emptyList()
-                        )
-                    } else {
-                        _uiState.value = _uiState.value?.copy(
-                            loading = false,
-                            errorMessage = "Unable to load order details"
-                        )
-                    }
-                }
-            }
-        }
+    fun initialize(order: Order) {
+        this.order = order
+        _uiState.postValue(_uiState.value?.copy(productsAndQuantity = order.products.mapDuplicatesToQuantity()))
     }
 
     /**
@@ -63,7 +45,6 @@ class OrderDetailsViewModel @Inject constructor(private val orderRepository: IOr
  * Includes fields for loading, errors and the products and quantity in an order.
  */
 data class OrderDetailsUIState(
-    val orderId: String? = "TBC",
     val loading: Boolean = false,
     val errorMessage: String? = null,
     val productsAndQuantity: List<Pair<Int, Product>> = listOf(),

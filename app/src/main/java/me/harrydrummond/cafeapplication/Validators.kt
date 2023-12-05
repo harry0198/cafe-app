@@ -28,6 +28,10 @@ object Validators {
         return ValidatedResult(isValid, if (isValid) null else "Invalid email address format")
     }
 
+    fun validateUsername(username: String): ValidatedResult {
+        return validateNotEmpty(username)
+    }
+
     /**
      * Validates a password string adheres to security practices
      *

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
+import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.databinding.FragmentMenuBinding
 import me.harrydrummond.cafeapplication.ui.common.productview.ProductListViewAdapter
@@ -24,6 +25,7 @@ import me.harrydrummond.cafeapplication.ui.customer.menu.product.ProductViewActi
  * @see FragmentMenuBinding
  * @author Harry Drummond
  */
+@AndroidEntryPoint
 class MenuFragment : Fragment() {
 
     private lateinit var adapter: ProductListViewAdapter

@@ -1,8 +1,6 @@
 package me.harrydrummond.cafeapplication.data.repository
 
-import com.google.android.gms.tasks.Task
 import me.harrydrummond.cafeapplication.data.model.Order
-import me.harrydrummond.cafeapplication.data.model.Product
 
 /**
  * Interface defining signatures to perform CRUD operations on an order repository.
@@ -11,4 +9,7 @@ import me.harrydrummond.cafeapplication.data.model.Product
  */
 interface IOrderRepository: CrudRepository<Order> {
 
+    fun getOrdersByUserId(userId: Int): List<Order>
+
+    fun getAllOrders(): List<Order>
 }
