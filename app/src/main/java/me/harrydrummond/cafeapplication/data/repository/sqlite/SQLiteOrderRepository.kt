@@ -19,7 +19,9 @@ class SQLiteOrderRepository(private val helper: DataBaseHelper): AbstractSQLiteR
 
     override fun update(type: Order): Boolean {
         // Update plain order without products
-        super.update(type)
+        val updated = super.update(type)
+
+        if (!updated) return false
 
         // Delete all order detail relations
         val success = orderDetailsRepository.deleteByOrderId(type.orderId)
@@ -48,17 +50,15 @@ class SQLiteOrderRepository(private val helper: DataBaseHelper): AbstractSQLiteR
         val query = "${OrderContract.CUSTOMER_ID} = ?"
         val orders = getAllByQuery(query, userId.toString())
 
-        for (order in orders) {
-            val products = getProductsForOrder(order.orderId)
-            order.products.clear()
-            order.products.addAll(products)
-        }
+        mapAllProducts(orders)
 
         return orders
     }
 
     override fun getAllOrders(): List<Order> {
         val orders = getAllByQuery(null, null)
+
+        mapAllProducts(orders)
 
         return orders
     }
@@ -69,20 +69,25 @@ class SQLiteOrderRepository(private val helper: DataBaseHelper): AbstractSQLiteR
         val orders = getAllByQuery(query, id.toString())
         val order = orders.firstOrNull() ?: return null
 
-        val products = getProductsForOrder(order.orderId)
-        order.products.clear()
-        order.products.addAll(products)
+        mapAllProducts(listOf(order))
 
         return order
+    }
+
+    private fun mapAllProducts(orders: List<Order>) {
+        for (order in orders) {
+            val products = getProductsForOrder(order.orderId)
+            order.products.clear()
+            order.products.addAll(products)
+        }
     }
 
     private fun getProductsForOrder(orderId: Int): MutableList<Product> {
         val products = mutableListOf<Product>()
 
-
         val selectQuery =
             "SELECT ${ProductContract.TABLE_NAME}.* FROM ${OrderContract.TABLE_NAME} " +
-                    "JOIN ${OrderDetailsContract.TABLE_NAME} ON ${OrderContract.TABLE_NAME}.${OrderContract.ID} = ${OrderDetailsContract.TABLE_NAME}.${OrderDetailsContract.ID} " +
+                    "JOIN ${OrderDetailsContract.TABLE_NAME} ON ${OrderContract.TABLE_NAME}.${OrderContract.ID} = ${OrderDetailsContract.TABLE_NAME}.${OrderDetailsContract.ORDER_ID} " +
                     "JOIN ${ProductContract.TABLE_NAME} ON ${OrderDetailsContract.TABLE_NAME}.${OrderDetailsContract.PROD_ID} = ${ProductContract.TABLE_NAME}.${ProductContract.ID} " +
                     "WHERE ${OrderContract.TABLE_NAME}.${OrderContract.ID} = ?"
 
@@ -109,8 +114,7 @@ class SQLiteOrderRepository(private val helper: DataBaseHelper): AbstractSQLiteR
                 product.productId
             )
 
-            val saved = orderDetailsRepository.save(orderDetails)
-            println()
+            orderDetailsRepository.save(orderDetails)
         }
     }
 }

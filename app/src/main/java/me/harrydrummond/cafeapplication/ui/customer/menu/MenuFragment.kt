@@ -69,7 +69,7 @@ class MenuFragment : Fragment() {
     }
 
     private fun handleUIState() {
-        viewModel.uiState.observe(this) { uiState ->
+        viewModel.uiState.observe(viewLifecycleOwner) { uiState ->
             binding.progressBar.isVisible = uiState.loading
             if (uiState.errorMessage != null) {
                 Toast.makeText(requireContext(), uiState.errorMessage, Toast.LENGTH_SHORT).show()

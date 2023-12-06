@@ -54,7 +54,7 @@ class LoginViewModel @Inject constructor(private val customerRepository: IUserRe
                 _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Invalid credentials"))
                 return@launch
             }
-            AuthenticatedUser.getInstance().setUserId(customerId)
+            AuthenticatedUser.getInstance().login(customerId, role)
             _uiState.postValue(_uiState.value?.copy(loading = false, event = if (role == Role.EMPLOYEE) Event.GoToAdminApp else Event.GoToCustomerApp))
         }
     }

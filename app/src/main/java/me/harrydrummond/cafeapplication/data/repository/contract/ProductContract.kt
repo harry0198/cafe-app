@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.database.Cursor
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.repository.toProduct
+import me.harrydrummond.cafeapplication.logic.toByteArray
 
 /**
  * Contains the table name and columns for creating the sqlite database.

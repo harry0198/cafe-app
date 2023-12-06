@@ -1,17 +1,25 @@
 package me.harrydrummond.cafeapplication.ui.admin.editmenu
 
+import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.databinding.ActivityEditProductBinding
+import me.harrydrummond.cafeapplication.logic.toBitmap
 import me.harrydrummond.cafeapplication.ui.common.reviews.ViewReviewsActivity
+
 
 /**
  * EditProductActivity class.
@@ -27,6 +35,7 @@ class EditProductActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityEditProductBinding
     lateinit var viewModel: EditProductViewModel
+    private var image: Bitmap? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditProductBinding.inflate(layoutInflater)
@@ -50,6 +59,32 @@ class EditProductActivity : AppCompatActivity() {
         binding.editProductDesc.setText(product.productDescription)
         binding.editProductPrice.setText(product.productPrice.toString())
         binding.editProductAvailability.isChecked = product.productAvailable
+        val image = product.productImage?.toBitmap(400, 400)
+        binding.productImage.setImageBitmap(image)
+        this.image = image
+
+        // Adapted https://stackoverflow.com/questions/62671106/onactivityresult-method-is-deprecated-what-is-the-alternative
+        // to suit usecase
+        val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                val imageUri: Uri? = data?.data
+
+                if (imageUri != null) {
+
+                    val source = ImageDecoder.createSource(this.contentResolver, imageUri)
+                    val bitmap = ImageDecoder.decodeBitmap(source)
+                    binding.productImage.setImageBitmap(bitmap)
+                    this.image = bitmap
+                }
+            }
+        }
+        binding.btnUploadImage.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK).apply {
+                data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            }
+            resultLauncher.launch(intent)
+        }
 
         handleUIState()
     }
@@ -66,7 +101,7 @@ class EditProductActivity : AppCompatActivity() {
 
         val priceSanitized = price.toDouble()
 
-        viewModel.saveProduct(name, desc, priceSanitized, availability)
+        viewModel.saveProduct(name, desc, priceSanitized, availability, image)
     }
 
     /**

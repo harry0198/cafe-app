@@ -1,13 +1,18 @@
 package me.harrydrummond.cafeapplication.ui.admin.editmenu
 
+import android.graphics.Bitmap
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import me.harrydrummond.cafeapplication.ValidatedResult
+import me.harrydrummond.cafeapplication.Validators
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
+import me.harrydrummond.cafeapplication.logic.toByteArray
 import javax.inject.Inject
 
 /**
@@ -42,16 +47,21 @@ class EditProductViewModel @Inject constructor(private val productRepository: IP
      * @param productPrice Price of product
      * @param productAvailable Is the product available to customers?
      */
-    fun saveProduct(productName: String, productDesc: String, productPrice: Double, productAvailable: Boolean) {
-        _uiState.value = _uiState.value?.copy(loading = true)
+    fun saveProduct(productName: String, productDesc: String, productPrice: Double, productAvailable: Boolean, image: Bitmap?) {
+
+        // Ensure is validated
+        val validated = validate(productName, productDesc, productPrice)
+        if (!validated) return
 
         // Set attributes
         productModel.productName = productName
         productModel.productDescription = productDesc
         productModel.productPrice = productPrice
         productModel.productAvailable = productAvailable
+        productModel.productImage = image?.toByteArray()
 
         // In background update the product and notify view
+        _uiState.value = _uiState.value?.copy(loading = true)
         viewModelScope.launch {
             val updated = productRepository.update(productModel)
             if (updated) {
@@ -95,6 +105,17 @@ class EditProductViewModel @Inject constructor(private val productRepository: IP
         _uiState.value = _uiState.value?.copy(errorMessage = null)
     }
 
+    private fun validate(productName: String, productDesc: String, productPrice: Double): Boolean {
+        // Validate the inputs
+        val name = Validators.validateNotEmpty(productName)
+        val desc = Validators.validateNotEmpty(productDesc)
+        val price = Validators.validatePrice(productPrice)
+
+        _uiState.postValue(_uiState.value?.copy(validatedProductName = name, validatedPrice = price, validatedProductDesc = desc))
+
+        return name.isValid && desc.isValid && price.isValid
+    }
+
     /**
      * Data class for showing the EditProduct UIState.
      */
@@ -102,6 +123,9 @@ class EditProductViewModel @Inject constructor(private val productRepository: IP
         val loading: Boolean = false,
         val errorMessage: String? = null,
         val event: Event? = null,
+        val validatedProductName: ValidatedResult = ValidatedResult(true, null),
+        val validatedProductDesc: ValidatedResult = ValidatedResult(true, null),
+        val validatedPrice: ValidatedResult = ValidatedResult(true, null)
     )
 
     /**

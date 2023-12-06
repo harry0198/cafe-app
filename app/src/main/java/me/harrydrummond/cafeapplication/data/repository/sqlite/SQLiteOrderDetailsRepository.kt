@@ -5,13 +5,9 @@ import me.harrydrummond.cafeapplication.data.repository.contract.OrderDetailsCon
 
 class SQLiteOrderDetailsRepository(private val helper: DataBaseHelper): AbstractSQLiteRepository<OrderDetails>(helper, OrderDetailsContract) {
 
-    fun getProductsByOrderId(orderId: Int) {
-
-    }
-
     fun deleteByOrderId(orderId: Int): Boolean {
         val db = helper.writableDatabase
-        val result = db.delete(OrderDetailsContract.TABLE_NAME, "${OrderDetailsContract.ORDER_ID} = $orderId", null) == 1
+        val result = db.delete(OrderDetailsContract.TABLE_NAME, "${OrderDetailsContract.ORDER_ID} = ?", arrayOf( orderId.toString())) != -1
 
         db.close()
         return result

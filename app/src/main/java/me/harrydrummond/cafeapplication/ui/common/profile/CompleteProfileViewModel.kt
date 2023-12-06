@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import me.harrydrummond.cafeapplication.ValidatedResult
 import me.harrydrummond.cafeapplication.Validators
 import me.harrydrummond.cafeapplication.data.model.Customer
+import me.harrydrummond.cafeapplication.data.model.Employee
 import me.harrydrummond.cafeapplication.data.model.Role
 import me.harrydrummond.cafeapplication.data.repository.AuthenticatedUser
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
@@ -23,7 +24,7 @@ import javax.inject.Inject
  * @author Harry Drummond
  */
 @HiltViewModel
-class CompleteProfileViewModel @Inject constructor(private val customerRepository: IUserRepository<Customer>) : ViewModel() {
+class CompleteProfileViewModel @Inject constructor(private val customerRepository: IUserRepository<Customer>, private val employeeRepository: IUserRepository<Employee>) : ViewModel() {
 
     private val _uiState: MutableLiveData<CreateProfileUiState> = MutableLiveData(
         CreateProfileUiState()
@@ -33,37 +34,6 @@ class CompleteProfileViewModel @Inject constructor(private val customerRepositor
     // On initialize, begin loading the user
     init {
         refreshProfile()
-    }
-
-    /**
-     * Refreshes the currently logged-in user's profile
-     * and delegates success and failure listeners
-     */
-    fun refreshProfile() {
-        // Run in background
-        viewModelScope.launch {
-
-            // Get the customer
-            val customer: Customer? =
-                customerRepository.getById(AuthenticatedUser.getInstance().getUserId())
-
-            if (customer != null) {
-                _uiState.value =
-                    _uiState.value?.copy(
-                        loading = false,
-                        fullName = customer.fullName ?: "",
-                        phoneNumber = customer.phoneNo ?: "",
-                        email = customer.email ?: ""
-                    )
-            } else {
-                _uiState.postValue(
-                    _uiState.value?.copy(
-                        loading = false,
-                        errorMessage = "Failed to load user"
-                    )
-                )
-            }
-        }
     }
 
     /**
@@ -89,26 +59,14 @@ class CompleteProfileViewModel @Inject constructor(private val customerRepositor
                 phoneNumberValidated = phoneNumberValidated
             )
 
-            if (!fullNameValidated.isValid || !phoneNumberValidated.isValid) {
+            if (!fullNameValidated.isValid || !phoneNumberValidated.isValid || !emailValidated.isValid) {
                 return@launch
             }
 
-            // Do save
-            val customer: Customer? = customerRepository.getById(AuthenticatedUser.getInstance().getUserId())
-
-            if (customer != null) {
-                val updatedCustomer = customer.copy(fullName = fullName, phoneNo = phoneNumber)
-                val updated = customerRepository.update(updatedCustomer)
-                if (updated) {
-                    _uiState.postValue(_uiState.value?.copy(loading = false, event = Event.ProfileSaved))
-                } else {
-                    _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Could not update profile"))
-                }
-            } else {
-                _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "You are not signed in."))
+            when (AuthenticatedUser.getInstance().getUserRole()) {
+                Role.EMPLOYEE -> saveEmployee(fullName, phoneNumber, email)
+                else -> saveCustomer(fullName, phoneNumber, email)
             }
-        }.invokeOnCompletion {
-            refreshProfile()
         }
     }
 
@@ -125,6 +83,102 @@ class CompleteProfileViewModel @Inject constructor(private val customerRepositor
     fun eventHandled() {
         _uiState.value = _uiState.value?.copy(event = null)
     }
+
+    /**
+     * Refreshes the currently logged-in user's profile
+     * and delegates success and failure listeners
+     */
+    private fun refreshProfile() {
+        // Run in background
+        viewModelScope.launch {
+
+            when (AuthenticatedUser.getInstance().getUserRole()) {
+                Role.EMPLOYEE -> refreshEmployee()
+                else -> refreshCustomer()
+            }
+        }
+    }
+
+    private fun saveCustomer(fullName: String, phoneNumber: String, email: String) {
+        // Do save
+        val customer: Customer? = customerRepository.getById(AuthenticatedUser.getInstance().getUserId())
+
+        if (customer != null) {
+            val updatedCustomer = customer.copy(fullName = fullName, phoneNo = phoneNumber, email = email)
+            val updated = customerRepository.update(updatedCustomer)
+            if (updated) {
+                _uiState.postValue(_uiState.value?.copy(loading = false, event = Event.ProfileSaved, fullName = fullName, phoneNumber = phoneNumber, email = email))
+            } else {
+                _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Could not update profile"))
+            }
+        } else {
+            _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "You are not signed in."))
+        }
+    }
+
+    private fun saveEmployee(fullName: String, phoneNumber: String, email: String) {
+        // Do save
+        val employee: Employee? = employeeRepository.getById(AuthenticatedUser.getInstance().getUserId())
+
+        if (employee != null) {
+            val updatedEmployee = employee.copy(fullName = fullName, phoneNo = phoneNumber, email = email)
+            val updated = employeeRepository.update(updatedEmployee)
+            if (updated) {
+                _uiState.postValue(_uiState.value?.copy(loading = false, event = Event.ProfileSaved, fullName = fullName, phoneNumber = phoneNumber, email = email))
+            } else {
+                _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Could not update profile"))
+            }
+        } else {
+            _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "You are not signed in."))
+        }
+    }
+
+    private fun refreshCustomer() {
+        // Get the customer
+        val customer: Customer? =
+            customerRepository.getById(AuthenticatedUser.getInstance().getUserId())
+
+        if (customer != null) {
+            _uiState.value =
+                _uiState.value?.copy(
+                    loading = false,
+                    fullName = customer.fullName ?: "",
+                    phoneNumber = customer.phoneNo ?: "",
+                    email = customer.email ?: ""
+                )
+        } else {
+            _uiState.postValue(
+                _uiState.value?.copy(
+                    loading = false,
+                    errorMessage = "Failed to load user"
+                )
+            )
+        }
+    }
+
+    private fun refreshEmployee() {
+        // Get the customer
+        val employee: Employee? =
+            employeeRepository.getById(AuthenticatedUser.getInstance().getUserId())
+
+        if (employee != null) {
+            _uiState.value =
+                _uiState.value?.copy(
+                    loading = false,
+                    fullName = employee.fullName ?: "",
+                    phoneNumber = employee.phoneNo ?: "",
+                    email = employee.email ?: ""
+                )
+        } else {
+            _uiState.postValue(
+                _uiState.value?.copy(
+                    loading = false,
+                    errorMessage = "Failed to load user"
+                )
+            )
+        }
+    }
+
 
     /**
      * Interface that activities must implement to allow for button handling

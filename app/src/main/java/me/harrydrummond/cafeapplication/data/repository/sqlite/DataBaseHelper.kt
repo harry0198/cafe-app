@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import me.harrydrummond.cafeapplication.data.model.Customer
 import me.harrydrummond.cafeapplication.data.model.Employee
 import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
+import me.harrydrummond.cafeapplication.data.repository.IPaymentRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.data.repository.IReviewRepository
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
@@ -14,6 +15,7 @@ import me.harrydrummond.cafeapplication.data.repository.contract.CustomerContrac
 import me.harrydrummond.cafeapplication.data.repository.contract.EmployeeContract
 import me.harrydrummond.cafeapplication.data.repository.contract.OrderContract
 import me.harrydrummond.cafeapplication.data.repository.contract.OrderDetailsContract
+import me.harrydrummond.cafeapplication.data.repository.contract.PaymentContract
 import me.harrydrummond.cafeapplication.data.repository.contract.ProductContract
 import me.harrydrummond.cafeapplication.data.repository.contract.ReviewContract
 
@@ -26,6 +28,7 @@ class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName,
     val employeeRepository: IUserRepository<Employee> = SQLiteEmployeeRepository(this)
     val orderRepository: IOrderRepository = SQLiteOrderRepository(this)
     val reviewRepository: IReviewRepository = SQLiteReviewRepository(this)
+    val paymentRepository: IPaymentRepository = SQLitePaymentRepository(this)
 
     override fun onCreate(db: SQLiteDatabase?) {
         val database = db ?: return
@@ -38,12 +41,13 @@ class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName,
             database.execSQL(OrderContract.CREATE_TABLE)
             database.execSQL(OrderDetailsContract.CREATE_TABLE)
             database.execSQL(ReviewContract.CREATE_TABLE)
+            database.execSQL(PaymentContract.CREATE_TABLE)
         } catch (e: SQLiteException) {
             e.printStackTrace()
         }
     }
 
     override fun onUpgrade(p0: SQLiteDatabase?, p1: Int, p2: Int) {
-        TODO("Not yet implemented")
+        // not required
     }
 }

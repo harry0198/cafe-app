@@ -12,12 +12,18 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.R
+import me.harrydrummond.cafeapplication.data.model.Customer
 import me.harrydrummond.cafeapplication.data.model.Product
+import me.harrydrummond.cafeapplication.data.model.Role
+import me.harrydrummond.cafeapplication.data.repository.AuthenticatedUser
+import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 import me.harrydrummond.cafeapplication.databinding.ActivityViewReviewsBinding
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ViewReviewsActivity : AppCompatActivity() {
 
+    @Inject lateinit var customerRepository: IUserRepository<Customer>
     private lateinit var adapter: ReviewListViewAdapter
     private lateinit var binding: ActivityViewReviewsBinding
     private lateinit var viewModel: ViewReviewsViewModel
@@ -27,7 +33,7 @@ class ViewReviewsActivity : AppCompatActivity() {
         setContentView(binding.root)
         viewModel = ViewModelProvider(this).get(ViewReviewsViewModel::class.java)
 
-        adapter =  ReviewListViewAdapter(this, emptyList())
+        adapter =  ReviewListViewAdapter(this, customerRepository, emptyList())
         binding.reviewsList.adapter = adapter
 
         setSupportActionBar(binding.toolbar)
@@ -38,6 +44,8 @@ class ViewReviewsActivity : AppCompatActivity() {
         // It is not this class' responsibility to resolve the issue.
         val product = intent.getParcelableExtra(IntentExtra.PRODUCT, Product::class.java)!!
         viewModel.initialize(product)
+
+        binding.floatingActionButton.isVisible = AuthenticatedUser.getInstance().getUserRole() == Role.CUSTOMER
 
         handleUIState()
     }

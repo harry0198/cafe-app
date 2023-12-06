@@ -37,7 +37,7 @@ class AdminViewOrderActivity : AppCompatActivity() {
         binding = ActivityAdminViewOrderBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ViewModelProvider(this).get(AdminViewOrderViewModel::class.java)
-        adapter =  CartItemListViewAdapter(this, listOf(), null, null)
+        adapter = CartItemListViewAdapter(this, listOf(), null, null)
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

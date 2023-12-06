@@ -12,6 +12,7 @@ import me.harrydrummond.cafeapplication.data.model.Status
 import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
+import me.harrydrummond.cafeapplication.logic.mapDuplicatesToQuantity
 import javax.inject.Inject
 
 /**
@@ -37,6 +38,7 @@ class AdminViewOrderViewModel @Inject constructor(private val orderRepository: I
      */
     fun initialize(order: Order) {
         this.order = order
+        _uiState.postValue(_uiState.value?.copy(productData = order.products.mapDuplicatesToQuantity()))
     }
 
     /**
@@ -59,8 +61,8 @@ class AdminViewOrderViewModel @Inject constructor(private val orderRepository: I
 
         // Save order status in background
         viewModelScope.launch {
-            val saved = orderRepository.save(order.copy(status = status))
-            if (saved != -1) {
+            val saved = orderRepository.update(order.copy(status = status))
+            if (saved) {
                 _uiState.postValue(_uiState.value?.copy(isLoading = false, orderStatus = status))
             } else {
                 _uiState.postValue(

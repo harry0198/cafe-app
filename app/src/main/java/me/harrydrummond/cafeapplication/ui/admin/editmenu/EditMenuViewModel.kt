@@ -1,11 +1,13 @@
 package me.harrydrummond.cafeapplication.ui.admin.editmenu
 
+import android.graphics.BitmapFactory
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import javax.inject.Inject
@@ -23,6 +25,10 @@ class EditMenuViewModel @Inject constructor(private val productRepository: IProd
     private val _uiState: MutableLiveData<EditMenuUIState> = MutableLiveData(EditMenuUIState())
     val uiState: LiveData<EditMenuUIState> get() = _uiState
 
+    /**
+     * Refreshes the ui state with the current products in the database.
+     * Runs asynchronously and notifies as loading while it completes.
+     */
     fun refreshProducts() {
         _uiState.value = _uiState.value?.copy(loading = true)
 
@@ -40,7 +46,7 @@ class EditMenuViewModel @Inject constructor(private val productRepository: IProd
         val dummyName = "New Product"
         val dummyDescription = "A new product for our menu! Check back here later!"
         val dummyPrice = 3.15
-        val dummyImage = ""
+        val dummyImage = null
         val dummyAvailability = false
 
         val dummyProduct = Product(-1,

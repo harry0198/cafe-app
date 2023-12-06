@@ -10,12 +10,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import me.harrydrummond.cafeapplication.data.model.Cart
 import me.harrydrummond.cafeapplication.data.model.Order
+import me.harrydrummond.cafeapplication.data.model.Payment
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.model.Status
 import me.harrydrummond.cafeapplication.data.repository.AuthenticatedUser
 import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
+import me.harrydrummond.cafeapplication.data.repository.IPaymentRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
+import me.harrydrummond.cafeapplication.data.repository.sqlite.SQLitePaymentRepository
 import me.harrydrummond.cafeapplication.logic.mapDuplicatesToQuantity
 import java.time.Instant
 import java.util.Date
@@ -29,7 +32,7 @@ import javax.inject.Inject
  * @author Harry Drummond
  */
 @HiltViewModel
-class CartViewModel @Inject constructor(private val orderRepository: IOrderRepository): ViewModel() {
+class CartViewModel @Inject constructor(private val orderRepository: IOrderRepository, private val paymentRepository: IPaymentRepository): ViewModel() {
 
     private val _uiState: MutableLiveData<CartFragmentUIState> = MutableLiveData(CartFragmentUIState())
     val uiState: LiveData<CartFragmentUIState> get() = _uiState
@@ -73,9 +76,16 @@ class CartViewModel @Inject constructor(private val orderRepository: IOrderRepos
     }
 
     /**
+     * Returns the total cost of the current cart.
+     */
+    fun getTotalCost(): Double {
+        return Cart.getInstance().getProducts().sumOf { it.productPrice }
+    }
+
+    /**
      * Places an order and updates the UIState
      */
-    fun placeOrder() {
+    fun placeOrder(cardNo: String, expiry: String, cvv: String) {
         _uiState.value = _uiState.value?.copy(loading = true)
 
         // Place order in background
@@ -97,6 +107,8 @@ class CartViewModel @Inject constructor(private val orderRepository: IOrderRepos
             )
 
             val saved = orderRepository.save(order)
+            val payment = Payment(-1, saved, "CARD", order.products.sumOf { it.productPrice }, Date.from(Instant.now()))
+            paymentRepository.save(payment)
 
             if (saved != -1) {
                 _uiState.postValue(_uiState.value?.copy(loading = false, event = Event.OrderPlaced))

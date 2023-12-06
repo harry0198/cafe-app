@@ -75,7 +75,7 @@ class RegisterViewModel @Inject constructor(private val customerRepository: IUse
             true
         )
         val save = employeeRepository.save(employee)
-        saveCodeHandler(save)
+        saveCodeHandler(save, Role.EMPLOYEE)
     }
 
     private fun registerCustomer(username: String, password: String) {
@@ -89,13 +89,12 @@ class RegisterViewModel @Inject constructor(private val customerRepository: IUse
             true
         )
         val save = customerRepository.save(customer)
-
-        saveCodeHandler(save)
+        saveCodeHandler(save, Role.CUSTOMER)
     }
 
-    private fun saveCodeHandler(save: Int) {
+    private fun saveCodeHandler(save: Int, role: Role) {
         // Handles the codes save outputs
-        AuthenticatedUser.getInstance().setUserId(save)
+        AuthenticatedUser.getInstance().login(save, role)
         when (save) {
             -3 -> _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Username taken!"))
             -1 -> _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Unable to register"))

@@ -13,6 +13,7 @@ import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.databinding.ActivityProductViewBinding
+import me.harrydrummond.cafeapplication.logic.toBitmap
 import me.harrydrummond.cafeapplication.ui.common.reviews.ReviewListViewAdapter
 import me.harrydrummond.cafeapplication.ui.common.reviews.ViewReviewsActivity
 import me.harrydrummond.cafeapplication.ui.common.reviews.ViewReviewsViewModel
@@ -48,6 +49,7 @@ class ProductViewActivity : AppCompatActivity() {
         binding.lblProductName.text = product.productName
         binding.lblProductPrice.text = String.format("%.2f", product.productPrice)
         binding.lblProductDescription.text = product.productDescription
+        binding.imageView2.setImageBitmap(product.productImage?.toBitmap(500, 500))
 
         handleUIState()
     }

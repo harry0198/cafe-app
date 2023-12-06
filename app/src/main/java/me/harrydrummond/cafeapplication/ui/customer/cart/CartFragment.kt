@@ -7,12 +7,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.R
+import me.harrydrummond.cafeapplication.Validators
 import me.harrydrummond.cafeapplication.databinding.FragmentCartBinding
+import me.harrydrummond.cafeapplication.logic.toPrice
 import me.harrydrummond.cafeapplication.ui.common.order.CartItemListViewAdapter
 
 /**
@@ -55,12 +60,48 @@ class CartFragment : Fragment() {
         binding.cartOrderList.adapter = adapter
 
         binding.btnPlaceOrder.setOnClickListener {
-            viewModel.placeOrder()
+            onBtnPlaceOrderClicked()
         }
 
         handleUIState()
 
         viewModel.refreshCart()
+    }
+
+    private fun onBtnPlaceOrderClicked() {
+        val bottomSheet = BottomSheetDialog(requireContext())
+        bottomSheet.setContentView(R.layout.bottom_sheet_payment_layout)
+
+        val price = bottomSheet.findViewById<TextView>(R.id.lblCost)!!
+        val cardNo = bottomSheet.findViewById<EditText>(R.id.txtCardNo)!!
+        val cardExpiry = bottomSheet.findViewById<EditText>(R.id.txtExpiry)!!
+        val cardCVV = bottomSheet.findViewById<EditText>(R.id.txtCVV)!!
+        val placeOrderBtn = bottomSheet.findViewById<Button>(R.id.btnPay)!!
+
+        price.text = viewModel.getTotalCost().toPrice()
+
+        placeOrderBtn.setOnClickListener {
+            if (viewModel.uiState.value?.cartProducts?.isEmpty() == true) {
+                emptyCart()
+                return@setOnClickListener
+            }
+            val validatedCardNo = Validators.validateCardNo(cardNo.text.toString())
+            val validatedCardExpiry = Validators.validateExpiry(cardExpiry.text.toString())
+            val validatedCVV = Validators.validateCVV(cardCVV.text.toString())
+
+            Validators.apply(validatedCardNo, cardNo)
+            Validators.apply(validatedCardExpiry, cardExpiry)
+            Validators.apply(validatedCVV, cardCVV)
+
+            if (!validatedCVV.isValid || !validatedCardNo.isValid || !validatedCardExpiry.isValid) {
+                return@setOnClickListener
+            }
+
+            bottomSheet.dismiss()
+            viewModel.placeOrder(cardNo.text.toString(), cardExpiry.text.toString(), cardCVV.text.toString())
+        }
+
+        bottomSheet.show()
     }
 
     private fun handleUIState() {
@@ -83,13 +124,17 @@ class CartFragment : Fragment() {
                         return@observe
                     }
                     Event.CartEmpty -> {
-                        Toast.makeText(requireContext(), "Please add an item to your cart", Toast.LENGTH_SHORT).show()
-                        viewModel.eventHandled()
+                        emptyCart()
                         return@observe
                     }
                 }
             }
         }
+    }
+
+    private fun emptyCart() {
+        Toast.makeText(requireContext(), "Please add an item to your cart", Toast.LENGTH_SHORT).show()
+        viewModel.eventHandled()
     }
 
     private fun popupEditQuantity(title: String, initialValue: Int, onPositiveButtonClick: (Int) -> Unit) {

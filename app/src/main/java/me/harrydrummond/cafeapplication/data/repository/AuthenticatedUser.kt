@@ -22,8 +22,9 @@ class AuthenticatedUser private constructor() {
         }
     }
 
-    fun setUserId(userId: Int) {
+    fun login(userId: Int, role: Role) {
         this.userId = userId
+        this.role = role
     }
 
     fun getUserId(): Int {
@@ -39,6 +40,6 @@ class AuthenticatedUser private constructor() {
     }
 
     fun logout() {
-        setUserId(-1)
+        userId = -1
     }
 }

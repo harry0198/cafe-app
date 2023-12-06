@@ -9,6 +9,7 @@ import dagger.hilt.components.SingletonComponent
 import me.harrydrummond.cafeapplication.data.model.Customer
 import me.harrydrummond.cafeapplication.data.model.Employee
 import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
+import me.harrydrummond.cafeapplication.data.repository.IPaymentRepository
 import me.harrydrummond.cafeapplication.data.repository.sqlite.DataBaseHelper
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.data.repository.IReviewRepository
@@ -48,6 +49,13 @@ internal object AppModule {
     fun provideReviewRepository(database: DataBaseHelper): IReviewRepository {
         return database.reviewRepository
     }
+
+    @Provides
+    @Singleton
+    fun providePaymentRepository(database: DataBaseHelper): IPaymentRepository {
+        return database.paymentRepository
+    }
+
 
     @Provides
     @Singleton

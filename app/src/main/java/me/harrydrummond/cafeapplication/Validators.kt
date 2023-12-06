@@ -28,6 +28,12 @@ object Validators {
         return ValidatedResult(isValid, if (isValid) null else "Invalid email address format")
     }
 
+    /**
+     * Validates a username string is correct
+     *
+     * @param username Username to validate
+     * @return validatedresult cnotaining if is valid and error message
+     */
     fun validateUsername(username: String): ValidatedResult {
         return validateNotEmpty(username)
     }
@@ -65,6 +71,54 @@ object Validators {
         val isValid = !str.isNullOrEmpty()
 
         return ValidatedResult(isValid, if (isValid) null else "Cannot be empty")
+    }
+
+    /**
+     * Validates an input double is of correct formatting for a price (2 decimal places required)
+     *
+     * @param price to validate formatting
+     * @return ValidatedResult containing if is valid and error message.
+     */
+    fun validatePrice(price: Double):ValidatedResult {
+        val isValid = price.toBigDecimal().scale() == 2
+
+        return ValidatedResult(isValid, if (isValid) null else "Incorrect price formatting. 2 Decimal Places required")
+    }
+
+    /**
+     * Validates card number is valid
+     *
+     * @param cardNo to validate
+     * @return Validated result containing if is valida nd erro mesasge.
+     */
+    fun validateCardNo(cardNo: String): ValidatedResult {
+        val isValid = cardNo.length == 16
+
+        return ValidatedResult(isValid, if (isValid) null else "Card Number length should be 16 numbers")
+    }
+
+    /**
+     * Validates expiry number is valid
+     *
+     * @param expiry to validate
+     * @return Validated result containing if is valid and error message
+     */
+    fun validateExpiry(expiry: String): ValidatedResult {
+        val isValid = expiry.length == 4
+
+        return ValidatedResult(isValid, if (isValid) null else "Expiry length should be 4 numbers")
+    }
+
+    /**
+     * Validates cvv number is valid
+     *
+     * @param cvv to validate
+     * @return Validated result containing if is valid and error message
+     */
+    fun validateCVV(cvv: String):ValidatedResult {
+        val isValid = cvv.length == 3
+
+        return ValidatedResult(isValid, if (isValid) null else "CVV length should be 3 numbers")
     }
 
     /**

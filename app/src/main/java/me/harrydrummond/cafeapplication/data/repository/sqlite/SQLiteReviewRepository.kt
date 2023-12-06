@@ -15,4 +15,6 @@ class SQLiteReviewRepository(helper: DataBaseHelper): AbstractSQLiteRepository<R
         val query = "${ReviewContract.PRODUCT_ID} = ?"
         return getAllByQuery(query, productId.toString())
     }
+
+
 }

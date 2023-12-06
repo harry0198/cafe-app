@@ -2,6 +2,7 @@ package me.harrydrummond.cafeapplication.ui.common.reviews
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.R
 
 class ReviewListView  : AppCompatActivity() {

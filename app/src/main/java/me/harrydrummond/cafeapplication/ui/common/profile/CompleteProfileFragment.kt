@@ -81,6 +81,7 @@ class CompleteProfileFragment : Fragment() {
 
             binding.fullName.setText(uiState.fullName)
             binding.phoneNumber.setText(uiState.phoneNumber)
+            binding.email.setText(uiState.email)
 
             // Apply validation results
             Validators.apply(uiState.fullNameValidated, binding.fullName)

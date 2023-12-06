@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import me.harrydrummond.cafeapplication.databinding.ActivityProductListViewBinding
 import me.harrydrummond.cafeapplication.data.model.Product
+import me.harrydrummond.cafeapplication.logic.toBitmap
+import me.harrydrummond.cafeapplication.logic.toPrice
 
 /**
  * List adapter for viewing ProductModels with a next button action.
@@ -50,7 +52,8 @@ class ProductListViewAdapter(context: Context, var productList: List<Product>, v
         val product = getItem(position)
 
         binding.productName.text = product.productName
-        binding.productPrice.text = "£ " + String.format("%.2f", product.productPrice)
+        binding.productPrice.text = product.productPrice.toPrice()
+        binding.productImage.setImageBitmap(product.productImage?.toBitmap(400, 400))
         binding.nextButton.setOnClickListener {
             onItemClick(product)
         }

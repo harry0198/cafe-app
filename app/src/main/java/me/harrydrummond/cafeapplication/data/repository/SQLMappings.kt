@@ -6,6 +6,7 @@ import me.harrydrummond.cafeapplication.data.model.Customer
 import me.harrydrummond.cafeapplication.data.model.Employee
 import me.harrydrummond.cafeapplication.data.model.Order
 import me.harrydrummond.cafeapplication.data.model.OrderDetails
+import me.harrydrummond.cafeapplication.data.model.Payment
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.model.Review
 import me.harrydrummond.cafeapplication.data.model.Status
@@ -13,11 +14,28 @@ import me.harrydrummond.cafeapplication.data.repository.contract.CustomerContrac
 import me.harrydrummond.cafeapplication.data.repository.contract.EmployeeContract
 import me.harrydrummond.cafeapplication.data.repository.contract.OrderContract
 import me.harrydrummond.cafeapplication.data.repository.contract.OrderDetailsContract
+import me.harrydrummond.cafeapplication.data.repository.contract.PaymentContract
 import me.harrydrummond.cafeapplication.data.repository.contract.ProductContract
 import me.harrydrummond.cafeapplication.data.repository.contract.ReviewContract
+import me.harrydrummond.cafeapplication.logic.toBitmap
 import java.time.Instant
 import java.util.Date
 
+/**
+ * Maps a cursor to a Payment
+ *
+ * @return Payment from the cursor.
+ */
+@SuppressLint("Range")
+fun Cursor.toPayment(): Payment {
+    return Payment(
+        this.getInt(this.getColumnIndex(PaymentContract.ID)),
+        this.getInt(this.getColumnIndex(PaymentContract.ORDER_ID)),
+        this.getString(this.getColumnIndex(PaymentContract.PAYMENT_TYPE)),
+        this.getDouble(this.getColumnIndex(PaymentContract.AMOUNT)),
+        Date.from(Instant.ofEpochSecond(this.getLong(this.getColumnIndex(PaymentContract.PAYMENT_DATE))))
+    )
+}
 
 /**
  * Maps a cursor to a customer
@@ -101,7 +119,7 @@ fun Cursor.toProduct(): Product {
         this.getInt(this.getColumnIndex(ProductContract.ID)),
         this.getString(this.getColumnIndex(ProductContract.NAME)),
         this.getDouble(this.getColumnIndex(ProductContract.PRICE)),
-        this.getString(this.getColumnIndex(ProductContract.IMAGE)), //TODO BLOB
+        this.getBlob(this.getColumnIndex(ProductContract.IMAGE)),
         this.getString(this.getColumnIndex(ProductContract.DESCRIPTION)),
         this.getInt(this.getColumnIndex(ProductContract.AVAILABLE)) == 1
 

@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import me.harrydrummond.cafeapplication.data.model.Customer
 import me.harrydrummond.cafeapplication.data.model.Review
+import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 import me.harrydrummond.cafeapplication.databinding.ActivityReviewListViewBinding
 
 
@@ -17,7 +19,7 @@ import me.harrydrummond.cafeapplication.databinding.ActivityReviewListViewBindin
  *
  * @see ReviewListView
  */
-class ReviewListViewAdapter(context: Context, var reviewList: List<Review>): BaseAdapter() {
+class ReviewListViewAdapter(context: Context, private val customerRepository: IUserRepository<Customer>, var reviewList: List<Review>): BaseAdapter() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -48,8 +50,15 @@ class ReviewListViewAdapter(context: Context, var reviewList: List<Review>): Bas
 
         val review = reviewList.get(position)
 
+        val customer = customerRepository.getById(review.userId)
+        var username = "Anonymous"
+
+        if (customer != null) {
+            username = customer.username
+        }
+
         binding.lblNumber.text = "#$position"
-        binding.lblUserName.text = "TODO"
+        binding.lblUserName.text = username
         binding.lblReview.text = review.review
 
         return myView

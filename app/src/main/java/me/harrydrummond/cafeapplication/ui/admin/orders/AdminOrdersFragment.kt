@@ -50,10 +50,10 @@ class AdminOrdersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = OrderListViewAdapter(this.requireContext(), emptyList()) { product ->
+        adapter = OrderListViewAdapter(this.requireContext(), emptyList()) { order ->
             // On click of the order, start the vieworder activity.
             val intent = Intent(requireContext(), AdminViewOrderActivity::class.java)
-            intent.putExtra(IntentExtra.ORDER_ID, product.orderId)
+            intent.putExtra(IntentExtra.ORDER_OBJ, order)
             startActivity(intent)
         }
         binding.ordersList.adapter = adapter
