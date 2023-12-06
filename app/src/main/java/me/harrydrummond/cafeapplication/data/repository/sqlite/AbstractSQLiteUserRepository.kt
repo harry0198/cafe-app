@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import me.harrydrummond.cafeapplication.data.model.User
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 import me.harrydrummond.cafeapplication.data.repository.contract.UserContract
+import org.mindrot.jbcrypt.BCrypt
 
 /**
  * Creates an abstract user repository where the type MUST be of type user.
@@ -24,8 +25,8 @@ abstract class AbstractSQLiteUserRepository<T: User>(
         val db = helper.writableDatabase
         val userName = username.lowercase()
 
-        val sqlStatement = "SELECT * FROM ${contract.TABLE_NAME} WHERE ${contract.getUsername()} = ? AND ${contract.getPassword()} = ?"
-        val param = arrayOf(userName, password)
+        val sqlStatement = "SELECT * FROM ${contract.TABLE_NAME} WHERE ${contract.getUsername()} = ?"
+        val param = arrayOf(userName)
         val cursor: Cursor = db.rawQuery(sqlStatement, param)
 
         val entityId = if (cursor.moveToFirst()) {
@@ -41,6 +42,12 @@ abstract class AbstractSQLiteUserRepository<T: User>(
         return entityId
     }
 
+    /**
+     * Saves a user to the sqlite database.
+     *
+     * @param type User type to save
+     * @return -1 if failed to save. -3 if username already exists. Or ID in database.
+     */
     override fun save(type: T): Int {
         val isUserNameAlreadyExists = usernameExists(type)
         if (isUserNameAlreadyExists)

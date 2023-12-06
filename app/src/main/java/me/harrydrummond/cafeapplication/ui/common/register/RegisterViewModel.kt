@@ -1,11 +1,13 @@
 package me.harrydrummond.cafeapplication.ui.common.register
 
+import android.provider.Settings.Global.getString
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.ValidatedResult
 import me.harrydrummond.cafeapplication.Validators
 import me.harrydrummond.cafeapplication.data.model.Customer
@@ -94,11 +96,13 @@ class RegisterViewModel @Inject constructor(private val customerRepository: IUse
 
     private fun saveCodeHandler(save: Int, role: Role) {
         // Handles the codes save outputs
-        AuthenticatedUser.getInstance().login(save, role)
         when (save) {
-            -3 -> _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Username taken!"))
+            -3 -> _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Username is taken"))
             -1 -> _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Unable to register"))
-            else -> _uiState.postValue(_uiState.value?.copy(loading = false, event = Event.UserWasRegistered))
+            else -> {
+                AuthenticatedUser.getInstance().login(save, role)
+                _uiState.postValue(_uiState.value?.copy(loading = false, event = Event.UserWasRegistered))
+            }
         }
     }
 

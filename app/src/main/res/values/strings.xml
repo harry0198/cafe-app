@@ -77,4 +77,5 @@
     <string name="sign_up_btn">Sign Up</string>
     <string name="create_your_profile">Create Your Profile 🧙</string>
     <string name="you_re_almost_there">You\'re almost there!</string>
+    <string name="username_taken">Username is taken!</string>
 </resources>

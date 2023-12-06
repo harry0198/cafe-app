@@ -12,11 +12,11 @@ package me.harrydrummond.cafeapplication.data.model
  * @param isActive Is Employee account activated
  */
 data class Employee(
-    override val id: Int,
+    override var id: Int,
     val fullName: String? = null,
     val email: String? = null,
     val phoneNo: String? = null,
     override val username: String,
     override val password: String,
-    val isActive: Boolean):
-    User(id, username, password)
+    override val isActive: Boolean):
+    User(id, username, password, isActive)

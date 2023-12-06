@@ -62,6 +62,7 @@ dependencies {
     debugImplementation("androidx.fragment:fragment-testing-manifest:1.6.0-alpha04")
     androidTestImplementation("androidx.fragment:fragment-testing:1.6.0-alpha04")
     androidTestImplementation("androidx.arch.core:core-testing:2.1.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.9")
 }
 
 // Allow references to generated code

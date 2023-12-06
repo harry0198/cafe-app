@@ -45,16 +45,21 @@ class LoginViewModel @Inject constructor(private val customerRepository: IUserRe
 
         // Run async logging in the user
         viewModelScope.launch {
-            val customerId = if (role == Role.EMPLOYEE) {
-                employeeRepository.getEntityIdByUsernameAndPassword(username, password)
+            val user: User?
+            if (role == Role.EMPLOYEE) {
+                val employeeId = employeeRepository.getEntityIdByUsernameAndPassword(username, password)
+                user = employeeRepository.getById(employeeId)
             } else {
-                customerRepository.getEntityIdByUsernameAndPassword(username, password)
+                val customerId = customerRepository.getEntityIdByUsernameAndPassword(username, password)
+                user = customerRepository.getById(customerId)
             }
-            if (customerId == -1) {
+
+            // If user does not exist or isn't active..
+            if (user == null || !user.isActive) {
                 _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Invalid credentials"))
                 return@launch
             }
-            AuthenticatedUser.getInstance().login(customerId, role)
+            AuthenticatedUser.getInstance().login(user.id, role)
             _uiState.postValue(_uiState.value?.copy(loading = false, event = if (role == Role.EMPLOYEE) Event.GoToAdminApp else Event.GoToCustomerApp))
         }
     }

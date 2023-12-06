@@ -3,6 +3,7 @@ package me.harrydrummond.cafeapplication.data.repository.contract
 import android.content.ContentValues
 import android.database.Cursor
 import me.harrydrummond.cafeapplication.data.model.Customer
+import me.harrydrummond.cafeapplication.data.repository.PasswordUtils
 import me.harrydrummond.cafeapplication.data.repository.toCustomer
 
 /**
@@ -33,6 +34,7 @@ object CustomerContract : UserContract<Customer> {
         return PASSWORD
     }
 
+
     override fun getEntityValues(entity: Customer, withPrimaryKey: Boolean): ContentValues {
         val cv = ContentValues()
         if (withPrimaryKey)
@@ -41,7 +43,7 @@ object CustomerContract : UserContract<Customer> {
         cv.put(EMAIL, entity.email)
         cv.put(PHONE_NO, entity.phoneNo)
         cv.put(USERNAME, entity.username)
-        cv.put(PASSWORD, entity.password)
+        cv.put(PASSWORD, PasswordUtils.hashPassword(entity.password))
         cv.put(IS_ACTIVE, entity.isActive)
         return cv
     }
