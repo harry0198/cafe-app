@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import me.harrydrummond.cafeapplication.data.model.Cart
@@ -16,9 +14,6 @@ import me.harrydrummond.cafeapplication.data.model.Status
 import me.harrydrummond.cafeapplication.data.repository.AuthenticatedUser
 import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IPaymentRepository
-import me.harrydrummond.cafeapplication.data.repository.IProductRepository
-import me.harrydrummond.cafeapplication.data.repository.IUserRepository
-import me.harrydrummond.cafeapplication.data.repository.sqlite.SQLitePaymentRepository
 import me.harrydrummond.cafeapplication.logic.mapDuplicatesToQuantity
 import java.time.Instant
 import java.util.Date

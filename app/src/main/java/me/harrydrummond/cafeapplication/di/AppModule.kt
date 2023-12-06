@@ -14,6 +14,7 @@ import me.harrydrummond.cafeapplication.data.repository.sqlite.DataBaseHelper
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.data.repository.IReviewRepository
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
+import me.harrydrummond.cafeapplication.logic.NotificationHelper
 import javax.inject.Singleton
 
 @Module
@@ -54,6 +55,12 @@ internal object AppModule {
     @Singleton
     fun providePaymentRepository(database: DataBaseHelper): IPaymentRepository {
         return database.paymentRepository
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotificationHelper(@ApplicationContext context: Context): NotificationHelper {
+        return NotificationHelper(context)
     }
 
 

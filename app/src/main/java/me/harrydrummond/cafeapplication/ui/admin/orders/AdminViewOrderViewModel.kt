@@ -12,6 +12,7 @@ import me.harrydrummond.cafeapplication.data.model.Status
 import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
+import me.harrydrummond.cafeapplication.logic.NotificationHelper
 import me.harrydrummond.cafeapplication.logic.mapDuplicatesToQuantity
 import javax.inject.Inject
 
@@ -23,7 +24,7 @@ import javax.inject.Inject
  * @author Harry Drummond
  */
 @HiltViewModel
-class AdminViewOrderViewModel @Inject constructor(private val orderRepository: IOrderRepository): ViewModel() {
+class AdminViewOrderViewModel @Inject constructor(private val orderRepository: IOrderRepository, private val notificationHelper: NotificationHelper): ViewModel() {
 
     private lateinit var order: Order
     private val _uiState: MutableLiveData<OrderUiState> = MutableLiveData(OrderUiState())
@@ -63,6 +64,7 @@ class AdminViewOrderViewModel @Inject constructor(private val orderRepository: I
         viewModelScope.launch {
             val saved = orderRepository.update(order.copy(status = status))
             if (saved) {
+                notificationHelper.showOrderStatusNotification(status)
                 _uiState.postValue(_uiState.value?.copy(isLoading = false, orderStatus = status))
             } else {
                 _uiState.postValue(
