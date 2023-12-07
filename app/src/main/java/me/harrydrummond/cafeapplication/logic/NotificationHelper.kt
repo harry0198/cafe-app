@@ -46,26 +46,12 @@ class NotificationHelper(private val context: Context) {
         }
     }
 
-    /**
-     * Posts a notification to the user with a given order status update.
-     *
-     * @param status Status of the order to show.
-     */
     @WorkerThread
-    fun showOrderStatusNotification(status: Status) {
-
-        // Get notificaiton text
-        val text: String
-        when (status) {
-            Status.PREPARING -> text = "being prepared"
-            Status.READY -> text = "ready"
-            else -> text = "placed"
-        }
-
+    fun sendNotif(title: String, message: String) {
         // Create notification
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setContentTitle("Order Status Update")
-            .setContentText("Your order is now $text.")
+            .setContentTitle(title)
+            .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
             .setSmallIcon(R.drawable.cart_icon)
@@ -83,6 +69,34 @@ class NotificationHelper(private val context: Context) {
             }
             notify(1, notification)
         }
+    }
 
+    /**
+     * Posts a notification to the user with a given order status update.
+     *
+     * @param status Status of the order to show.
+     */
+    @WorkerThread
+    fun showOrderStatusNotification(status: Status) {
+
+        // Get notificaiton text
+        val text: String
+        when (status) {
+            Status.PREPARING -> text = "being prepared"
+            Status.READY -> text = "ready"
+            else -> text = "placed"
+        }
+
+        sendNotif("Order Status Update","Your order is now $text.")
+    }
+
+    /**
+     * Posts a notification to the user with a promotional message
+     *
+     * @param message Message to show.
+     */
+    @WorkerThread
+    fun showPromotionalMessage(message: String) {
+        sendNotif("Promotional Message", message)
     }
 }

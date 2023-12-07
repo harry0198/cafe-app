@@ -12,11 +12,20 @@ import me.harrydrummond.cafeapplication.data.repository.contract.ProductContract
 import me.harrydrummond.cafeapplication.data.repository.toOrder
 import me.harrydrummond.cafeapplication.data.repository.toProduct
 
+/**
+ * An sqlite repository for performing operations on the order repository.
+ * Overrides methods for the joining of products.
+ *
+ * @param helper [DataBaseHelper] to perform operations on.
+ */
 class SQLiteOrderRepository(private val helper: DataBaseHelper): AbstractSQLiteRepository<Order>(helper, OrderContract),
     IOrderRepository {
 
     private val orderDetailsRepository = SQLiteOrderDetailsRepository(helper)
 
+    /**
+     * @inheritDoc
+     */
     override fun update(type: Order): Boolean {
         // Update plain order without products
         val updated = super.update(type)
@@ -31,11 +40,17 @@ class SQLiteOrderRepository(private val helper: DataBaseHelper): AbstractSQLiteR
         return success
     }
 
+    /**
+     * @inheritDoc
+     */
     override fun delete(type: Order): Boolean {
         orderDetailsRepository.deleteByOrderId(type.orderId)
         return super.delete(type)
     }
 
+    /**
+     * @inheritDoc
+     */
     override fun save(type: Order): Int {
         // Saves plain order without products
         val savedId = super.save(type)
@@ -46,6 +61,9 @@ class SQLiteOrderRepository(private val helper: DataBaseHelper): AbstractSQLiteR
         return savedId
     }
 
+    /**
+     * @inheritDoc
+     */
     override fun getOrdersByUserId(userId: Int): List<Order> {
         val query = "${OrderContract.CUSTOMER_ID} = ?"
         val orders = getAllByQuery(query, userId.toString())
@@ -55,6 +73,9 @@ class SQLiteOrderRepository(private val helper: DataBaseHelper): AbstractSQLiteR
         return orders
     }
 
+    /**
+     * @inheritDoc
+     */
     override fun getAllOrders(): List<Order> {
         val orders = getAllByQuery(null, null)
 
@@ -63,6 +84,9 @@ class SQLiteOrderRepository(private val helper: DataBaseHelper): AbstractSQLiteR
         return orders
     }
 
+    /**
+     * @inheritDoc
+     */
     @SuppressLint("Range")
     override fun getById(id: Int): Order? {
         val query = "${OrderContract.ID} = ?"

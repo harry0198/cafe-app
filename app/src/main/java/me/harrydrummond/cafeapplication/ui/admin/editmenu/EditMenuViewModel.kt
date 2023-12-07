@@ -1,6 +1,8 @@
 package me.harrydrummond.cafeapplication.ui.admin.editmenu
 
+import android.app.AlertDialog
 import android.graphics.BitmapFactory
+import android.widget.EditText
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,6 +12,7 @@ import kotlinx.coroutines.launch
 import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
+import me.harrydrummond.cafeapplication.logic.NotificationHelper
 import javax.inject.Inject
 
 /**
@@ -20,7 +23,7 @@ import javax.inject.Inject
  * @author Harry Drummond
  */
 @HiltViewModel
-class EditMenuViewModel @Inject constructor(private val productRepository: IProductRepository): ViewModel() {
+class EditMenuViewModel @Inject constructor(private val productRepository: IProductRepository, private val notificationHelper: NotificationHelper): ViewModel() {
 
     private val _uiState: MutableLiveData<EditMenuUIState> = MutableLiveData(EditMenuUIState())
     val uiState: LiveData<EditMenuUIState> get() = _uiState
@@ -36,6 +39,15 @@ class EditMenuViewModel @Inject constructor(private val productRepository: IProd
             val allProducts = productRepository.getAllProducts()
             _uiState.postValue(_uiState.value?.copy(loading = false, products = allProducts))
         }
+    }
+
+    /**
+     * Sends a promotional message via a notification.
+     *
+     * @param message message to include in notificaiton
+     */
+    fun sendPromotional(message: String) {
+        notificationHelper.showPromotionalMessage(message)
     }
 
     /**

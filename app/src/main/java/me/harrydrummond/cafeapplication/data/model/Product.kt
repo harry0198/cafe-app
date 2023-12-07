@@ -2,6 +2,16 @@ package me.harrydrummond.cafeapplication.data.model
 
 import java.io.Serializable
 
+/**
+ * A data class indicating a product in the database. Contains custom equals and hashcode methods.
+ *
+ * @param productId Id of the product in the database
+ * @param productName Name of the product in the database
+ * @param productPrice Price of the product
+ * @param productImage Image of the product
+ * @param productDescription Description of the product
+ * @param productAvailable Is the product available.
+ */
 data class Product(
     var productId: Int,
     var productName: String = "",

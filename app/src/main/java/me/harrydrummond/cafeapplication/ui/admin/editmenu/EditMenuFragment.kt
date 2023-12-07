@@ -1,5 +1,6 @@
 package me.harrydrummond.cafeapplication.ui.admin.editmenu
 
+import android.app.AlertDialog
 import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -7,10 +8,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
 import androidx.core.view.isVisible
 import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.IntentExtra
+import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.databinding.FragmentEditMenuBinding
 import me.harrydrummond.cafeapplication.ui.common.productview.ProductListViewAdapter
 
@@ -53,13 +56,42 @@ class EditMenuFragment : Fragment() {
         }
         binding.listProducts.adapter = adapter
         onAddMenuItemButtonListener()
+        onSendPromotionButtonClicked()
 
         handleUIState()
+    }
+
+
+    private fun onSendPromotionButtonClicked() {
+        binding.btnSendPromotion.setOnClickListener {
+            popupPromotionalMessage("Send Notification", "")
+        }
     }
 
     private fun onAddMenuItemButtonListener() {
         binding.btnAddProduct.setOnClickListener {
             viewModel.addProduct()
+        }
+    }
+
+    private fun popupPromotionalMessage(title: String, initialValue: String) {
+        // Create a popup
+        val builder = AlertDialog.Builder(requireContext())
+        val dialogLayout = layoutInflater.inflate(R.layout.edit_text_layout, null)
+        val editText = dialogLayout.findViewById<EditText>(R.id.etLayout)
+
+        editText.setText(initialValue)
+        with(builder) {
+            setTitle(title)
+            setPositiveButton("Send Message") { _, _ ->
+                val message = editText.text.toString()
+                viewModel.sendPromotional(message)
+            }
+            setNegativeButton("Cancel") { dialog, which ->
+                // do nothing
+            }
+            setView(dialogLayout)
+            show()
         }
     }
 

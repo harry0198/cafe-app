@@ -87,7 +87,7 @@ class CompleteProfileViewModel @Inject constructor(private val customerRepositor
      * Refreshes the currently logged-in user's profile
      * and delegates success and failure listeners
      */
-    private fun refreshProfile() {
+    fun refreshProfile() {
         // Run in background
         viewModelScope.launch {
 

@@ -62,6 +62,16 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btnSendPromotion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:clickable="true"
+            android:src="@drawable/send_promotion_icon"
+            app:layout_constraintBottom_toBottomOf="@+id/btnAddProduct"
+            app:layout_constraintEnd_toStartOf="@+id/btnAddProduct" />
+
         <ListView
             android:id="@+id/listProducts"
             android:layout_width="0dp"

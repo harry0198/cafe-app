@@ -21,6 +21,12 @@ import me.harrydrummond.cafeapplication.data.repository.contract.ReviewContract
 
 private const val DataBaseName = "Cafe.db"
 private const val ver : Int = 1
+
+/**
+ * Helper class for perofrming sqlite operations on the internal database.
+ *
+ * @param context Application context
+ */
 class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName, null, ver) {
 
     val customerRepository: IUserRepository<Customer> = SQLiteCustomerRepository(this)
