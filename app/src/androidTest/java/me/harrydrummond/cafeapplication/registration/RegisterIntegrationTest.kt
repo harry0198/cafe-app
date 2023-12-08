@@ -1,7 +1,6 @@
-package me.harrydrummond.cafeapplication.login
+package me.harrydrummond.cafeapplication.registration
 
 import android.content.Intent
-import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
@@ -17,7 +16,6 @@ import androidx.test.filters.LargeTest
 import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.data.model.Role
-import me.harrydrummond.cafeapplication.ui.common.login.LoginActivity
 import me.harrydrummond.cafeapplication.ui.common.profile.CreateProfileActivity
 import me.harrydrummond.cafeapplication.ui.common.register.RegisterActivity
 import org.junit.After

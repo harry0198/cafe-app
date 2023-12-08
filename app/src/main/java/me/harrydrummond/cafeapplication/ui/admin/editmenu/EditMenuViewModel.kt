@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import me.harrydrummond.cafeapplication.R
+import me.harrydrummond.cafeapplication.Validators
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.logic.NotificationHelper
@@ -47,6 +48,11 @@ class EditMenuViewModel @Inject constructor(private val productRepository: IProd
      * @param message message to include in notificaiton
      */
     fun sendPromotional(message: String) {
+        val emptyValidation = Validators.validateNotEmpty(message)
+        if (!emptyValidation.isValid) {
+            _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = emptyValidation.message))
+            return
+        }
         notificationHelper.showPromotionalMessage(message)
     }
 

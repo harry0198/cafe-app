@@ -104,9 +104,18 @@ object Validators {
      * @return Validated result containing if is valid and error message
      */
     fun validateExpiry(expiry: String): ValidatedResult {
-        val isValid = expiry.length == 4
+        val lengthValid = expiry.length == 4
 
-        return ValidatedResult(isValid, if (isValid) null else "Expiry length should be 4 numbers")
+        if (!lengthValid) {
+            return ValidatedResult(false, "Expiry length should be 4 numbers")
+        }
+
+        val expiryPattern = ("(?:0[1-9]|1[0-2])[0-9]{2}")
+        val pattern: Pattern = Pattern.compile(expiryPattern)
+        val matcher: Matcher = pattern.matcher(expiry)
+        val dateCorrect = matcher.matches()
+
+        return ValidatedResult(dateCorrect, if (dateCorrect) null else "Not a valid expiry date")
     }
 
     /**
