@@ -15,4 +15,5 @@ data class Review(
     val userId: Int,
     val productId: Int,
     val review: String = "",
+    val rating: Float
 ): Serializable

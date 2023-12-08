@@ -34,15 +34,17 @@ class ViewReviewsViewModel @Inject constructor(private val reviewRepository: IRe
      * Saves a review to the database
      *
      * @param reviewStr Review to save
+     * @param rating Out of 5 stars rating given
      */
-    fun saveReview(reviewStr: String) {
+    fun saveReview(reviewStr: String, rating: Float) {
         _uiState.value = _uiState.value?.copy(loading = true)
 
         val review = Review(
             -1,
             AuthenticatedUser.getInstance().getUserId(),
             product.productId,
-            reviewStr
+            reviewStr,
+            rating
         )
 
         viewModelScope.launch {

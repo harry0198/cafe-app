@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
+import android.widget.RatingBar
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -72,8 +73,8 @@ class ViewReviewsActivity : AppCompatActivity() {
      * Prompts the user to write a brief review
      */
     fun onWriteReviewBtnClicked(view: View) {
-        popupAddReview("Write a Review", "In my opinion...") { review ->
-            viewModel.saveReview(review)
+        popupAddReview("Write a Review", "In my opinion...") { review: String, rating: Float ->
+            viewModel.saveReview(review, rating)
         }
     }
 
@@ -101,18 +102,20 @@ class ViewReviewsActivity : AppCompatActivity() {
         }
     }
 
-    private fun popupAddReview(title: String, initialValue: String, onPositiveButtonClick: (String) -> Unit) {
+    private fun popupAddReview(title: String, initialValue: String, onPositiveButtonClick: (String, Float) -> Unit) {
         // Create a popup
         val builder = AlertDialog.Builder(this)
-        val dialogLayout = layoutInflater.inflate(R.layout.edit_text_layout, null)
-        val editText = dialogLayout.findViewById<EditText>(R.id.etLayout)
+        val dialogLayout = layoutInflater.inflate(R.layout.write_review_layout, null)
+        val editText = dialogLayout.findViewById<EditText>(R.id.reviewLayout)
+        val starRating = dialogLayout.findViewById<RatingBar>(R.id.reviewStars)
 
         editText.setText(initialValue)
         with(builder) {
             setTitle(title)
             setPositiveButton("Save") { _, _ ->
                 val review = editText.text.toString()
-                onPositiveButtonClick(review)
+                val stars = starRating.rating
+                onPositiveButtonClick(review, stars)
             }
             setNegativeButton("Cancel") { dialog, which ->
                 // do nothing

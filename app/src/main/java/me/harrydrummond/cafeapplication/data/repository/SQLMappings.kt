@@ -109,7 +109,8 @@ fun Cursor.toReview(): Review {
         this.getInt(this.getColumnIndex(ReviewContract.ID)),
         this.getInt(this.getColumnIndex(ReviewContract.USER_ID)),
         this.getInt(this.getColumnIndex(ReviewContract.PRODUCT_ID)),
-        this.getString(this.getColumnIndex(ReviewContract.REVIEW))
+        this.getString(this.getColumnIndex(ReviewContract.REVIEW)),
+        this.getFloat(this.getColumnIndex(ReviewContract.RATING))
     )
 }
 

@@ -45,5 +45,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="lorem ipsum dolac ect er ect er ect er ect er ect erc" />
+
+        <RatingBar
+            android:id="@+id/ratingBar"
+            style="@style/Widget.AppCompat.RatingBar.Small"
+            android:clickable="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

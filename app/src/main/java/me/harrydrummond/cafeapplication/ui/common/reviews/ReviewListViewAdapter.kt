@@ -60,6 +60,7 @@ class ReviewListViewAdapter(context: Context, private val customerRepository: IU
         binding.lblNumber.text = "#$position"
         binding.lblUserName.text = username
         binding.lblReview.text = review.review
+        binding.ratingBar.rating = review.rating
 
         return myView
     }

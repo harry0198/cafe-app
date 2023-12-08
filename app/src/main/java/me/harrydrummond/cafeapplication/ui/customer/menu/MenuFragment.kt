@@ -49,17 +49,7 @@ class MenuFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Setup adapter
-        adapter =  ProductListViewAdapter(this.requireContext(), emptyList()) { product ->
-            // On product click, send to product view activity
-            val intent = Intent(requireContext(), ProductViewActivity::class.java).apply {
-                putExtra(IntentExtra.PRODUCT, product)
-            }
-
-            startActivity(intent)
-        }
-        binding.listProducts.layoutManager = GridLayoutManager(requireContext(), 2)
-        binding.listProducts.adapter = adapter
+        setupRecyclerView()
 
         handleUIState()
     }
@@ -67,7 +57,19 @@ class MenuFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.refreshProducts()
-        adapter.notifyDataSetChanged()
+    }
+
+    private fun setupRecyclerView() {
+        // Setup adapter
+        adapter =  ProductListViewAdapter(this.requireContext(), mutableListOf()) { product ->
+            // On product click, send to product view activity
+            val intent = Intent(requireContext(), ProductViewActivity::class.java).apply {
+                putExtra(IntentExtra.PRODUCT, product)
+            }
+
+            startActivity(intent)
+        }
+        binding.listProducts.adapter = adapter
     }
 
     private fun handleUIState() {

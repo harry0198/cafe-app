@@ -1,8 +1,6 @@
 package me.harrydrummond.cafeapplication.data.repository.sqlite
 
-import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.model.Review
-import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.data.repository.IReviewRepository
 import me.harrydrummond.cafeapplication.data.repository.contract.ReviewContract
 
@@ -21,6 +19,4 @@ class SQLiteReviewRepository(helper: DataBaseHelper): AbstractSQLiteRepository<R
         val query = "${ReviewContract.PRODUCT_ID} = ?"
         return getAllByQuery(query, productId.toString())
     }
-
-
 }

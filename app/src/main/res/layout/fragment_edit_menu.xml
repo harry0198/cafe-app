@@ -72,12 +72,13 @@
             app:layout_constraintBottom_toBottomOf="@+id/btnAddProduct"
             app:layout_constraintEnd_toStartOf="@+id/btnAddProduct" />
 
-        <androidx.recyclerview.widget.RecyclerView
+        <GridView
             android:id="@+id/listProducts"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:divider="@null"
             android:dividerHeight="10dp"
+            android:numColumns="2"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -86,7 +87,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lytAuth">
 
-        </androidx.recyclerview.widget.RecyclerView>
+        </GridView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

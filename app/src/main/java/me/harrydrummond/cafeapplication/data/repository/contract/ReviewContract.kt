@@ -15,11 +15,11 @@ object ReviewContract : BaseContract<Review> {
     const val USER_ID = "UserId"
     const val PRODUCT_ID = "ProductId"
     const val REVIEW = "Review"
+    const val RATING = "Rating"
 
     override val TABLE_NAME = "Review"
     override val ID = "ReviewId"
-    override val CREATE_TABLE = "CREATE TABLE $TABLE_NAME ( $ID INTEGER PRIMARY KEY AUTOINCREMENT, $USER_ID INTEGER NOT NULL, " +
-            "$PRODUCT_ID INTEGER NOT NULL, $REVIEW TEXT NOT NULL )"
+    override val CREATE_TABLE = "CREATE TABLE $TABLE_NAME ( $ID INTEGER PRIMARY KEY AUTOINCREMENT, $USER_ID INTEGER NOT NULL )"
 
     /**
      * @inheritDoc
@@ -42,6 +42,7 @@ object ReviewContract : BaseContract<Review> {
         cv.put(PRODUCT_ID, entity.productId)
         cv.put(USER_ID, entity.userId)
         cv.put(REVIEW, entity.review)
+        cv.put(RATING, entity.rating)
 
         return cv
     }

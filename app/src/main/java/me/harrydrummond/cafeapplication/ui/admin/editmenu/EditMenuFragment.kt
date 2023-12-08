@@ -48,7 +48,7 @@ class EditMenuFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(EditMenuViewModel::class.java)
 
-        adapter =  ProductListViewAdapter(this.requireContext(), emptyList()) { product ->
+        adapter =  ProductListViewAdapter(this.requireContext(), listOf()) { product ->
             // On product selected, send to editproductactivity.
             val intent = Intent(requireContext(), EditProductActivity::class.java).apply {
                 putExtra(IntentExtra.PRODUCT, product)
@@ -56,7 +56,6 @@ class EditMenuFragment : Fragment() {
 
             startActivity(intent)
         }
-        binding.listProducts.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.listProducts.adapter = adapter
         onAddMenuItemButtonListener()
         onSendPromotionButtonClicked()
@@ -101,7 +100,6 @@ class EditMenuFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.refreshProducts()
-        adapter.notifyDataSetChanged()
     }
 
     private fun handleUIState() {

@@ -41,13 +41,13 @@ class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName,
 
         try {
             // Create tables
-            database.execSQL(CustomerContract.CREATE_TABLE)
-            database.execSQL(ProductContract.CREATE_TABLE)
-            database.execSQL(EmployeeContract.CREATE_TABLE)
-            database.execSQL(OrderContract.CREATE_TABLE)
-            database.execSQL(OrderDetailsContract.CREATE_TABLE)
             database.execSQL(ReviewContract.CREATE_TABLE)
             database.execSQL(PaymentContract.CREATE_TABLE)
+            database.execSQL(EmployeeContract.CREATE_TABLE)
+            database.execSQL(ProductContract.CREATE_TABLE)
+            database.execSQL(CustomerContract.CREATE_TABLE)
+            database.execSQL(OrderContract.CREATE_TABLE)
+            database.execSQL(OrderDetailsContract.CREATE_TABLE)
         } catch (e: SQLiteException) {
             e.printStackTrace()
         }
