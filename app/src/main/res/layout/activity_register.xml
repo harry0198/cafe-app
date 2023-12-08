@@ -87,6 +87,35 @@
             android:hint="@string/enter_your_password"
             android:inputType="textPassword" />
 
+        <TextView
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_medium"
+            android:textFontWeight="700"
+            android:text="Password Requirements:" />
+        <TextView
+            android:id="@+id/lbl_minlength_validation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1) Must be over 6 characters" />
+        <TextView
+            android:id="@+id/lbl_maxlength_validation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2) Must be under 20 characters" />
+        <TextView
+            android:id="@+id/lbl_digit_validation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="3) Must contain a number" />
+        <TextView
+            android:id="@+id/lbl_capital_validation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="4) Must contain a capital letter" />
+
+
     </LinearLayout>
 
     <Button

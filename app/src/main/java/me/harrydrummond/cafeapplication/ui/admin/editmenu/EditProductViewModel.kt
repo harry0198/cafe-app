@@ -1,15 +1,14 @@
 package me.harrydrummond.cafeapplication.ui.admin.editmenu
 
 import android.graphics.Bitmap
-import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import me.harrydrummond.cafeapplication.ValidatedResult
-import me.harrydrummond.cafeapplication.Validators
+import me.harrydrummond.cafeapplication.logic.validators.ValidatedResult
+import me.harrydrummond.cafeapplication.logic.validators.Validators
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
 import me.harrydrummond.cafeapplication.logic.toByteArray

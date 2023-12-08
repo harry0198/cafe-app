@@ -15,7 +15,7 @@ import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.R
-import me.harrydrummond.cafeapplication.Validators
+import me.harrydrummond.cafeapplication.logic.validators.Validators
 import me.harrydrummond.cafeapplication.databinding.FragmentCartBinding
 import me.harrydrummond.cafeapplication.logic.toPrice
 import me.harrydrummond.cafeapplication.ui.common.order.CartItemListViewAdapter
@@ -148,7 +148,7 @@ class CartFragment : Fragment() {
             setTitle(title)
             setPositiveButton("Save") { _, _ ->
                 val num = editNumber.text.toString().toIntOrNull()
-                val toastText = if (num != null) {
+                val toastText = if (num != null && num <= 15 && num > 0) {
                     onPositiveButtonClick(num.toInt())
                     "Quantity Updated"
                 } else {

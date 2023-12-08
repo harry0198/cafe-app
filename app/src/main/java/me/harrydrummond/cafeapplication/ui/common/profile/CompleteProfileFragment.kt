@@ -2,9 +2,7 @@
 package me.harrydrummond.cafeapplication.ui.common.profile
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.telephony.PhoneNumberUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +12,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import dagger.hilt.android.AndroidEntryPoint
-import me.harrydrummond.cafeapplication.Validators
+import me.harrydrummond.cafeapplication.logic.validators.Validators
 import me.harrydrummond.cafeapplication.databinding.FragmentCompleteProfileBinding
 
 

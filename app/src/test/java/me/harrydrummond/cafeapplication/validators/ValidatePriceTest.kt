@@ -1,7 +1,7 @@
 package me.harrydrummond.cafeapplication.validators
 
 import junit.framework.TestCase
-import me.harrydrummond.cafeapplication.Validators
+import me.harrydrummond.cafeapplication.logic.validators.Validators
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized

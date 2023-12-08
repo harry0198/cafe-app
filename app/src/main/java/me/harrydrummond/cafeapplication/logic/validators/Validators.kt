@@ -1,4 +1,4 @@
-package me.harrydrummond.cafeapplication
+package me.harrydrummond.cafeapplication.logic.validators
 
 import android.telephony.PhoneNumberUtils
 import android.widget.EditText
@@ -42,10 +42,17 @@ object Validators {
      * Validates a password string adheres to security practices
      *
      * @param password to validate
-     * @return ValidatedResult containing if is valid and error message.
+     * @return ValidatedPasswordResult containing validation passes and failures.
      */
-    fun validatePassword(password: String): ValidatedResult {
-        return validateNotEmpty(password)
+    fun validatePassword(password: String): ValidatedPasswordResult {
+        val passwordValidationResult = ValidatedPasswordResult()
+        passwordValidationResult.passEmptyValidation = validateNotEmpty(password).isValid
+        passwordValidationResult.passDigitValidation = hasDigit(password)
+        passwordValidationResult.passCapitalValidation = hasCapitalLetter(password)
+        passwordValidationResult.passMinLengthValidation = password.length > PasswordConstants.MIN_PASSWORD_LENGTH
+        passwordValidationResult.passMaxLengthValidation = password.length < PasswordConstants.MAX_PASSWORD_LENGTH
+
+        return passwordValidationResult
     }
 
 
@@ -79,7 +86,7 @@ object Validators {
      * @param price to validate formatting
      * @return ValidatedResult containing if is valid and error message.
      */
-    fun validatePrice(price: Double):ValidatedResult {
+    fun validatePrice(price: Double): ValidatedResult {
         val isValid = price.toBigDecimal().scale() == 2
 
         return ValidatedResult(isValid, if (isValid) null else "Incorrect price formatting. 2 Decimal Places required")
@@ -124,7 +131,7 @@ object Validators {
      * @param cvv to validate
      * @return Validated result containing if is valid and error message
      */
-    fun validateCVV(cvv: String):ValidatedResult {
+    fun validateCVV(cvv: String): ValidatedResult {
         val isValid = cvv.length == 3
 
         return ValidatedResult(isValid, if (isValid) null else "CVV length should be 3 numbers")
@@ -143,5 +150,23 @@ object Validators {
         } else {
             field.error = validatedResult.message
         }
+    }
+
+    private fun hasDigit(string: String): Boolean {
+        for (char in string) {
+            if (char.isDigit()) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun hasCapitalLetter(string: String): Boolean {
+        for (char in string) {
+            if (char.isUpperCase()) {
+                return true
+            }
+        }
+        return false
     }
 }

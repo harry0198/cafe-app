@@ -1,20 +1,19 @@
 package me.harrydrummond.cafeapplication.ui.common.register
 
-import android.provider.Settings.Global.getString
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import me.harrydrummond.cafeapplication.R
-import me.harrydrummond.cafeapplication.ValidatedResult
-import me.harrydrummond.cafeapplication.Validators
+import me.harrydrummond.cafeapplication.logic.validators.ValidatedResult
+import me.harrydrummond.cafeapplication.logic.validators.Validators
 import me.harrydrummond.cafeapplication.data.model.Customer
 import me.harrydrummond.cafeapplication.data.model.Employee
 import me.harrydrummond.cafeapplication.data.model.Role
 import me.harrydrummond.cafeapplication.data.repository.AuthenticatedUser
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
+import me.harrydrummond.cafeapplication.logic.validators.ValidatedPasswordResult
 import javax.inject.Inject
 
 
@@ -51,7 +50,7 @@ class RegisterViewModel @Inject constructor(private val customerRepository: IUse
             validatedPassword = validatePassword
         )
 
-        if (!validateUsername.isValid || !validatePassword.isValid) {
+        if (!validateUsername.isValid || !validatePassword.allDoPass()) {
             return
         }
 
@@ -129,5 +128,5 @@ data class RegisterUIState(
     val errorMessage: String? = null,
     val event: Event? = null,
     val validatedUsername: ValidatedResult = ValidatedResult(true, null),
-    val validatedPassword: ValidatedResult = ValidatedResult(true, null)
+    val validatedPassword: ValidatedPasswordResult = ValidatedPasswordResult(true, true, true, true, true)
 )

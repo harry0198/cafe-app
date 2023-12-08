@@ -14,6 +14,7 @@ import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.databinding.ActivityProductViewBinding
 import me.harrydrummond.cafeapplication.logic.toBitmap
+import me.harrydrummond.cafeapplication.logic.toPrice
 import me.harrydrummond.cafeapplication.ui.common.reviews.ReviewListViewAdapter
 import me.harrydrummond.cafeapplication.ui.common.reviews.ViewReviewsActivity
 import me.harrydrummond.cafeapplication.ui.common.reviews.ViewReviewsViewModel
@@ -47,7 +48,7 @@ class ProductViewActivity : AppCompatActivity() {
         viewModel.initialize(product)
 
         binding.lblProductName.text = product.productName
-        binding.lblProductPrice.text = String.format("%.2f", product.productPrice)
+        binding.lblProductPrice.text = product.productPrice.toPrice()
         binding.lblProductDescription.text = product.productDescription
         binding.imageView2.setImageBitmap(product.productImage?.toBitmap(500, 500))
 
@@ -96,6 +97,7 @@ class ProductViewActivity : AppCompatActivity() {
                 when (uiState.event) {
                     Event.ItemAddedToCart -> {
                         Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show()
+                        onBackPressed()
                         viewModel.eventExecuted()
                         return@observe
                     }

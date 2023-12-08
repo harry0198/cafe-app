@@ -1,21 +1,22 @@
 package me.harrydrummond.cafeapplication.ui.common.register
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.IntentExtra
-import me.harrydrummond.cafeapplication.R
-import me.harrydrummond.cafeapplication.Validators
+import me.harrydrummond.cafeapplication.logic.validators.Validators
 import me.harrydrummond.cafeapplication.data.model.Role
-import me.harrydrummond.cafeapplication.databinding.ActivityLoginBinding
 import me.harrydrummond.cafeapplication.databinding.ActivityRegisterBinding
+import me.harrydrummond.cafeapplication.logic.validators.ValidatedPasswordResult
+import me.harrydrummond.cafeapplication.logic.validators.ValidatedResult
 import me.harrydrummond.cafeapplication.ui.AdminAppActivity
-import me.harrydrummond.cafeapplication.ui.common.login.LoginViewModel
 import me.harrydrummond.cafeapplication.ui.common.profile.CreateProfileActivity
 
 
@@ -74,7 +75,7 @@ class RegisterActivity : AppCompatActivity() {
                 viewModel.errorMessageShown()
             }
             Validators.apply(uiState.validatedUsername, binding.registerEmail)
-            Validators.apply(uiState.validatedPassword, binding.registerPassword)
+            applyPasswordValidatedResult(uiState.validatedPassword)
             if (uiState.event != null) {
                 when (uiState.event) {
                     Event.UserWasRegistered -> {
@@ -95,6 +96,27 @@ class RegisterActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun applyPasswordValidatedResult(validatedResult: ValidatedPasswordResult) {
+        setTextColour(binding.lblDigitValidation, validatedResult.passDigitValidation)
+        setTextColour(binding.lblCapitalValidation, validatedResult.passCapitalValidation)
+        setTextColour(binding.lblMaxlengthValidation, validatedResult.passMaxLengthValidation)
+        setTextColour(binding.lblMinlengthValidation, validatedResult.passMinLengthValidation)
+
+        if (!validatedResult.allDoPass()) {
+            binding.registerPassword.error = "There were validation errors"
+        } else {
+            binding.registerPassword.error = null
+        }
+    }
+
+    private fun setTextColour(view: TextView, didPass: Boolean) {
+        if (didPass) {
+            view.setTextColor(Color.GREEN)
+        } else {
+            view.setTextColor(Color.RED)
         }
     }
 }

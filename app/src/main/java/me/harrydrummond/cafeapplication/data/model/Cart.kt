@@ -1,12 +1,16 @@
 package me.harrydrummond.cafeapplication.data.model
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+
 /**
  * Singleton class that holds a user's cart contents.
  * A cart holds many products.
  */
 class Cart private constructor() {
 
-    private var products: MutableList<Product> = mutableListOf()
+    private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
+    val products: LiveData<List<Product>> get() = _products
 
     companion object {
         // Singleton instance
@@ -28,7 +32,7 @@ class Cart private constructor() {
      * @see List
      */
     fun getProducts(): List<Product> {
-        return products
+        return products.value ?: emptyList()
     }
 
     /**
@@ -38,9 +42,11 @@ class Cart private constructor() {
      * @param quantity Quantity to add
      */
     fun addProduct(product: Product, quantity: Int) {
+        val list = getProducts().toMutableList()
         for (i in 0..<quantity) {
-            products.add(product)
+            list.add(product)
         }
+        _products.postValue(list)
     }
 
     /**
@@ -49,14 +55,16 @@ class Cart private constructor() {
      * @param product Product to clear
      */
     fun clearProductsMatching(product: Product) {
-        products.removeAll { it.productId == product.productId}
+        val prods = getProducts().toMutableList()
+        prods.removeAll { it.productId == product.productId}
+        _products.value = prods
     }
 
     /**
      * Clear the entire cart contents.
      */
     fun clear() {
-        products.clear()
+        _products.postValue(emptyList())
     }
 
 }

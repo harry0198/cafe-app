@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import me.harrydrummond.cafeapplication.R
+import me.harrydrummond.cafeapplication.data.model.Cart
 import me.harrydrummond.cafeapplication.databinding.ActivityAppBinding
 import me.harrydrummond.cafeapplication.ui.common.profile.CompleteProfileViewModel
 import me.harrydrummond.cafeapplication.ui.customer.cart.CartFragment
@@ -46,6 +47,12 @@ class AppActivity : AppCompatActivity(), CompleteProfileViewModel.ValidationList
                 else -> {}
             }
             true
+        }
+
+        Cart.getInstance().products.observe(this) { products ->
+            val badge = binding.bottomNavigationView.getOrCreateBadge(R.id.c_cart);
+            badge.isVisible = products.isNotEmpty();
+            badge.number = products.size
         }
     }
 
