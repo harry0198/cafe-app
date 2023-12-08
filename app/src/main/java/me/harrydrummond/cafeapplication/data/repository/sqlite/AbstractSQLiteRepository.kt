@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteOpenHelper
 import me.harrydrummond.cafeapplication.data.repository.CrudRepository
 import me.harrydrummond.cafeapplication.data.repository.contract.BaseContract
+import java.sql.Timestamp
 
 /**
  * Abstract class with implementations of CRUD operations for an SQLite database.
@@ -78,7 +79,7 @@ abstract class AbstractSQLiteRepository<T>(
      * @param query Query to run
      * @param args Arguments in query
       */
-    fun getAllByQuery(query: String?, args: String?): List<T> {
+    fun getAllByQuery(query: String?, args: String?, orderBy: String? = null): List<T> {
         val db = helper.writableDatabase
         val list: MutableList<T> = mutableListOf()
 
@@ -89,7 +90,7 @@ abstract class AbstractSQLiteRepository<T>(
             if (args != null) arrayOf(args) else null,
             null,
             null,
-            null
+            orderBy
         )
 
         while (cursor.moveToNext()) {

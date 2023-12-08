@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import me.harrydrummond.cafeapplication.data.model.Order
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.logic.mapDuplicatesToQuantity
+import java.util.Date
 
 /**
  * OrderDetailsViewModel class which provides the business logic to the view class
@@ -29,7 +30,7 @@ class OrderDetailsViewModel: ViewModel() {
      */
     fun initialize(order: Order) {
         this.order = order
-        _uiState.postValue(_uiState.value?.copy(productsAndQuantity = order.products.mapDuplicatesToQuantity()))
+        _uiState.postValue(_uiState.value?.copy(productsAndQuantity = order.products.mapDuplicatesToQuantity(), dateOfOrder = order.timestamp))
     }
 
     /**
@@ -47,5 +48,6 @@ class OrderDetailsViewModel: ViewModel() {
 data class OrderDetailsUIState(
     val loading: Boolean = false,
     val errorMessage: String? = null,
+    val dateOfOrder: Date? = null,
     val productsAndQuantity: List<Pair<Int, Product>> = listOf(),
 )

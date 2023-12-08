@@ -8,6 +8,7 @@ import android.widget.BaseAdapter
 import androidx.core.view.isVisible
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.databinding.OrderDetailsListViewBinding
+import me.harrydrummond.cafeapplication.logic.toPrice
 
 /**
  * List view adapter for viewing a fully loaded cart.
@@ -56,7 +57,7 @@ class CartItemListViewAdapter (context: Context, var cartItems: List<Pair<Int, P
         val totalPrice = product.productPrice * quantity
 
         binding.lblTitle.text = "x$quantity ${product.productName}"
-        binding.lblSubTotal.text = "£" + String.format("%.2f", totalPrice)
+        binding.lblSubTotal.text = totalPrice.toPrice()
         binding.lblDesc.text = product.productDescription
 
         // If edit btn callback is null, don't display the edit btn

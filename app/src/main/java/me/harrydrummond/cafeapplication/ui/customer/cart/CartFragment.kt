@@ -55,11 +55,16 @@ class CartFragment : Fragment() {
                 viewModel.updateQuantity(product, result)
             }
         }, { product ->
+            // Delete listener
             viewModel.updateQuantity(product, 0)
         })
         binding.cartOrderList.adapter = adapter
 
         binding.btnPlaceOrder.setOnClickListener {
+            if (viewModel.isCartEmpty()) {
+                emptyCart()
+                return@setOnClickListener
+            }
             onBtnPlaceOrderClicked()
         }
 
@@ -97,8 +102,8 @@ class CartFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            bottomSheet.dismiss()
             viewModel.placeOrder(cardNo.text.toString(), cardExpiry.text.toString(), cardCVV.text.toString())
+            bottomSheet.dismiss()
         }
 
         bottomSheet.show()
@@ -108,6 +113,7 @@ class CartFragment : Fragment() {
         viewModel.uiState.observe(requireActivity()) { uiState ->
             binding.progressBar.isVisible = uiState.loading
 
+            val cp = uiState.cartProducts
             adapter.cartItems = uiState.cartProducts
             adapter.notifyDataSetChanged()
 

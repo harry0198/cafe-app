@@ -46,7 +46,7 @@ class Cart private constructor() {
         for (i in 0..<quantity) {
             list.add(product)
         }
-        _products.postValue(list)
+        _products.value = list
     }
 
     /**
@@ -64,7 +64,7 @@ class Cart private constructor() {
      * Clear the entire cart contents.
      */
     fun clear() {
-        _products.postValue(emptyList())
+        _products.value = emptyList()
     }
 
 }

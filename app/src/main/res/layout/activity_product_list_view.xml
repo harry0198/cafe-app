@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/product_list_view_background"
+    android:orientation="vertical"
+    android:padding="10dp"
     tools:context=".ui.common.productview.ProductListView">
 
 
@@ -13,6 +15,7 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:background="#00FFFFFF"
+        android:layout_gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,43 +23,31 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/productImage"
         app:layout_constraintTop_toTopOf="parent"
-        android:gravity="center"
         app:layout_constraintVertical_bias="0.8">
 
         <TextView
             android:id="@+id/productName"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto"
-            android:textSize="10sp"
+            android:text="Flat White"
             android:textColor="?attr/colorSecondary"
             android:textFontWeight="400"
-            android:text="Flat White" />
+            android:textSize="10sp" />
 
         <TextView
             android:id="@+id/productPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_medium"
-            android:textFontWeight="800"
+            android:text="£ 3.25"
             android:textColor="?attr/colorPrimary"
-            android:text="£ 3.25" />
+            android:textFontWeight="800" />
     </LinearLayout>
-
-    <Button
-        android:id="@+id/nextButton"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-
-        android:layout_marginEnd="20dp"
-        android:background="@drawable/arrow_forward"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -11,6 +11,9 @@ import me.harrydrummond.cafeapplication.databinding.ActivityOrderDetailsBinding
 import me.harrydrummond.cafeapplication.databinding.FragmentOrdersBinding
 import me.harrydrummond.cafeapplication.ui.common.order.CartItemListViewAdapter
 import me.harrydrummond.cafeapplication.ui.common.order.OrderListViewAdapter
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 /**
  * OrderDetailsActivity class.
@@ -50,6 +53,11 @@ class OrderDetailsActivity : AppCompatActivity() {
 
     private fun handleUIState() {
         viewModel.uiState.observe(this) { uiState ->
+            if (uiState.dateOfOrder != null) {
+                val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.UK)
+                binding.lblDateOfOrder.text = sdf.format(uiState.dateOfOrder)
+            }
+
             binding.odProgress.isVisible = uiState.loading
 
             if (uiState.errorMessage != null) {
@@ -61,4 +69,5 @@ class OrderDetailsActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
         }
     }
+
 }

@@ -11,6 +11,8 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.R
@@ -54,6 +56,7 @@ class EditMenuFragment : Fragment() {
 
             startActivity(intent)
         }
+        binding.listProducts.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.listProducts.adapter = adapter
         onAddMenuItemButtonListener()
         onSendPromotionButtonClicked()

@@ -55,6 +55,12 @@
             android:fontFamily="@font/roboto"
             android:text="Preparing..." />
 
+        <TextView
+            android:id="@+id/lblDateOfOrder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="10/01/19 10:30am" />
+
 
     </LinearLayout>
 

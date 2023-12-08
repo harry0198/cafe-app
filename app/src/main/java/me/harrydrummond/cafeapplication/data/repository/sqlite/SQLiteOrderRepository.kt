@@ -66,7 +66,7 @@ class SQLiteOrderRepository(private val helper: DataBaseHelper): AbstractSQLiteR
      */
     override fun getOrdersByUserId(userId: Int): List<Order> {
         val query = "${OrderContract.CUSTOMER_ID} = ?"
-        val orders = getAllByQuery(query, userId.toString())
+        val orders = getAllByQuery(query, userId.toString(), "${OrderContract.DATE} DESC")
 
         mapAllProducts(orders)
 
@@ -77,7 +77,7 @@ class SQLiteOrderRepository(private val helper: DataBaseHelper): AbstractSQLiteR
      * @inheritDoc
      */
     override fun getAllOrders(): List<Order> {
-        val orders = getAllByQuery(null, null)
+        val orders = getAllByQuery(null, null, "${OrderContract.DATE} DESC")
 
         mapAllProducts(orders)
 

@@ -45,6 +45,8 @@ class CartViewModel @Inject constructor(private val orderRepository: IOrderRepos
         viewModelScope.launch {
             val products = Cart.getInstance().getProducts()
             val mappedProducts = products.mapDuplicatesToQuantity()
+            println("Mapped prods" + mappedProducts.size)
+            println("actual prods" + products.size)
             _uiState.postValue(
                 _uiState.value?.copy(
                     loading = false,
@@ -78,6 +80,13 @@ class CartViewModel @Inject constructor(private val orderRepository: IOrderRepos
     }
 
     /**
+     * Is the current cart empty
+     */
+    fun isCartEmpty(): Boolean {
+        return Cart.getInstance().getProducts().isEmpty()
+    }
+
+    /**
      * Places an order and updates the UIState
      */
     fun placeOrder(cardNo: String, expiry: String, cvv: String) {
@@ -106,15 +115,14 @@ class CartViewModel @Inject constructor(private val orderRepository: IOrderRepos
             paymentRepository.save(payment)
 
             if (saved != -1) {
-                _uiState.postValue(_uiState.value?.copy(loading = false, event = Event.OrderPlaced))
+                _uiState.value = _uiState.value?.copy(loading = false, event = Event.OrderPlaced)
                 clearCart()
             } else {
-                _uiState.postValue(
+                _uiState.value =
                     _uiState.value?.copy(
                         loading = false,
                         errorMessage = "Unable to place order"
                     )
-                )
             }
         }
     }
