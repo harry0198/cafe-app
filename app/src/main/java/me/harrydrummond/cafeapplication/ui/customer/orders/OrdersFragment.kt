@@ -7,14 +7,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.view.isVisible
 import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.IntentExtra
-import me.harrydrummond.cafeapplication.databinding.ActivityCreateProfileBinding
 import me.harrydrummond.cafeapplication.databinding.FragmentOrdersBinding
+import me.harrydrummond.cafeapplication.ui.CustomerAppViewModel
 import me.harrydrummond.cafeapplication.ui.common.order.OrderListViewAdapter
-import me.harrydrummond.cafeapplication.ui.common.profile.CreateProfileViewModel
 
 /**
  * OrdersFragment class.
@@ -31,11 +28,13 @@ class OrdersFragment : Fragment() {
 
     private lateinit var adapter: OrderListViewAdapter
     private lateinit var viewModel: OrdersViewModel
+    private lateinit var appViewModel: CustomerAppViewModel
     private lateinit var binding: FragmentOrdersBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this).get(OrdersViewModel::class.java)
+        appViewModel = ViewModelProvider(requireActivity()).get(CustomerAppViewModel::class.java) // Get shared viewmodel from parent.
     }
 
     override fun onCreateView(
@@ -51,9 +50,11 @@ class OrdersFragment : Fragment() {
 
         // Set the order list view adapter to be empty
         adapter =  OrderListViewAdapter(this.requireContext(), emptyList()) { order ->
+            val collectedOrder = viewModel.tryCollectOrder(order)
+
             // On click of an order list view, send to order details activity
             val intent = Intent(requireContext(), OrderDetailsActivity::class.java)
-            intent.putExtra(IntentExtra.ORDER_OBJ, order)
+            intent.putExtra(IntentExtra.ORDER_OBJ, collectedOrder)
             startActivity(intent)
         }
         binding.ordersList.adapter = adapter
@@ -63,19 +64,13 @@ class OrdersFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.refreshOrders()
+        appViewModel.refreshOrders()
         adapter.notifyDataSetChanged()
     }
 
     private fun handleUIState() {
-        viewModel.uiState.observe(viewLifecycleOwner) { uiState ->
-            binding.progressBar.isVisible = uiState.loading
-            if (uiState.errorMessage != null) {
-                Toast.makeText(requireContext(), uiState.errorMessage, Toast.LENGTH_SHORT).show()
-                viewModel.errorMessageShown()
-            }
-
-            adapter.orderItems = uiState.orders
+        appViewModel.orders.observe(viewLifecycleOwner) {
+            adapter.orderItems = it
             adapter.notifyDataSetChanged()
         }
     }

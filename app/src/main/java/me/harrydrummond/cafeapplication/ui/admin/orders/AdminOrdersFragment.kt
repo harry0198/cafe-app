@@ -13,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.databinding.ActivityLoginBinding
 import me.harrydrummond.cafeapplication.databinding.FragmentAdminOrdersBinding
+import me.harrydrummond.cafeapplication.ui.AdminAppViewModel
 import me.harrydrummond.cafeapplication.ui.common.login.LoginViewModel
 import me.harrydrummond.cafeapplication.ui.customer.orders.OrderDetailsActivity
 import me.harrydrummond.cafeapplication.ui.common.order.OrderListViewAdapter
@@ -32,11 +33,13 @@ class AdminOrdersFragment : Fragment() {
 
     private lateinit var adapter: OrderListViewAdapter
     private lateinit var viewModel: AdminOrdersViewModel
+    private lateinit var appViewModel: AdminAppViewModel
     private lateinit var binding: FragmentAdminOrdersBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this).get(AdminOrdersViewModel::class.java)
+        appViewModel = ViewModelProvider(requireActivity()).get(AdminAppViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -51,7 +54,7 @@ class AdminOrdersFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         adapter = OrderListViewAdapter(this.requireContext(), emptyList()) { order ->
-            // On click of the order, start the vieworder activity.
+            // On click of the order, start the view order activity.
             val intent = Intent(requireContext(), AdminViewOrderActivity::class.java)
             intent.putExtra(IntentExtra.ORDER_OBJ, order)
             startActivity(intent)
@@ -63,20 +66,14 @@ class AdminOrdersFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.refreshOrders()
+        appViewModel.refreshOrders()
         adapter.notifyDataSetChanged()
     }
 
     private fun handleUIState() {
-        viewModel.uiState.observe(requireActivity()) { uiState ->
-            binding.progressBar.isVisible = uiState.loading
-            adapter.orderItems = uiState.orders
+        appViewModel.orders.observe(requireActivity()) { orders ->
+            adapter.orderItems = orders
             adapter.notifyDataSetChanged()
-
-            if (uiState.errorMessage != null) {
-                Toast.makeText(requireContext(), uiState.errorMessage, Toast.LENGTH_SHORT).show()
-                viewModel.errorMessageShown()
-            }
         }
     }
 

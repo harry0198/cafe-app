@@ -53,6 +53,7 @@ class OrderListViewAdapter (context: Context, var orderItems: List<Order>, val o
 
         binding.lblTitle.text = "Order ID: ${order.orderId}"
         binding.lblItemCount.text = "x$total"
+        binding.status.text = order.status.toString()
 
         binding.nextButton.setOnClickListener {
             onNextClick(order)

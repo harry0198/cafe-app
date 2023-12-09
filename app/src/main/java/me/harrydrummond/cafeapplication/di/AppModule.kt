@@ -1,6 +1,7 @@
 package me.harrydrummond.cafeapplication.di
 
 import android.content.Context
+import android.provider.ContactsContract.Data
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -8,6 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.harrydrummond.cafeapplication.data.model.Customer
 import me.harrydrummond.cafeapplication.data.model.Employee
+import me.harrydrummond.cafeapplication.data.repository.INotificationRepository
 import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IPaymentRepository
 import me.harrydrummond.cafeapplication.data.repository.sqlite.DataBaseHelper
@@ -61,6 +63,12 @@ internal object AppModule {
     @Singleton
     fun provideNotificationHelper(@ApplicationContext context: Context): NotificationHelper {
         return NotificationHelper(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotificationRepository(database: DataBaseHelper): INotificationRepository {
+        return database.notificationRepository
     }
 
 

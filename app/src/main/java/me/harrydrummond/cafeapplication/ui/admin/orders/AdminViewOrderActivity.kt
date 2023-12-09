@@ -8,13 +8,10 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import dagger.hilt.android.AndroidEntryPoint
 import me.harrydrummond.cafeapplication.IntentExtra
-import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.data.model.Order
 import me.harrydrummond.cafeapplication.data.model.Status
 import me.harrydrummond.cafeapplication.databinding.ActivityAdminViewOrderBinding
-import me.harrydrummond.cafeapplication.databinding.ActivityOrderDetailsBinding
 import me.harrydrummond.cafeapplication.ui.common.order.CartItemListViewAdapter
-import me.harrydrummond.cafeapplication.ui.customer.orders.OrderDetailsViewModel
 
 /**
  * AdminViewOrderActivity class.
@@ -79,7 +76,9 @@ class AdminViewOrderActivity : AppCompatActivity() {
             when (uiState.orderStatus) {
                 Status.READY -> binding.lblStatus.text = "Ready for Collection"
                 Status.PREPARING -> binding.lblStatus.text = "Preparing..."
-                Status.NONE -> binding.lblStatus.text = "Order Received"
+                Status.RECEIVED -> binding.lblStatus.text = "Received"
+                Status.COLLECTED -> binding.lblStatus.text = "Collected"
+                Status.NONE -> binding.lblStatus.text = "Received"
             }
             adapter.cartItems = uiState.productData
             adapter.notifyDataSetChanged()

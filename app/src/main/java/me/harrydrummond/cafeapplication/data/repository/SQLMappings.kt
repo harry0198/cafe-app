@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.database.Cursor
 import me.harrydrummond.cafeapplication.data.model.Customer
 import me.harrydrummond.cafeapplication.data.model.Employee
+import me.harrydrummond.cafeapplication.data.model.Notification
 import me.harrydrummond.cafeapplication.data.model.Order
 import me.harrydrummond.cafeapplication.data.model.OrderDetails
 import me.harrydrummond.cafeapplication.data.model.Payment
@@ -12,6 +13,7 @@ import me.harrydrummond.cafeapplication.data.model.Review
 import me.harrydrummond.cafeapplication.data.model.Status
 import me.harrydrummond.cafeapplication.data.repository.contract.CustomerContract
 import me.harrydrummond.cafeapplication.data.repository.contract.EmployeeContract
+import me.harrydrummond.cafeapplication.data.repository.contract.NotificationContract
 import me.harrydrummond.cafeapplication.data.repository.contract.OrderContract
 import me.harrydrummond.cafeapplication.data.repository.contract.OrderDetailsContract
 import me.harrydrummond.cafeapplication.data.repository.contract.PaymentContract
@@ -124,5 +126,14 @@ fun Cursor.toProduct(): Product {
         this.getString(this.getColumnIndex(ProductContract.DESCRIPTION)),
         this.getInt(this.getColumnIndex(ProductContract.AVAILABLE)) == 1
 
+    )
+}
+
+@SuppressLint("Range")
+fun Cursor.toNotification(): Notification {
+    return Notification(
+        this.getInt(this.getColumnIndex(NotificationContract.ID)),
+        this.getInt(this.getColumnIndex(NotificationContract.USER_ID)),
+        this.getString(this.getColumnIndex(NotificationContract.MESSAGE))
     )
 }

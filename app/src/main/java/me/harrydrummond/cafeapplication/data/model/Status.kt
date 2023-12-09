@@ -6,7 +6,9 @@ package me.harrydrummond.cafeapplication.data.model
  * @see Order
  */
 enum class Status {
+    COLLECTED,
     READY,
     PREPARING,
+    RECEIVED,
     NONE
 }

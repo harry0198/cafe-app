@@ -1,5 +1,6 @@
 package me.harrydrummond.cafeapplication.data.repository.sqlite
 
+import android.annotation.SuppressLint
 import android.database.Cursor
 import android.database.sqlite.SQLiteOpenHelper
 import me.harrydrummond.cafeapplication.data.model.User
@@ -60,6 +61,29 @@ abstract class AbstractSQLiteUserRepository<T: User>(
 
         db.close()
         return if (success.toInt() == -1) success.toInt() else success.toInt()
+    }
+
+    @SuppressLint("Range")
+    override fun getAllUserIds(): List<Int> {
+        val db = helper.writableDatabase
+        val list: MutableList<Int> = mutableListOf()
+
+        val cursor = db.query(
+            contract.TABLE_NAME,
+            arrayOf(contract.ID),
+            null,
+            null,
+            null,
+            null,
+            null
+        )
+
+        while (cursor.moveToNext()) {
+            list.add(cursor.getInt(cursor.getColumnIndex(contract.ID)))
+        }
+
+        db.close()
+        return list
     }
 
     private fun usernameExists(entity: T): Boolean {

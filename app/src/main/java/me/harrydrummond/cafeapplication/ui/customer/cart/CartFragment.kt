@@ -18,6 +18,7 @@ import me.harrydrummond.cafeapplication.R
 import me.harrydrummond.cafeapplication.logic.validators.Validators
 import me.harrydrummond.cafeapplication.databinding.FragmentCartBinding
 import me.harrydrummond.cafeapplication.logic.toPrice
+import me.harrydrummond.cafeapplication.ui.CustomerAppViewModel
 import me.harrydrummond.cafeapplication.ui.common.order.CartItemListViewAdapter
 
 /**
@@ -35,6 +36,7 @@ class CartFragment : Fragment() {
 
     private lateinit var binding: FragmentCartBinding
     private lateinit var viewModel: CartViewModel
+    private lateinit var appViewModel: CustomerAppViewModel
     private lateinit var adapter: CartItemListViewAdapter
 
     override fun onCreateView(
@@ -48,6 +50,7 @@ class CartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(CartViewModel::class.java)
+        appViewModel = ViewModelProvider(requireActivity()).get(CustomerAppViewModel::class.java)
 
         adapter =  CartItemListViewAdapter(this.requireContext(), listOf(), { product ->
             // Edit Listener to update the product quantity.
@@ -112,8 +115,6 @@ class CartFragment : Fragment() {
     private fun handleUIState() {
         viewModel.uiState.observe(requireActivity()) { uiState ->
             binding.progressBar.isVisible = uiState.loading
-
-            val cp = uiState.cartProducts
             adapter.cartItems = uiState.cartProducts
             adapter.notifyDataSetChanged()
 
@@ -126,6 +127,7 @@ class CartFragment : Fragment() {
                 when (uiState.event) {
                     Event.OrderPlaced -> {
                         Toast.makeText(requireContext(), "Order placed", Toast.LENGTH_SHORT).show()
+                        appViewModel.refreshOrders()
                         viewModel.eventHandled()
                         return@observe
                     }

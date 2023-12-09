@@ -6,9 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import me.harrydrummond.cafeapplication.data.model.Customer
+import me.harrydrummond.cafeapplication.data.model.Notification
 import me.harrydrummond.cafeapplication.logic.validators.Validators
 import me.harrydrummond.cafeapplication.data.model.Product
+import me.harrydrummond.cafeapplication.data.repository.INotificationRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
+import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 import me.harrydrummond.cafeapplication.logic.NotificationHelper
 import javax.inject.Inject
 
@@ -20,7 +24,10 @@ import javax.inject.Inject
  * @author Harry Drummond
  */
 @HiltViewModel
-class EditMenuViewModel @Inject constructor(private val productRepository: IProductRepository, private val notificationHelper: NotificationHelper): ViewModel() {
+class EditMenuViewModel @Inject constructor(private val productRepository: IProductRepository,
+                                            private val notificationHelper: NotificationHelper,
+                                            private val userRepository: IUserRepository<Customer>,
+                                            private val notificationRepository: INotificationRepository): ViewModel() {
 
     private val _uiState: MutableLiveData<EditMenuUIState> = MutableLiveData(EditMenuUIState())
     val uiState: LiveData<EditMenuUIState> get() = _uiState
@@ -49,7 +56,17 @@ class EditMenuViewModel @Inject constructor(private val productRepository: IProd
             _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = emptyValidation.message))
             return
         }
-        notificationHelper.showPromotionalMessage(message)
+
+        viewModelScope.launch {
+            val allUserIds = userRepository.getAllUserIds()
+            for (userId in allUserIds) {
+                val notification = Notification(-1,userId, message)
+                notificationRepository.save(notification)
+            }
+        }
+
+
+        notificationHelper.sendNotif("Promotions", "Notification sent to users")
     }
 
     /**

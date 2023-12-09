@@ -87,7 +87,7 @@ class NotificationHelper(private val context: Context) {
             else -> text = "placed"
         }
 
-        sendNotif("Order Status Update","Your order is now $text.")
+        sendNotif("Order Status Update","Order is now $text.")
     }
 
     /**

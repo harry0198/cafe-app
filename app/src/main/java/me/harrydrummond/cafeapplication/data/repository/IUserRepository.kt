@@ -19,4 +19,11 @@ interface IUserRepository<T: User>: CrudRepository<T> {
      * @return User id or -1 if not found.
      */
     fun getEntityIdByUsernameAndPassword(username: String, password: String): Int
+
+    /**
+     * Gets all user ids in the database
+     *
+     * @return List of user ids.
+     */
+    fun getAllUserIds(): List<Int>
 }

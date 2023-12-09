@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import me.harrydrummond.cafeapplication.data.model.Customer
 import me.harrydrummond.cafeapplication.data.model.Employee
+import me.harrydrummond.cafeapplication.data.repository.INotificationRepository
 import me.harrydrummond.cafeapplication.data.repository.IOrderRepository
 import me.harrydrummond.cafeapplication.data.repository.IPaymentRepository
 import me.harrydrummond.cafeapplication.data.repository.IProductRepository
@@ -13,6 +14,7 @@ import me.harrydrummond.cafeapplication.data.repository.IReviewRepository
 import me.harrydrummond.cafeapplication.data.repository.IUserRepository
 import me.harrydrummond.cafeapplication.data.repository.contract.CustomerContract
 import me.harrydrummond.cafeapplication.data.repository.contract.EmployeeContract
+import me.harrydrummond.cafeapplication.data.repository.contract.NotificationContract
 import me.harrydrummond.cafeapplication.data.repository.contract.OrderContract
 import me.harrydrummond.cafeapplication.data.repository.contract.OrderDetailsContract
 import me.harrydrummond.cafeapplication.data.repository.contract.PaymentContract
@@ -34,6 +36,7 @@ class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName,
     val employeeRepository: IUserRepository<Employee> = SQLiteEmployeeRepository(this)
     val orderRepository: IOrderRepository = SQLiteOrderRepository(this)
     val reviewRepository: IReviewRepository = SQLiteReviewRepository(this)
+    val notificationRepository: INotificationRepository = SQLiteNotificationRepository(this)
     val paymentRepository: IPaymentRepository = SQLitePaymentRepository(this)
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -48,6 +51,7 @@ class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName,
             database.execSQL(CustomerContract.CREATE_TABLE)
             database.execSQL(OrderContract.CREATE_TABLE)
             database.execSQL(OrderDetailsContract.CREATE_TABLE)
+            database.execSQL(NotificationContract.CREATE_TABLE)
         } catch (e: SQLiteException) {
             e.printStackTrace()
         }

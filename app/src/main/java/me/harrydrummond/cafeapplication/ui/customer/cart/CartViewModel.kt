@@ -45,8 +45,6 @@ class CartViewModel @Inject constructor(private val orderRepository: IOrderRepos
         viewModelScope.launch {
             val products = Cart.getInstance().getProducts()
             val mappedProducts = products.mapDuplicatesToQuantity()
-            println("Mapped prods" + mappedProducts.size)
-            println("actual prods" + products.size)
             _uiState.postValue(
                 _uiState.value?.copy(
                     loading = false,
@@ -104,7 +102,7 @@ class CartViewModel @Inject constructor(private val orderRepository: IOrderRepos
 
             val order = Order(
                 products = cartProducts,
-                status = Status.NONE,
+                status = Status.RECEIVED,
                 userId = AuthenticatedUser.getInstance().getUserId(),
                 orderId = -1,
                 timestamp = Date.from(Instant.now())
