@@ -19,12 +19,14 @@ class ValidatePriceTest(private val testString: Double, private val expectedIsVa
         @JvmStatic
         @Parameterized.Parameters
         fun data(): Collection<Array<Any>> {
-            return Arrays.asList(
-                arrayOf(1.0, false),
-                arrayOf(15.6, false),
-                arrayOf(.0, false),
-                arrayOf(35072834054.5, false),
-                arrayOf(3, false),
+            return listOf(
+                arrayOf(1.0, true),
+                arrayOf(15.6, true),
+                arrayOf(.0, true),
+                arrayOf(3507283.5, true),
+                arrayOf(3, true),
+                arrayOf(3.1, true),
+                arrayOf(124, true),
                 arrayOf(0.15, true),
                 arrayOf(0.1764342, false),
                 arrayOf(15325332.45872341, false),

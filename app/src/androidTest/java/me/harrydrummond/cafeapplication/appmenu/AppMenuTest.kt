@@ -46,7 +46,7 @@ class AppMenuTest {
     }
 
     /**
-     * Tests the order use case behaves as expected
+     * Tests the menuis displayed when clicked.
      */
     @Test
     fun testMenuIsDisplayed() {

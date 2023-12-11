@@ -128,5 +128,5 @@ data class RegisterUIState(
     val errorMessage: String? = null,
     val event: Event? = null,
     val validatedUsername: ValidatedResult = ValidatedResult(true, null),
-    val validatedPassword: ValidatedPasswordResult = ValidatedPasswordResult(true, true, true, true, true)
+    val validatedPassword: ValidatedPasswordResult = ValidatedPasswordResult()
 )

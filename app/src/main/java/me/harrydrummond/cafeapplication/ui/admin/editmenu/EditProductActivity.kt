@@ -142,6 +142,7 @@ class EditProductActivity : AppCompatActivity() {
                     }
                     EditProductViewModel.Event.ProductSaved -> {
                         Toast.makeText(this, "Product Saved", Toast.LENGTH_SHORT).show()
+                        onBackPressed()
                         viewModel.eventHandled()
                     }
                 }

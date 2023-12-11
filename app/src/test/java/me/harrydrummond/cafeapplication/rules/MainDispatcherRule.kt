@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
-// Reusable JUnit4 TestRule to override the Main dispatcher
+// Reusable JUnit4 TestRule to override the Main dispatcher for coroutines
 // https://stackoverflow.com/questions/58303961/kotlin-coroutine-unit-test-fails-with-module-with-the-main-dispatcher-had-faile
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainDispatcherRule(

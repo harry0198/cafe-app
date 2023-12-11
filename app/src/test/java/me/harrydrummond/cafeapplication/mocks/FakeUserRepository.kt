@@ -22,6 +22,13 @@ class FakeUserRepository<T: User>: IUserRepository<T> {
     /**
      * @inheritDoc
      */
+    override fun getAllUserIds(): List<Int> {
+        return users.map { it.id }
+    }
+
+    /**
+     * @inheritDoc
+     */
     override fun getById(id: Int): T? {
         return users.firstOrNull { it.id == id }
     }

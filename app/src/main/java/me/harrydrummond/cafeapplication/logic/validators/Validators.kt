@@ -87,7 +87,8 @@ object Validators {
      * @return ValidatedResult containing if is valid and error message.
      */
     fun validatePrice(price: Double): ValidatedResult {
-        val isValid = price.toBigDecimal().scale() == 2
+        val priceRegex = Regex("^\\d+(\\.\\d{1,2})?$")
+        val isValid = priceRegex.matches(price.toString())
 
         return ValidatedResult(isValid, if (isValid) null else "Incorrect price formatting. 2 Decimal Places required")
     }

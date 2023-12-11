@@ -55,7 +55,7 @@ class RegisterIntegrationTest {
     @Test
     fun testRegisterBtn() {
         val usernameText = "Harry"
-        val passwordText = "password"
+        val passwordText = "Password123"
 
 
         onView(withId(R.id.registerEmail)).perform(typeText(usernameText), closeSoftKeyboard())

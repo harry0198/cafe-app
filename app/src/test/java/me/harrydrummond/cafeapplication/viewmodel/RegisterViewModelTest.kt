@@ -60,7 +60,7 @@ class RegisterViewModelTest {
     @Test
     fun `CUSTOMER test username taken, error message UI State`() {
         val username = "harry"
-        val password = "password"
+        val password = "Example123"
         // Register new user account
         val customer = Customer(-1, null, null, null, username, password, true)
 
@@ -86,7 +86,7 @@ class RegisterViewModelTest {
     @Test
     fun `EMPLOYEE test username taken, error message UI State`() {
         val username = "harry"
-        val password = "password"
+        val password = "Example123"
         // Register new user account
         val employee = Employee(-1, null, null, null, username, password, true)
 
@@ -126,7 +126,7 @@ class RegisterViewModelTest {
 
     private fun testValidUsernamePasswordRegisters(role: Role) {
         val username = "harry"
-        val password = "password"
+        val password = "Example123"
 
         // Act
         registerViewModel.register(username, password, role)
