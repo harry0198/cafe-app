@@ -28,6 +28,12 @@ class CompleteProfileViewModel @Inject constructor(private val customerRepositor
     private val _uiState: MutableLiveData<CreateProfileUiState> = MutableLiveData(
         CreateProfileUiState()
     )
+    private val _fullName: MutableLiveData<String> = MutableLiveData("")
+    private val _phoneNum: MutableLiveData<String> = MutableLiveData("")
+    private val _email: MutableLiveData<String> = MutableLiveData("")
+    val fullName: LiveData<String> get() = _fullName
+    val phoneNum: LiveData<String> get() = _phoneNum
+    val emailAddr: LiveData<String> get() = _email
     val uiState: LiveData<CreateProfileUiState> get() = _uiState
 
     // On initialize, begin loading the user
@@ -66,6 +72,8 @@ class CompleteProfileViewModel @Inject constructor(private val customerRepositor
                 Role.EMPLOYEE -> saveEmployee(fullName, phoneNumber, email)
                 else -> saveCustomer(fullName, phoneNumber, email)
             }
+
+            refreshProfile()
         }
     }
 
@@ -106,7 +114,7 @@ class CompleteProfileViewModel @Inject constructor(private val customerRepositor
             val updatedCustomer = customer.copy(fullName = fullName, phoneNo = phoneNumber, email = email)
             val updated = customerRepository.update(updatedCustomer)
             if (updated) {
-                _uiState.postValue(_uiState.value?.copy(loading = false, event = Event.ProfileSaved, fullName = fullName, phoneNumber = phoneNumber, email = email))
+                _uiState.postValue(_uiState.value?.copy(loading = false, event = Event.ProfileSaved))
             } else {
                 _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Could not update profile"))
             }
@@ -123,7 +131,7 @@ class CompleteProfileViewModel @Inject constructor(private val customerRepositor
             val updatedEmployee = employee.copy(fullName = fullName, phoneNo = phoneNumber, email = email)
             val updated = employeeRepository.update(updatedEmployee)
             if (updated) {
-                _uiState.postValue(_uiState.value?.copy(loading = false, event = Event.ProfileSaved, fullName = fullName, phoneNumber = phoneNumber, email = email))
+                _uiState.postValue(_uiState.value?.copy(loading = false, event = Event.ProfileSaved))
             } else {
                 _uiState.postValue(_uiState.value?.copy(loading = false, errorMessage = "Could not update profile"))
             }
@@ -141,10 +149,10 @@ class CompleteProfileViewModel @Inject constructor(private val customerRepositor
             _uiState.value =
                 _uiState.value?.copy(
                     loading = false,
-                    fullName = customer.fullName ?: "",
-                    phoneNumber = customer.phoneNo ?: "",
-                    email = customer.email ?: ""
                 )
+            _phoneNum.value = customer.phoneNo?: ""
+            _email.value = customer.email?: ""
+            _fullName.value = customer.fullName?: ""
         } else {
             _uiState.postValue(
                 _uiState.value?.copy(
@@ -164,10 +172,10 @@ class CompleteProfileViewModel @Inject constructor(private val customerRepositor
             _uiState.value =
                 _uiState.value?.copy(
                     loading = false,
-                    fullName = employee.fullName ?: "",
-                    phoneNumber = employee.phoneNo ?: "",
-                    email = employee.email ?: ""
                 )
+            _phoneNum.value = employee.phoneNo?: ""
+            _email.value = employee.email?: ""
+            _fullName.value = employee.fullName?: ""
         } else {
             _uiState.postValue(
                 _uiState.value?.copy(
@@ -194,9 +202,6 @@ class CompleteProfileViewModel @Inject constructor(private val customerRepositor
         val loading: Boolean = false,
         val errorMessage: String? = null,
         val event: Event? = null,
-        val fullName: String = "",
-        val email: String = "",
-        val phoneNumber: String = "",
         var emailValidated: ValidatedResult = ValidatedResult(true,null),
         val fullNameValidated: ValidatedResult = ValidatedResult(true, null),
         val phoneNumberValidated: ValidatedResult = ValidatedResult(true, null)

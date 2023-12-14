@@ -70,6 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:ems="10"
+            android:maxLength="32"
             android:hint="Enter product title"
             android:inputType="textEmailAddress" />
 
@@ -83,6 +84,7 @@
             android:textStyle="bold" />
 
         <EditText
+            android:maxLength="256"
             android:id="@+id/editProductDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -100,6 +102,7 @@
             android:textStyle="bold" />
 
         <EditText
+            android:maxLength="10"
             android:id="@+id/editProductPrice"
             android:layout_width="match_parent"
             android:layout_height="48dp"

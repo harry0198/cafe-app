@@ -52,27 +52,29 @@
 
                 <TextView
                     android:id="@+id/lblProductName"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/roboto_medium"
-                    android:text="Flat White"
+                    android:maxLines="5"
+                    android:text="Victoria Sponge Cake Coffee"
                     android:textFontWeight="900"
                     android:textSize="24sp"
+                    app:layout_constraintEnd_toStartOf="@+id/btnViewReviews"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/lblProductDescription"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
+                    android:layout_height="wrap_content"
                     android:fontFamily="@font/roboto_medium"
                     android:text="A unique blend of italian ground coffee beans with a creamy topping"
                     android:textColor="?attr/colorSecondary"
                     android:textFontWeight="400"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/lblProductName"
-                    app:layout_constraintTop_toBottomOf="@+id/btnViewReviews" />
+                    app:layout_constraintTop_toBottomOf="@+id/lblProductName" />
 
                 <TextView
                     android:id="@+id/lblProductPrice"

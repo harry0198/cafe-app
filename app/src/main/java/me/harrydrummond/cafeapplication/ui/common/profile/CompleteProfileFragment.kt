@@ -73,13 +73,19 @@ class CompleteProfileFragment : Fragment() {
     }
 
     private fun handleUIState() {
+        viewModel.emailAddr.observe(requireActivity()) { addr ->
+            binding.email.setText(addr)
+        }
+        viewModel.phoneNum.observe(requireActivity()) { pn ->
+            binding.phoneNumber.setText(pn)
+        }
+        viewModel.fullName.observe(requireActivity()) { name ->
+            binding.fullName.setText(name)
+        }
+
         viewModel.uiState.observe(requireActivity()) { uiState ->
             val progressBar = requireActivity().findViewById<View>(me.harrydrummond.cafeapplication.R.id.progressBar) as ProgressBar
             progressBar.isVisible = uiState.loading
-
-            binding.fullName.setText(uiState.fullName)
-            binding.phoneNumber.setText(uiState.phoneNumber)
-            binding.email.setText(uiState.email)
 
             // Apply validation results
             Validators.apply(uiState.fullNameValidated, binding.fullName)
