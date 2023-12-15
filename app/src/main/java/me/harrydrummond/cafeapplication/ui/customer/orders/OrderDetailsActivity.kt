@@ -7,6 +7,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import me.harrydrummond.cafeapplication.IntentExtra
 import me.harrydrummond.cafeapplication.data.model.Order
+import me.harrydrummond.cafeapplication.data.model.Status
 import me.harrydrummond.cafeapplication.databinding.ActivityOrderDetailsBinding
 import me.harrydrummond.cafeapplication.databinding.FragmentOrdersBinding
 import me.harrydrummond.cafeapplication.ui.common.order.CartItemListViewAdapter

@@ -55,7 +55,7 @@ abstract class AbstractSQLiteUserRepository<T: User>(
             return -3
 
         val db = helper.writableDatabase
-        val cv = writeContentValues(type, false)
+        val cv = writeContentValues(type, false, true)
 
         val success = db.insert(contract.TABLE_NAME, null, cv)
 

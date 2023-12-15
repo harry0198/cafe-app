@@ -35,15 +35,16 @@ object CustomerContract : UserContract<Customer> {
     }
 
 
-    override fun getEntityValues(entity: Customer, withPrimaryKey: Boolean): ContentValues {
+    override fun getEntityValues(entity: Customer, withPrimaryKey: Boolean, hashing: Boolean): ContentValues {
         val cv = ContentValues()
+        val password = if (hashing) PasswordUtils.hashPassword(entity.password) else entity.password
         if (withPrimaryKey)
             cv.put(ID, entity.id)
         cv.put(FULL_NAME, entity.fullName)
         cv.put(EMAIL, entity.email)
         cv.put(PHONE_NO, entity.phoneNo)
         cv.put(USERNAME, entity.username)
-        cv.put(PASSWORD, PasswordUtils.hashPassword(entity.password))
+        cv.put(PASSWORD, password)
         cv.put(IS_ACTIVE, entity.isActive)
         return cv
     }

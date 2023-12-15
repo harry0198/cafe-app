@@ -35,7 +35,7 @@ object ProductContract : BaseContract<Product> {
     /**
      * @inheritDoc
      */
-    override fun getEntityValues(entity: Product, withPrimaryKey: Boolean): ContentValues {
+    override fun getEntityValues(entity: Product, withPrimaryKey: Boolean, hashing: Boolean): ContentValues {
         val cv = ContentValues()
 
         if (withPrimaryKey)

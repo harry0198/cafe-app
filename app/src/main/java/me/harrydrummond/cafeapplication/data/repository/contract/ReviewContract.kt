@@ -34,7 +34,7 @@ object ReviewContract : BaseContract<Review> {
     /**
      * @inheritDoc
      */
-    override fun getEntityValues(entity: Review, withPrimaryKey: Boolean): ContentValues {
+    override fun getEntityValues(entity: Review, withPrimaryKey: Boolean, hashing: Boolean): ContentValues {
         val cv = ContentValues()
 
         if (withPrimaryKey)

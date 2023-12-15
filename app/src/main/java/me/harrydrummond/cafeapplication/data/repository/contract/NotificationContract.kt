@@ -17,7 +17,7 @@ object NotificationContract : BaseContract<Notification> {
 
 
 
-    override fun getEntityValues(entity: Notification, withPrimaryKey: Boolean): ContentValues {
+    override fun getEntityValues(entity: Notification, withPrimaryKey: Boolean, hashing: Boolean): ContentValues {
         val cv = ContentValues()
 
         if (withPrimaryKey)

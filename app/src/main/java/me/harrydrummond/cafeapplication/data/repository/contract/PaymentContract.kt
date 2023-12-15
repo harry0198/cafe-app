@@ -33,7 +33,7 @@ object PaymentContract : BaseContract<Payment> {
     /**
      * @inheritDoc
      */
-    override fun getEntityValues(entity: Payment, withPrimaryKey: Boolean): ContentValues {
+    override fun getEntityValues(entity: Payment, withPrimaryKey: Boolean, hashing: Boolean): ContentValues {
         val cv = ContentValues()
 
         if (withPrimaryKey)

@@ -3,6 +3,7 @@ package me.harrydrummond.cafeapplication.data.repository.contract
 import android.content.ContentValues
 import android.database.Cursor
 import me.harrydrummond.cafeapplication.data.model.Employee
+import me.harrydrummond.cafeapplication.data.repository.PasswordUtils
 import me.harrydrummond.cafeapplication.data.repository.toEmployee
 
 /**
@@ -32,16 +33,16 @@ object EmployeeContract : UserContract<Employee> {
         return PASSWORD
     }
 
-    override fun getEntityValues(entity: Employee, withPrimaryKey: Boolean): ContentValues {
+    override fun getEntityValues(entity: Employee, withPrimaryKey: Boolean, hashing: Boolean): ContentValues {
         val cv = ContentValues()
-
+        val password = if (hashing) PasswordUtils.hashPassword(entity.password) else entity.password
         if (withPrimaryKey)
             cv.put(ID, entity.id)
         cv.put(FULL_NAME, entity.fullName)
         cv.put(EMAIL, entity.email)
         cv.put(PHONE_NO, entity.phoneNo)
         cv.put(USERNAME, entity.username)
-        cv.put(PASSWORD, entity.password)
+        cv.put(PASSWORD, password)
         cv.put(IS_ACTIVE, entity.isActive)
         return cv
     }

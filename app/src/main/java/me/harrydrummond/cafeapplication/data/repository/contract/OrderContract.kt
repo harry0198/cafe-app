@@ -30,7 +30,7 @@ object OrderContract : BaseContract<Order> {
     /**
      * @inheritDoc
      */
-    override fun getEntityValues(entity: Order, withPrimaryKey: Boolean): ContentValues {
+    override fun getEntityValues(entity: Order, withPrimaryKey: Boolean, hashing: Boolean): ContentValues {
         val cv = ContentValues()
 
         if (withPrimaryKey)

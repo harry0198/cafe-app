@@ -27,7 +27,7 @@ object OrderDetailsContract : BaseContract<OrderDetails> {
     /**
      * @inheritDoc
      */
-    override fun getEntityValues(entity: OrderDetails, withPrimaryKey: Boolean): ContentValues {
+    override fun getEntityValues(entity: OrderDetails, withPrimaryKey: Boolean, hashing: Boolean): ContentValues {
         val cv = ContentValues()
 
         if (withPrimaryKey)

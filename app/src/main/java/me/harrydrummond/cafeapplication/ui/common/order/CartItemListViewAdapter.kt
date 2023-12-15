@@ -8,6 +8,7 @@ import android.widget.BaseAdapter
 import androidx.core.view.isVisible
 import me.harrydrummond.cafeapplication.data.model.Product
 import me.harrydrummond.cafeapplication.databinding.OrderDetailsListViewBinding
+import me.harrydrummond.cafeapplication.logic.toBitmap
 import me.harrydrummond.cafeapplication.logic.toPrice
 
 /**
@@ -59,6 +60,7 @@ class CartItemListViewAdapter (context: Context, var cartItems: List<Pair<Int, P
         binding.lblTitle.text = "x$quantity ${product.productName}"
         binding.lblSubTotal.text = totalPrice.toPrice()
         binding.lblDesc.text = product.productDescription
+        binding.imageView3.setImageBitmap(product.productImage?.toBitmap(400,400))
 
         // If edit btn callback is null, don't display the edit btn
         if (onEditClick != null) {

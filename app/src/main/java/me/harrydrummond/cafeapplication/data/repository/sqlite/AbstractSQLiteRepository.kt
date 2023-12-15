@@ -23,10 +23,11 @@ abstract class AbstractSQLiteRepository<T>(
      * Writes [T] values to a [ContentValues] object
      * @param type [T] to write values of
      * @param withPrimaryKey Should we write the primary key to the values. (useful for add where it's not needed)
+     * @param hash Should hash?
      * @return [ContentValues] written values.
      */
-    fun writeContentValues(type: T, withPrimaryKey: Boolean): ContentValues {
-        return contract.getEntityValues(type, withPrimaryKey)
+    fun writeContentValues(type: T, withPrimaryKey: Boolean, hash: Boolean): ContentValues {
+        return contract.getEntityValues(type, withPrimaryKey, hash)
     }
 
     /**
@@ -34,7 +35,7 @@ abstract class AbstractSQLiteRepository<T>(
      */
     override fun save(type: T): Int {
         val db = helper.writableDatabase
-        val cv = writeContentValues(type, false)
+        val cv = writeContentValues(type, false, true)
 
         val success = db.insert(contract.TABLE_NAME, null, cv)
 
@@ -47,7 +48,7 @@ abstract class AbstractSQLiteRepository<T>(
      */
     override fun update(type: T): Boolean {
         val db = helper.writableDatabase
-        val cv = writeContentValues(type, true)
+        val cv = writeContentValues(type, true, false)
 
         val result = db.update(contract.TABLE_NAME, cv, "${contract.ID} = ${contract.getId(type)}", null) == 1
         db.close()
